@@ -3,82 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Hub | News & Finance</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="ticker-wrap">
-        <div class="tradingview-widget-container">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-            {
-                "symbols": [
-                    {"proName": "FOREXCOM:SPX500", "title": "S&P 500"},
-                    {"proName": "BITSTAMP:BTCUSD", "title": "Bitcoin"},
-                    {"proName": "NASDAQ:AAPL", "title": "Apple"},
-                    {"proName": "NASDAQ:TSLA", "title": "Tesla"},
-                    {"proName": "NASDAQ:NVDA", "title": "Nvidia"}
-                ],
-                "showSymbolLogo": true, "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive"
-            }
-            </script>
+    <div class="dashboard-grid">
+        
+        <div class="card clock-card">
+            <div id="clock">00:00:00</div>
+            <div id="date">Monday, January 1st</div>
         </div>
+
+        <div class="card">
+            <h3>Weather</h3>
+            <div class="weather-placeholder">
+                <p>Ottawa, ON</p>
+                <h2>-2°C</h2>
+                <p>Partly Cloudy</p>
+            </div>
+            </div>
+
+        <div class="card">
+            <h3>Market Watch</h3>
+            <ul class="stock-list">
+                <li><span>S&P 500</span> <span class="up">+0.45%</span></li>
+                <li><span>NASDAQ</span> <span class="up">+1.12%</span></li>
+                <li><span>DJIA</span> <span class="down">-0.10%</span></li>
+                <li><span>BTC</span> <span class="up">+2.31%</span></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>News</h3>
+            <ul class="links">
+                <li><a href="https://reuters.com" target="_blank">Reuters</a></li>
+                <li><a href="https://apnews.com" target="_blank">Associated Press</a></li>
+                <li><a href="https://news.google.com" target="_blank">Google News</a></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>Reading List</h3>
+            <ul class="links">
+                <li><a href="#">The Verge</a></li>
+                <li><a href="#">TechCrunch</a></li>
+                <li><a href="#">Wait But Why</a></li>
+                <li><a href="#">A List Apart</a></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>Quick Launch</h3>
+            <div class="icon-grid">
+                <a href="https://gmail.com" class="tool-icon">Mail</a>
+                <a href="https://calendar.google.com" class="tool-icon">Cal</a>
+                <a href="https://drive.google.com" class="tool-icon">Drive</a>
+                <a href="https://github.com" class="tool-icon">Git</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Today's Focus</h3>
+            <ul class="task-list">
+                <li><input type="checkbox"> Check overnight markets</li>
+                <li><input type="checkbox"> Read Morning Brew</li>
+                <li><input type="checkbox"> Update journal</li>
+            </ul>
+        </div>
+
     </div>
 
-    <main class="container">
-        <header>
-            <p id="date-display"></p>
-            <iframe src="https://free.timeanddate.com/clock/ia7g71ib/n188/tt0" frameborder="0" width="340" height="18"></iframe>
-        </header>
-
-        <section class="top-row">
-            <div class="card weather-card">
-            <a class="weatherwidget-io" href="https://forecast7.com/en/40d71n74d01/new-york/" data-label_1="Ottawa" data-label_2="WEATHER" data-theme="original" >Ottawa WEATHER</a>
-<script>
-!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
-</script>
-            </div>
-        </section>
-
-        <div class="grid">
-            <div class="card">
-                <h2>Popular News</h2>
-                <ul class="link-list">
-                    <li><a href="https://www.nytimes.com" target="_blank">The New York Times</a></li>
-                    <li><a href="https://www.bbc.com/news" target="_blank">BBC News</a></li>
-                    <li><a href="https://www.reuters.com" target="_blank">Reuters</a></li>
-                    <li><a href="https://www.cnn.com" target="_blank">CNN</a></li>
-                    <li><a href="https://www.theguardian.com" target="_blank">The Guardian</a></li>
-                    <li><a href="https://www.wsj.com" target="_blank">Wall Street Journal</a></li>
-                    <li><a href="https://www.aljazeera.com" target="_blank">Al Jazeera</a></li>
-                    <li><a href="https://www.bloomberg.com" target="_blank">Bloomberg</a></li>
-                    <li><a href="https://www.apnews.com" target="_blank">Associated Press</a></li>
-                    <li><a href="https://www.npr.org" target="_blank">NPR News</a></li>
-                </ul>
-            </div>
-
-            <div class="card">
-                <h2>Leading Blogs</h2>
-                <ul class="link-list">
-                    <li><a href="https://www.theverge.com" target="_blank">The Verge</a></li>
-                    <li><a href="https://techcrunch.com" target="_blank">TechCrunch</a></li>
-                    <li><a href="https://www.mashable.com" target="_blank">Mashable</a></li>
-                    <li><a href="https://www.engadget.com" target="_blank">Engadget</a></li>
-                    <li><a href="https://www.medium.com" target="_blank">Medium</a></li>
-                    <li><a href="https://www.smashingmagazine.com" target="_blank">Smashing Magazine</a></li>
-                    <li><a href="https://www.wired.com" target="_blank">Wired</a></li>
-                    <li><a href="https://www.gizmodo.com" target="_blank">Gizmodo</a></li>
-                    <li><a href="https://www.lifehacker.com" target="_blank">Lifehacker</a></li>
-                    <li><a href="https://www.apartmenttherapy.com" target="_blank">Apartment Therapy</a></li>
-                </ul>
-            </div>
-        </div>
-    </main>
-
     <script>
-        document.getElementById('date-display').innerText = new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        function updateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            
+            document.getElementById('clock').textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('date').textContent = now.toLocaleDateString(undefined, options);
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
     </script>
 </body>
 </html>

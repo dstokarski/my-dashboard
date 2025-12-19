@@ -1,96 +1,119 @@
-:root {
-    --bg-color: #0f172a;
-    --card-bg: rgba(30, 41, 59, 0.7);
-    --text-primary: #f8fafc;
-    --accent-color: #38bdf8;
-    --border-color: rgba(255, 255, 255, 0.1);
+/* General Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    background-color: var(--bg-color);
-    color: var(--text-primary);
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #ffffff;
+    color: #333;
     padding: 20px;
 }
 
-header {
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-header h1 { font-weight: 600; font-size: 2.5rem; margin-bottom: 5px; }
-header p { color: var(--accent-color); font-weight: 300; }
-
-/* Widgets */
-.ticker-wrap {
-    border-bottom: 1px solid var(--border-color);
-    background: rgba(15, 23, 42, 0.9);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.top-row {
-    margin-bottom: 20px;
-}
-
-.grid {
+/* The Grid Layout */
+.dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-/* Glassmorphism Cards */
+/* Individual Boxes (Cards) */
 .card {
-    background: var(--card-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    padding: 20px;
+    background: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-h2 {
-    font-size: 1.25rem;
-    margin-top: 0;
-    border-bottom: 2px solid var(--accent-color);
-    display: inline-block;
-    padding-bottom: 5px;
-    margin-bottom: 20px;
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-/* Links */
-.link-list {
+/* Typography */
+h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+/* Clock Specific */
+.clock-card {
+    text-align: center;
+    grid-column: span 1;
+}
+#clock {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #111;
+}
+#date {
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Lists and Links */
+ul {
     list-style: none;
-    padding: 0;
-    margin: 0;
 }
 
-.link-list li {
-    margin-bottom: 12px;
+.links li {
+    margin-bottom: 10px;
 }
 
-.link-list a {
-    color: #cbd5e1;
+.links a {
     text-decoration: none;
-    transition: all 0.2s;
-    font-size: 1rem;
-    display: block;
+    color: #007aff;
+    font-weight: 500;
 }
 
-.link-list a:hover {
-    color: var(--accent-color);
-    transform: translateX(5px);
+.links a:hover {
+    text-decoration: underline;
+}
+
+/* Stocks Styling */
+.stock-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.up { color: #28a745; font-weight: bold; }
+.down { color: #dc3545; font-weight: bold; }
+
+/* Icon Grid */
+.icon-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.tool-icon {
+    display: block;
+    padding: 10px;
+    background: #f7f7f7;
+    text-align: center;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.task-list li {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
 }
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
-    header h1 { font-size: 1.8rem; }
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
 }
