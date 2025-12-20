@@ -3,96 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Personal Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="dashboard-grid">
         
-        <div class="card clock-card">
-            <div id="clock">00:00:00</div>
-            <div id="date">Monday, January 1st</div>
-        </div>
-
-        <div class="card search-container">
-    <form action="https://www.google.com/search" method="GET">
-        <input type="text" name="q" placeholder="Search Google..." autocomplete="off" autofocus>
-        <button type="submit">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        </button>
-    </form>
-</div>
-
-        <div class="card">
-            <h3>Weather</h3>
-            <div class="weather-placeholder">
-                <p>Ottawa, ON</p>
-                <h2>-2°C</h2>
-                <p>Partly Cloudy</p>
+        <div class="header-container">
+            <div class="card search-card">
+                <form action="https://www.google.com/search" method="GET">
+                    <input type="text" name="q" placeholder="Search Google..." autocomplete="off" autofocus>
+                </form>
             </div>
+            <div class="card clock-card">
+                <div id="clock">00:00</div>
+                <div id="date">Saturday, December 20</div>
             </div>
-
-        <div class="card">
-            <h3>Market Watch</h3>
-            <ul class="stock-list">
-                <li><span>S&P 500</span> <span class="up">+0.45%</span></li>
-                <li><span>NASDAQ</span> <span class="up">+1.12%</span></li>
-                <li><span>DJIA</span> <span class="down">-0.10%</span></li>
-                <li><span>BTC</span> <span class="up">+2.31%</span></li>
-            </ul>
         </div>
 
         <div class="card">
-            <h3>News</h3>
+            <h3>🌍 Global News</h3>
             <ul class="links">
-                <li><a href="https://reuters.com" target="_blank">Reuters</a></li>
-                <li><a href="https://apnews.com" target="_blank">Associated Press</a></li>
-                <li><a href="https://news.google.com" target="_blank">Google News</a></li>
+                <li><a href="https://www.reuters.com" target="_blank">Reuters</a></li>
+                <li><a href="https://www.apnews.com" target="_blank">Associated Press</a></li>
+                <li><a href="https://www.bbc.com/news" target="_blank">BBC World</a></li>
+                <li><a href="https://www.nytimes.com" target="_blank">The New York Times</a></li>
+                <li><a href="https://www.theguardian.com/international" target="_blank">The Guardian</a></li>
             </ul>
         </div>
 
         <div class="card">
-            <h3>Reading List</h3>
+            <h3>🇨🇦 Canadian News</h3>
             <ul class="links">
-                <li><a href="#">The Verge</a></li>
-                <li><a href="#">TechCrunch</a></li>
-                <li><a href="#">Wait But Why</a></li>
-                <li><a href="#">A List Apart</a></li>
+                <li><a href="https://www.cbc.ca/news" target="_blank">CBC News</a></li>
+                <li><a href="https://www.theglobeandmail.com" target="_blank">The Globe and Mail</a></li>
+                <li><a href="https://www.nationalpost.com" target="_blank">National Post</a></li>
+                <li><a href="https://www.ctvnews.ca" target="_blank">CTV News Canada</a></li>
+                <li><a href="https://www.globalnews.ca" target="_blank">Global News</a></li>
             </ul>
         </div>
 
         <div class="card">
-            <h3>Quick Launch</h3>
-            <div class="icon-grid">
-                <a href="https://gmail.com" class="tool-icon">Mail</a>
-                <a href="https://calendar.google.com" class="tool-icon">Cal</a>
-                <a href="https://drive.google.com" class="tool-icon">Drive</a>
-                <a href="https://github.com" class="tool-icon">Git</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>Today's Focus</h3>
-            <ul class="task-list">
-                <li><input type="checkbox"> Check overnight markets</li>
-                <li><input type="checkbox"> Read Morning Brew</li>
-                <li><input type="checkbox"> Update journal</li>
+            <h3>⚖️ Ontario News</h3>
+            <ul class="links">
+                <li><a href="https://www.thestar.com" target="_blank">Toronto Star</a></li>
+                <li><a href="https://www.tvo.org" target="_blank">TVO Today</a></li>
+                <li><a href="https://www.cp24.com" target="_blank">CP24 Ontario</a></li>
+                <li><a href="https://www.ontario.ca/news" target="_blank">Ontario Newsroom</a></li>
+                <li><a href="https://www.insauga.com" target="_blank">InSauga Ontario</a></li>
             </ul>
         </div>
 
-    </div>
+        <div class="card">
+            <h3>🏛️ Ottawa Local</h3>
+            <ul class="links">
+                <li><a href="https://ottawacitizen.com" target="_blank">Ottawa Citizen</a></li>
+                <li><a href="https://ottawasun.com" target="_blank">Ottawa Sun</a></li>
+                <li><a href="https://www.cbc.ca/news/canada/ottawa" target="_blank">CBC Ottawa</a></li>
+                <li><a href="https://www.ottawalookout.com" target="_blank">The Ottawa Lookout</a></li>
+                <li><a href="https://www.ledroit.com" target="_blank">Le Droit</a></li>
+            </ul>
+        </div>
 
-    <script>
-        function updateTime() {
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            
-            document.getElementById('clock').textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            document.getElementById('date').textContent = now.toLocaleDateString(undefined, options);
-        }
-        setInterval(updateTime, 1000);
-        updateTime();
-    </script>
-</body>
-</html>
+        <div class="card">
+            <h3>🏒 Canadian Sports</h3>
+            <ul class="links">
+                <li><a href="https://www.tsn.ca" target="_blank">TSN</a></li>
+                <li><a href="https://www.sportsnet.ca" target="_blank">Sportsnet</a></li>
+                <li><a href="https://www.thescore.com" target="_blank">TheScore</a></li>
+                <li><a href="https://www.nhl.com/senators" target="_blank">Ottawa Senators</a></li>
+                <li><a href="https://www.cfl.ca" target="_blank">CFL Official</a></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>🎨 Cartoons & Comics</h3>
+            <ul class="links">
+                <li><a href="https://xkcd.com" target="_blank">xkcd</a></li>
+                <li><a href="https://www.smbc-comics.com" target="_blank">SMBC</a></li>
+                <li><a href="https://theoatmeal.com" target="_blank">The Oatmeal</a></li>
+                <li><a href="https://www.poorlydrawnlines.com" target="_blank">Poorly Drawn Lines</a></li>
+                <li><a href="https://www.qwantz.com" target="_blank">Dinosaur Comics</a></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>🪵 Woodworking</h3>
+            <ul class="links">
+                <li><a href="https://www.thewoodwhisperer.com" target="_blank">The Wood Whisperer</a></li>
+                <li><a href="https://www.finewoodworking.com" target="_blank">Fine Woodworking</a></li>
+                <li><a href="https://www.paulsellers.com" target="_blank">Paul Sellers</a></li>
+                <li><a href="https://www.ana-white.com" target="_blank">Ana White Plans</a></li>
+                <li><a href="https://lostartpress.com" target="_blank">Lost Art Press</a></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>💻 Tech Blogs</h3>
+            <ul class="links">
+                <li><a href="https://www.theverge.com" target="_blank">The Verge</a></li>
+                <li><a href="https://techcrunch.com" target="_blank">TechCrunch</a></li>
+                <li><a href="https://arstechnica.com" target="_blank">Ars Technica</a></li>
+                <li><a href="https://www.wired.com" target="_blank">Wired</a></li>
+                <li><a href="https://slashdot.org" target="_blank">Slashdot</a></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>💡 Productivity</h3>
+            <ul class="links">
+                <li><a href="https://www.zenhabits.net" target="_blank">Zen Habits</a></li>
+                <li><a href="https://www.lifehack.org" target="_blank">Lifehack</a></li>
+                <li><a href="https://jamesclear.com/articles" target="_blank">James Clear</a></li>
+                <li><a href="https://www.fastcompany.com" target="_blank">Fast Company</a></li>
+                <li><a href="https://sivers.org" target="_blank">Derek Sivers</a></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h3>🥘 Food & Cooking</h3>
+            <ul class="links">
+                <li><a href="https://www.seriouseats.com" target="_blank">Serious Eats</a></li>
+                <li><a href="https://www.smittenkitchen.com" target="_blank">Smitten Kitchen</a></li>
+                <li><a href="https://www.budgetbytes.com" target="_blank">Budget Bytes</a></li>
+                <li><a href="https://www.allrecipes.com" target="_blank">AllRecipes</a></li>
+                <li><a href="https://www.bonappetit.com" target="_blank">Bon Appétit
