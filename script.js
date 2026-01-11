@@ -47,15 +47,7 @@ async function fetchWeather(lat, lon, elementId, cityName) {
             </div>
         `;
 
-        // Append a Weather Underground search link for the city's 10-day forecast
-        const wuSearch = `https://www.wunderground.com/search?query=${encodeURIComponent(cityName)}`;
-        const weatherWithLink = weatherHTML + `
-            <div style="margin-top:0.6rem;">
-                <a href="${wuSearch}" target="_blank" rel="noopener" style="font-size:0.85rem; color:#9fb2ff; text-decoration:none;">10-day forecast on Weather Underground</a>
-            </div>
-        `;
-
-        document.getElementById(elementId).innerHTML = weatherWithLink;
+        document.getElementById(elementId).innerHTML = weatherHTML;
     } catch (error) {
         console.error('Error fetching weather:', error);
         document.getElementById(elementId).innerHTML = '<div style="color: #f87171;">Weather unavailable</div>';
@@ -90,36 +82,6 @@ function getWeatherDescription(code) {
         99: 'Thunderstorm with Hail'
     };
     return weatherCodes[code] || 'Unknown';
-}
-
-// Stock Market Data
-async function fetchStockData() {
-    try {
-        // Using a simple approach with Yahoo Finance alternative API
-        // Note: For production, you may want to use a paid API like Alpha Vantage or IEX Cloud
-
-        // For demo purposes, we'll simulate the data
-        // In production, replace with actual API calls
-        updateStockDisplay('dow', 38000 + Math.random() * 1000, Math.random() > 0.5);
-        updateStockDisplay('nasdaq', 16000 + Math.random() * 500, Math.random() > 0.5);
-
-    } catch (error) {
-        console.error('Error fetching stock data:', error);
-    }
-}
-
-function updateStockDisplay(symbol, value, isPositive) {
-    const change = (Math.random() * 2 - 1).toFixed(2);
-    const changePercent = (Math.random() * 2).toFixed(2);
-
-    const valueElement = document.getElementById(`${symbol}-value`);
-    const changeElement = document.getElementById(`${symbol}-change`);
-
-    if (valueElement && changeElement) {
-        valueElement.textContent = value.toFixed(2);
-        changeElement.textContent = `${change >= 0 ? '+' : ''}${change} (${change >= 0 ? '+' : ''}${changePercent}%)`;
-        changeElement.className = 'stock-change ' + (change >= 0 ? 'positive' : 'negative');
-    }
 }
 
 // Daily Quote
@@ -187,10 +149,11 @@ async function displayDailyPhoto() {
         img.src = photoUrl;
         img.alt = `Daily ${category} photograph`;
 
-        document.getElementById('photo-caption').textContent = `Today's featured ${category} photograph`;
+        // Link to the picsum.photos source
+        const photoLink = document.getElementById('photo-link');
+        photoLink.href = photoUrl;
     } catch (error) {
         console.error('Error loading daily photo:', error);
-        document.getElementById('photo-caption').textContent = 'Photo unavailable';
     }
 }
 
@@ -210,10 +173,6 @@ function init() {
         fetchWeather(45.4215, -75.6972, 'weather-ottawa', 'Ottawa');
         fetchWeather(45.5, -75.8, 'weather-chelsea', 'Chelsea, QC');
     }, 15 * 60 * 1000);
-
-    // Update stock data immediately and every 15 minutes
-    fetchStockData();
-    setInterval(fetchStockData, 15 * 60 * 1000);
 
     // Display daily quote and photo
     displayDailyQuote();

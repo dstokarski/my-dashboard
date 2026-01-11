@@ -189,56 +189,6 @@ body::before {
     grid-column: span 2;
 }
 
-/* Stock Widget */
-.stocks-container {
-    display: flex;
-    flex-direction: row; /* desktop: show stocks in a row */
-    gap: 1rem;
-}
-
-.stock-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    flex: 1; /* allow items to share available space on desktop */
-}
-
-.stock-name {
-    font-weight: 600;
-    font-size: 1rem;
-}
-
-.stock-value {
-    font-size: 1.1rem;
-    color: #e0e4f0;
-}
-
-.stock-change {
-    font-size: 0.9rem;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-}
-
-.stock-change.positive {
-    color: #4ade80;
-    background: rgba(74, 222, 128, 0.1);
-}
-
-.stock-change.negative {
-    color: #f87171;
-    background: rgba(248, 113, 113, 0.1);
-}
-
-.stock-update {
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
-    color: #8891a8;
-    text-align: center;
-}
-
 /* Quote Widget */
 .quote-container {
     display: flex;
@@ -273,18 +223,17 @@ body::before {
     height: 100%;
 }
 
-#daily-photo {
-    width: 100%;
-    height: 280px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 0.8rem;
+#photo-link {
+    display: block;
+    height: 100%;
+    text-decoration: none;
 }
 
-.photo-caption {
-    font-size: 0.85rem;
-    color: #b0b8cc;
-    line-height: 1.4;
+#daily-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
 }
 
 /* Responsive Design */
@@ -319,11 +268,6 @@ body::before {
     .weather-card {
         flex: 1;
         min-width: 150px;
-    }
-
-    /* Stack stock items on narrow screens */
-    .stocks-container {
-        flex-direction: column;
     }
 }
 
