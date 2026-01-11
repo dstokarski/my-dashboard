@@ -39,9 +39,9 @@ async function fetchWeather(lat, lon, elementId, cityName) {
 
         const weatherHTML = `
             <div class="current-weather">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">${temp}°C</div>
-                <div style="color: #b0b8cc; margin-bottom: 0.5rem;">${weatherCode}</div>
-                <div style="font-size: 0.85rem; color: #8891a8;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem; font-weight: 700; color: #2d3748;">${temp}°C</div>
+                <div style="color: #4a5568; margin-bottom: 0.5rem; font-weight: 600;">${weatherCode}</div>
+                <div style="font-size: 0.85rem; color: #718096; font-weight: 500;">
                     H: ${tempMax}° L: ${tempMin}°
                 </div>
             </div>
@@ -50,7 +50,7 @@ async function fetchWeather(lat, lon, elementId, cityName) {
         document.getElementById(elementId).innerHTML = weatherHTML;
     } catch (error) {
         console.error('Error fetching weather:', error);
-        document.getElementById(elementId).innerHTML = '<div style="color: #f87171;">Weather unavailable</div>';
+        document.getElementById(elementId).innerHTML = '<div style="color: #e53e3e; font-weight: 600;">Weather unavailable</div>';
     }
 }
 
@@ -196,7 +196,7 @@ async function fetchAstronomyData() {
         document.getElementById('astronomy').innerHTML = astronomyHTML;
     } catch (error) {
         console.error('Error fetching astronomy data:', error);
-        document.getElementById('astronomy').innerHTML = '<div style="color: #f87171;">Astronomy data unavailable</div>';
+        document.getElementById('astronomy').innerHTML = '<div style="color: #e53e3e; font-weight: 600;">Astronomy data unavailable</div>';
     }
 }
 
@@ -256,54 +256,6 @@ async function fetchHeadlines() {
     }
 }
 
-// RSS Feed Reader
-async function fetchRSSFeed() {
-    try {
-        // Using a CORS proxy and multiple RSS feeds
-        const feeds = [
-            'https://feeds.bloomberg.com/markets/news.rss',
-            'https://feeds.reuters.com/reuters/topNews',
-            'https://feeds.techcrunch.com/feed'
-        ];
-
-        // For simplicity, fetch from a single reliable feed
-        const proxyUrl = 'https://api.allorigins.win/get?url=';
-        const feedUrl = 'https://feeds.bbc.co.uk/news/rss.xml';
-        
-        const response = await fetch(`${proxyUrl}${encodeURIComponent(feedUrl)}`);
-        const data = await response.json();
-        
-        // Parse XML response
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(data.contents, 'text/xml');
-        const items = xmlDoc.querySelectorAll('item');
-
-        let feedHTML = '<div class="rss-articles">';
-        let count = 0;
-        items.forEach(item => {
-            if (count >= 8) return; // Show up to 8 articles
-            const title = item.querySelector('title')?.textContent || 'No title';
-            const link = item.querySelector('link')?.textContent || '#';
-            const description = item.querySelector('description')?.textContent || 'No description';
-            const pubDate = item.querySelector('pubDate')?.textContent || '';
-
-            feedHTML += `
-                <div class="rss-article">
-                    <h3><a href="${link}" target="_blank" rel="noopener">${title}</a></h3>
-                    <p class="rss-description">${description.substring(0, 150)}...</p>
-                    <small class="rss-date">${pubDate ? new Date(pubDate).toLocaleDateString() : ''}</small>
-                </div>
-            `;
-            count++;
-        });
-        feedHTML += '</div>';
-
-        document.getElementById('rss-feed').innerHTML = feedHTML;
-    } catch (error) {
-        console.error('Error fetching RSS feed:', error);
-        document.getElementById('rss-feed').innerHTML = '<div style="color: #f87171; padding: 1rem;">RSS feed unavailable at the moment</div>';
-    }
-}
 
 // Initialize everything
 function init() {
@@ -326,10 +278,9 @@ function init() {
     displayDailyQuote();
     displayDailyPhoto();
 
-    // Fetch astronomy, headlines, and RSS feed
+    // Fetch astronomy and headlines
     fetchAstronomyData();
     fetchHeadlines();
-    fetchRSSFeed();
 }
 
 // Start when page loads
