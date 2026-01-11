@@ -1,4 +1,4 @@
-// Time and Date Display
+//  Time and Date Display
 function updateTime() {
     const now = new Date();
     const options = { timeZone: 'America/Toronto', hour12: true };
