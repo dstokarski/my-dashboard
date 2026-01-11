@@ -22,11 +22,17 @@
                     <div id="weather-ottawa" class="weather-info">
                         <div class="loading">Loading weather...</div>
                     </div>
+                    <div class="weather-card-link">
+                        <a href="general.html" class="generic-link">Generic Link</a>
+                    </div>
                 </div>
                 <div class="weather-card">
                     <h3>Chelsea, QC</h3>
                     <div id="weather-chelsea" class="weather-info">
                         <div class="loading">Loading weather...</div>
+                    </div>
+                    <div class="weather-card-link">
+                        <a href="general.html" class="generic-link">Generic Link</a>
                     </div>
                 </div>
             </div>
@@ -69,6 +75,10 @@
                     <li><a href="https://toronto.ctvnews.ca" target="_blank">CTV Toronto</a></li>
                     <li><a href="https://ottawa.ctvnews.ca" target="_blank">CTV Ottawa</a></li>
                     <li><a href="https://www.ottawamatters.com" target="_blank">Ottawa Matters</a></li>
+                    <li><a href="https://www.bytowne.ca" target="_blank">ByTowne Cinema</a></li>
+                    <li><a href="https://www.mayfairtheatres.com" target="_blank">Mayfair Theatres</a></li>
+                    <li><a href="https://www.ottawatourism.ca/events" target="_blank">Ottawa Events (Tourism)</a></li>
+                    <li><a href="https://www.eventbrite.ca/d/ottawa--on/events/" target="_blank">Eventbrite Ottawa</a></li>
                 </ul>
             </div>
                
@@ -117,6 +127,22 @@
                 </ul>
             </div>
 
+            <!-- Astronomy Widget -->
+            <div class="card card-widget">
+                <h2 class="card-title">Tonight's Sky</h2>
+                <div id="astronomy" class="astronomy-container">
+                    <p class="loading">Loading sky data...</p>
+                </div>
+            </div>
+
+            <!-- World Headlines -->
+            <div class="card card-widget">
+                <h2 class="card-title">World Headlines</h2>
+                <div id="headlines" class="headlines-container">
+                    <p class="loading">Loading headlines...</p>
+                </div>
+            </div>
+
             <!-- Inspirational Quote -->
             <div class="card card-widget card-tall">
                 <h2 class="card-title">Daily Inspiration</h2>
@@ -127,12 +153,20 @@
             </div>
 
             <!-- Daily Photograph -->
-            <div class="card card-widget card-wide">
+            <div class="card card-widget card-wide photo-card">
                 <div id="photo" class="photo-container">
                     <a id="photo-link" href="" target="_blank" rel="noopener">
                         <img id="daily-photo" src="" alt="Daily photograph">
                     </a>
                 </div>
+            </div>
+        </div>
+
+        <!-- RSS Feed Reader (Full Width) -->
+        <div class="rss-feed-section">
+            <h2 class="section-title">Trending News Feed</h2>
+            <div id="rss-feed" class="rss-feed-container">
+                <p class="loading">Loading news feed...</p>
             </div>
         </div>
     </div>

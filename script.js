@@ -157,6 +157,154 @@ async function displayDailyPhoto() {
     }
 }
 
+// Astronomy Data (Sunrise, Sunset, Moon Phase)
+async function fetchAstronomyData() {
+    try {
+        const response = await fetch(
+            'https://api.open-meteo.com/v1/forecast?latitude=45.4215&longitude=-75.6972&daily=sunrise,sunset&timezone=America%2FToronto&forecast_days=1'
+        );
+        const data = await response.json();
+
+        const sunrise = new Date(data.daily.sunrise[0]).toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        const sunset = new Date(data.daily.sunset[0]).toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        // Calculate moon phase (simplified)
+        const today = new Date();
+        const lunarCycle = 29.53; // days
+        const knownNewMoon = new Date(2024, 0, 11); // A known new moon date
+        const daysSinceNewMoon = (today - knownNewMoon) / (1000 * 60 * 60 * 24);
+        const moonPhase = ((daysSinceNewMoon % lunarCycle) / lunarCycle * 100).toFixed(0);
+        
+        const moonPhases = ['🌑 New Moon', '🌒 Waxing Crescent', '🌓 First Quarter', '🌔 Waxing Gibbous', '🌕 Full Moon', '🌖 Waning Gibbous', '🌗 Last Quarter', '🌘 Waning Crescent'];
+        const phaseIndex = Math.floor((moonPhase / 100) * 8) % 8;
+        const currentPhase = moonPhases[phaseIndex];
+
+        const astronomyHTML = `
+            <div class="astronomy-info">
+                <div class="astronomy-item"><strong>🌅 Sunrise:</strong> ${sunrise}</div>
+                <div class="astronomy-item"><strong>🌇 Sunset:</strong> ${sunset}</div>
+                <div class="astronomy-item"><strong>${currentPhase}</strong> (${moonPhase}%)</div>
+            </div>
+        `;
+
+        document.getElementById('astronomy').innerHTML = astronomyHTML;
+    } catch (error) {
+        console.error('Error fetching astronomy data:', error);
+        document.getElementById('astronomy').innerHTML = '<div style="color: #f87171;">Astronomy data unavailable</div>';
+    }
+}
+
+// World Headlines (using NewsAPI or similar)
+async function fetchHeadlines() {
+    try {
+        // Using NewsAPI via RapidAPI (free tier available) or fallback to simple headlines
+        // For demo, using a public news source endpoint
+        const response = await fetch(
+            'https://newsapi.org/v2/top-headlines?country=us&sortBy=popularity&pageSize=5&apiKey=demo'
+        );
+        
+        if (!response.ok) {
+            // Fallback to static demo headlines
+            throw new Error('Using demo headlines');
+        }
+
+        const data = await response.json();
+        const articles = data.articles.slice(0, 5);
+
+        let headlinesHTML = '<div class="headlines-list">';
+        articles.forEach(article => {
+            headlinesHTML += `
+                <div class="headline-item">
+                    <a href="${article.url}" target="_blank" rel="noopener">
+                        <strong>${article.title}</strong>
+                    </a>
+                </div>
+            `;
+        });
+        headlinesHTML += '</div>';
+
+        document.getElementById('headlines').innerHTML = headlinesHTML;
+    } catch (error) {
+        console.warn('Using demo headlines:', error);
+        const demoHeadlines = [
+            { title: 'Global Markets Rally on Positive Economic Data', url: '#' },
+            { title: 'Tech Giants Announce New AI Initiatives', url: '#' },
+            { title: 'Climate Summit Reaches Major Agreement', url: '#' },
+            { title: 'Space Agency Launches New Satellite Mission', url: '#' },
+            { title: 'Healthcare Breakthrough in Cancer Research', url: '#' }
+        ];
+
+        let headlinesHTML = '<div class="headlines-list">';
+        demoHeadlines.forEach(article => {
+            headlinesHTML += `
+                <div class="headline-item">
+                    <a href="${article.url}" target="_blank" rel="noopener">
+                        <strong>${article.title}</strong>
+                    </a>
+                </div>
+            `;
+        });
+        headlinesHTML += '</div>';
+
+        document.getElementById('headlines').innerHTML = headlinesHTML;
+    }
+}
+
+// RSS Feed Reader
+async function fetchRSSFeed() {
+    try {
+        // Using a CORS proxy and multiple RSS feeds
+        const feeds = [
+            'https://feeds.bloomberg.com/markets/news.rss',
+            'https://feeds.reuters.com/reuters/topNews',
+            'https://feeds.techcrunch.com/feed'
+        ];
+
+        // For simplicity, fetch from a single reliable feed
+        const proxyUrl = 'https://api.allorigins.win/get?url=';
+        const feedUrl = 'https://feeds.bbc.co.uk/news/rss.xml';
+        
+        const response = await fetch(`${proxyUrl}${encodeURIComponent(feedUrl)}`);
+        const data = await response.json();
+        
+        // Parse XML response
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(data.contents, 'text/xml');
+        const items = xmlDoc.querySelectorAll('item');
+
+        let feedHTML = '<div class="rss-articles">';
+        let count = 0;
+        items.forEach(item => {
+            if (count >= 8) return; // Show up to 8 articles
+            const title = item.querySelector('title')?.textContent || 'No title';
+            const link = item.querySelector('link')?.textContent || '#';
+            const description = item.querySelector('description')?.textContent || 'No description';
+            const pubDate = item.querySelector('pubDate')?.textContent || '';
+
+            feedHTML += `
+                <div class="rss-article">
+                    <h3><a href="${link}" target="_blank" rel="noopener">${title}</a></h3>
+                    <p class="rss-description">${description.substring(0, 150)}...</p>
+                    <small class="rss-date">${pubDate ? new Date(pubDate).toLocaleDateString() : ''}</small>
+                </div>
+            `;
+            count++;
+        });
+        feedHTML += '</div>';
+
+        document.getElementById('rss-feed').innerHTML = feedHTML;
+    } catch (error) {
+        console.error('Error fetching RSS feed:', error);
+        document.getElementById('rss-feed').innerHTML = '<div style="color: #f87171; padding: 1rem;">RSS feed unavailable at the moment</div>';
+    }
+}
+
 // Initialize everything
 function init() {
     // Update time immediately and then every second
@@ -177,6 +325,11 @@ function init() {
     // Display daily quote and photo
     displayDailyQuote();
     displayDailyPhoto();
+
+    // Fetch astronomy, headlines, and RSS feed
+    fetchAstronomyData();
+    fetchHeadlines();
+    fetchRSSFeed();
 }
 
 // Start when page loads
