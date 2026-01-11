@@ -47,7 +47,15 @@ async function fetchWeather(lat, lon, elementId, cityName) {
             </div>
         `;
 
-        document.getElementById(elementId).innerHTML = weatherHTML;
+        // Append a Weather Underground search link for the city's 10-day forecast
+        const wuSearch = `https://www.wunderground.com/search?query=${encodeURIComponent(cityName)}`;
+        const weatherWithLink = weatherHTML + `
+            <div style="margin-top:0.6rem;">
+                <a href="${wuSearch}" target="_blank" rel="noopener" style="font-size:0.85rem; color:#9fb2ff; text-decoration:none;">10-day forecast on Weather Underground</a>
+            </div>
+        `;
+
+        document.getElementById(elementId).innerHTML = weatherWithLink;
     } catch (error) {
         console.error('Error fetching weather:', error);
         document.getElementById(elementId).innerHTML = '<div style="color: #f87171;">Weather unavailable</div>';
@@ -139,28 +147,41 @@ const quotes = [
 ];
 
 function displayDailyQuote() {
-    const today = new Date();
-    const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
-    const quote = quotes[dayOfYear % quotes.length];
+    // Try fetching a random quote from quotable.io; fallback to local list on failure
+    (async () => {
+        try {
+            const res = await fetch('https://api.quotable.io/random');
+            if (res.ok) {
+                const q = await res.json();
+                document.getElementById('quote-text').textContent = `"${q.content}"`;
+                document.getElementById('quote-author').textContent = q.author || '';
+                return;
+            }
+        } catch (e) {
+            console.warn('Quote API failed, using local fallback:', e);
+        }
 
-    document.getElementById('quote-text').textContent = `"${quote.text}"`;
-    document.getElementById('quote-author').textContent = quote.author;
+        // Local fallback: choose a random quote so it changes on each load
+        const idx = Math.floor(Math.random() * quotes.length);
+        const quote = quotes[idx];
+        document.getElementById('quote-text').textContent = `"${quote.text}"`;
+        document.getElementById('quote-author').textContent = quote.author || '';
+    })();
 }
 
 // Daily Photograph (using Unsplash API)
 async function displayDailyPhoto() {
     try {
-        // Using Unsplash Source for random daily photos
-        // The photo changes daily based on the date
+        // Use picsum.photos with a seed so the photograph reliably appears and can be deterministic per day
         const today = new Date().toISOString().split('T')[0];
         const seed = today;
 
-        // Categories: nature, landscape, architecture, people, animals, etc.
         const categories = ['nature', 'landscape', 'architecture', 'wildlife', 'travel'];
         const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
         const category = categories[dayOfYear % categories.length];
 
-        const photoUrl = `https://source.unsplash.com/800x400/?${category}&sig=${seed}`;
+        // Picsum supports seeded images via /seed/{seed}/{width}/{height}
+        const photoUrl = `https://picsum.photos/seed/${encodeURIComponent(category + '-' + seed)}/1200/600`;
 
         const img = document.getElementById('daily-photo');
         img.src = photoUrl;

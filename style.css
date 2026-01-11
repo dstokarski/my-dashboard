@@ -192,7 +192,7 @@ body::before {
 /* Stock Widget */
 .stocks-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* desktop: show stocks in a row */
     gap: 1rem;
 }
 
@@ -203,6 +203,7 @@ body::before {
     padding: 0.8rem;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
+    flex: 1; /* allow items to share available space on desktop */
 }
 
 .stock-name {
@@ -318,6 +319,11 @@ body::before {
     .weather-card {
         flex: 1;
         min-width: 150px;
+    }
+
+    /* Stack stock items on narrow screens */
+    .stocks-container {
+        flex-direction: column;
     }
 }
 
