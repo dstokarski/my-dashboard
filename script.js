@@ -39,9 +39,9 @@ async function fetchWeather(lat, lon, elementId, cityName) {
 
         const weatherHTML = `
             <div class="current-weather">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem; font-weight: 700; color: #000000;">${temp}°C</div>
-                <div style="color: #4a4a4a; margin-bottom: 0.5rem; font-weight: 500;">${weatherCode}</div>
-                <div style="font-size: 0.85rem; color: #6a6a6a; font-weight: 400;">
+                <div style="font-size: 1.5rem; margin-bottom: 0.25rem; font-weight: 700; color: #212529;">${temp}°C</div>
+                <div style="color: #6c757d; margin-bottom: 0.25rem; font-weight: 500; font-size: 0.813rem;">${weatherCode}</div>
+                <div style="font-size: 0.75rem; color: #6c757d; font-weight: 400;">
                     H: ${tempMax}° L: ${tempMin}°
                 </div>
             </div>
@@ -50,7 +50,7 @@ async function fetchWeather(lat, lon, elementId, cityName) {
         document.getElementById(elementId).innerHTML = weatherHTML;
     } catch (error) {
         console.error('Error fetching weather:', error);
-        document.getElementById(elementId).innerHTML = '<div style="color: #c41e3a; font-weight: 500;">Weather unavailable</div>';
+        document.getElementById(elementId).innerHTML = '<div style="color: #dc3545; font-weight: 500; font-size: 0.813rem;">Weather unavailable</div>';
     }
 }
 
@@ -196,7 +196,7 @@ async function fetchAstronomyData() {
         document.getElementById('astronomy').innerHTML = astronomyHTML;
     } catch (error) {
         console.error('Error fetching astronomy data:', error);
-        document.getElementById('astronomy').innerHTML = '<div style="color: #c41e3a; font-weight: 500;">Astronomy data unavailable</div>';
+        document.getElementById('astronomy').innerHTML = '<div style="color: #dc3545; font-weight: 500; font-size: 0.813rem;">Astronomy data unavailable</div>';
     }
 }
 
