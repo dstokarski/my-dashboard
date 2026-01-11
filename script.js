@@ -39,9 +39,9 @@ async function fetchWeather(lat, lon, elementId, cityName) {
 
         const weatherHTML = `
             <div class="current-weather">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem; font-weight: 700; color: #2d3748;">${temp}°C</div>
-                <div style="color: #4a5568; margin-bottom: 0.5rem; font-weight: 600;">${weatherCode}</div>
-                <div style="font-size: 0.85rem; color: #718096; font-weight: 500;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem; font-weight: 700; color: #000000;">${temp}°C</div>
+                <div style="color: #4a4a4a; margin-bottom: 0.5rem; font-weight: 500;">${weatherCode}</div>
+                <div style="font-size: 0.85rem; color: #6a6a6a; font-weight: 400;">
                     H: ${tempMax}° L: ${tempMin}°
                 </div>
             </div>
@@ -50,7 +50,7 @@ async function fetchWeather(lat, lon, elementId, cityName) {
         document.getElementById(elementId).innerHTML = weatherHTML;
     } catch (error) {
         console.error('Error fetching weather:', error);
-        document.getElementById(elementId).innerHTML = '<div style="color: #e53e3e; font-weight: 600;">Weather unavailable</div>';
+        document.getElementById(elementId).innerHTML = '<div style="color: #c41e3a; font-weight: 500;">Weather unavailable</div>';
     }
 }
 
@@ -115,7 +115,7 @@ function displayDailyQuote() {
             const res = await fetch('https://api.quotable.io/random');
             if (res.ok) {
                 const q = await res.json();
-                document.getElementById('quote-text').textContent = `"${q.content}"`;
+                document.getElementById('quote-text').textContent = q.content;
                 document.getElementById('quote-author').textContent = q.author || '';
                 return;
             }
@@ -126,7 +126,7 @@ function displayDailyQuote() {
         // Local fallback: choose a random quote so it changes on each load
         const idx = Math.floor(Math.random() * quotes.length);
         const quote = quotes[idx];
-        document.getElementById('quote-text').textContent = `"${quote.text}"`;
+        document.getElementById('quote-text').textContent = quote.text;
         document.getElementById('quote-author').textContent = quote.author || '';
     })();
 }
@@ -196,66 +196,9 @@ async function fetchAstronomyData() {
         document.getElementById('astronomy').innerHTML = astronomyHTML;
     } catch (error) {
         console.error('Error fetching astronomy data:', error);
-        document.getElementById('astronomy').innerHTML = '<div style="color: #e53e3e; font-weight: 600;">Astronomy data unavailable</div>';
+        document.getElementById('astronomy').innerHTML = '<div style="color: #c41e3a; font-weight: 500;">Astronomy data unavailable</div>';
     }
 }
-
-// World Headlines (using NewsAPI or similar)
-async function fetchHeadlines() {
-    try {
-        // Using NewsAPI via RapidAPI (free tier available) or fallback to simple headlines
-        // For demo, using a public news source endpoint
-        const response = await fetch(
-            'https://newsapi.org/v2/top-headlines?country=us&sortBy=popularity&pageSize=5&apiKey=demo'
-        );
-        
-        if (!response.ok) {
-            // Fallback to static demo headlines
-            throw new Error('Using demo headlines');
-        }
-
-        const data = await response.json();
-        const articles = data.articles.slice(0, 5);
-
-        let headlinesHTML = '<div class="headlines-list">';
-        articles.forEach(article => {
-            headlinesHTML += `
-                <div class="headline-item">
-                    <a href="${article.url}" target="_blank" rel="noopener">
-                        <strong>${article.title}</strong>
-                    </a>
-                </div>
-            `;
-        });
-        headlinesHTML += '</div>';
-
-        document.getElementById('headlines').innerHTML = headlinesHTML;
-    } catch (error) {
-        console.warn('Using demo headlines:', error);
-        const demoHeadlines = [
-            { title: 'Global Markets Rally on Positive Economic Data', url: '#' },
-            { title: 'Tech Giants Announce New AI Initiatives', url: '#' },
-            { title: 'Climate Summit Reaches Major Agreement', url: '#' },
-            { title: 'Space Agency Launches New Satellite Mission', url: '#' },
-            { title: 'Healthcare Breakthrough in Cancer Research', url: '#' }
-        ];
-
-        let headlinesHTML = '<div class="headlines-list">';
-        demoHeadlines.forEach(article => {
-            headlinesHTML += `
-                <div class="headline-item">
-                    <a href="${article.url}" target="_blank" rel="noopener">
-                        <strong>${article.title}</strong>
-                    </a>
-                </div>
-            `;
-        });
-        headlinesHTML += '</div>';
-
-        document.getElementById('headlines').innerHTML = headlinesHTML;
-    }
-}
-
 
 // Initialize everything
 function init() {
@@ -278,9 +221,8 @@ function init() {
     displayDailyQuote();
     displayDailyPhoto();
 
-    // Fetch astronomy and headlines
+    // Fetch astronomy data
     fetchAstronomyData();
-    fetchHeadlines();
 }
 
 // Start when page loads

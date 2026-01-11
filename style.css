@@ -6,15 +6,15 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #1a202c;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    background: #ffffff;
+    color: #1a1a1a;
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
 }
 
-/* Background Image */
+/* Background Image - Mountain with grayscale */
 body::before {
     content: '';
     position: fixed;
@@ -22,10 +22,12 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    filter: grayscale(100%);
+    opacity: 0.35;
     z-index: -2;
 }
 
@@ -35,8 +37,8 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(1px);
     z-index: -1;
 }
 
@@ -64,18 +66,17 @@ body::before {
 .time {
     font-size: 4rem;
     font-weight: 700;
-    letter-spacing: -1px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    letter-spacing: -0.5px;
+    color: #000000;
+    font-family: Georgia, "Times New Roman", Times, serif;
 }
 
 .date {
     font-size: 1.2rem;
-    color: #4a5568;
+    color: #4a4a4a;
     margin-top: 0.5rem;
-    font-weight: 500;
+    font-weight: 400;
+    font-family: Georgia, "Times New Roman", Times, serif;
 }
 
 .weather-section {
@@ -85,20 +86,21 @@ body::before {
 }
 
 .weather-card {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 20px;
+    background: #ffffff;
+    backdrop-filter: none;
+    border: 1px solid #d4d4d4;
+    border-radius: 2px;
     padding: 1.5rem;
     min-width: 200px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .weather-card h3 {
     font-size: 1rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    color: #2d3748;
+    color: #000000;
+    font-family: Georgia, "Times New Roman", Times, serif;
 }
 
 .weather-info {
@@ -107,7 +109,7 @@ body::before {
 }
 
 .loading {
-    color: #718096;
+    color: #6a6a6a;
     font-style: italic;
 }
 
@@ -120,28 +122,28 @@ body::before {
 }
 
 .card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 20px;
+    background: #ffffff;
+    backdrop-filter: none;
+    border: 1px solid #d4d4d4;
+    border-radius: 2px;
     padding: 1.5rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.2s ease;
 }
 
 .card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    border-color: rgba(102, 126, 234, 0.3);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .card-title {
     font-size: 1.3rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    color: #2d3748;
-    border-bottom: 3px solid #667eea;
+    color: #000000;
+    border-bottom: 2px solid #d4af37;
     padding-bottom: 0.5rem;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    letter-spacing: 0.3px;
 }
 
 .links-list {
@@ -153,59 +155,41 @@ body::before {
 }
 
 .links-list a {
-    color: #4a5568;
+    color: #326891;
     text-decoration: none;
     font-size: 0.95rem;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: text-decoration 0.2s ease;
     display: inline-block;
-    position: relative;
-    font-weight: 500;
-}
-
-.links-list a::before {
-    content: '→';
-    margin-right: 0.5rem;
-    opacity: 0;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    position: absolute;
-    left: -1.2rem;
-    color: #667eea;
+    font-weight: 400;
 }
 
 .links-list a:hover {
-    color: #667eea;
-    padding-left: 1.2rem;
-    font-weight: 600;
-}
-
-.links-list a:hover::before {
-    opacity: 1;
+    text-decoration: underline;
 }
 
 /* Weather Card Links */
 .weather-card-link {
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid #e5e5e5;
     text-align: center;
 }
 
 .generic-link {
-    color: #667eea;
+    color: #000000;
     text-decoration: none;
     font-size: 0.9rem;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     display: inline-block;
     padding: 0.5rem 1rem;
-    border: 2px solid #667eea;
-    border-radius: 12px;
-    font-weight: 600;
+    border: 1px solid #000000;
+    border-radius: 1px;
+    font-weight: 500;
 }
 
 .generic-link:hover {
     color: #ffffff;
-    background: #667eea;
-    transform: scale(1.05);
+    background: #000000;
 }
 
 /* Widget Cards */
@@ -234,16 +218,26 @@ body::before {
     font-size: 1.2rem;
     font-style: italic;
     line-height: 1.8;
-    color: #2d3748;
+    color: #1a1a1a;
     margin-bottom: 1rem;
-    font-weight: 500;
+    font-weight: 400;
+    font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+.quote-text::before {
+    content: '"';
+}
+
+.quote-text::after {
+    content: '"';
 }
 
 .quote-author {
     font-size: 0.95rem;
-    color: #4a5568;
+    color: #4a4a4a;
     text-align: right;
-    font-weight: 600;
+    font-weight: 500;
+    font-family: Georgia, "Times New Roman", Times, serif;
 }
 
 .quote-author::before {
@@ -254,6 +248,8 @@ body::before {
 .photo-card {
     padding: 0;
     overflow: hidden;
+    border: 2px solid #000000;
+    border-radius: 0;
 }
 
 .photo-container {
@@ -346,39 +342,11 @@ body::before {
 
 .astronomy-item {
     padding: 0.6rem;
-    background: rgba(102, 126, 234, 0.1);
-    border-radius: 12px;
-    color: #2d3748;
-    font-weight: 500;
-}
-
-/* Headlines Widget */
-.headlines-container {
-    font-size: 0.9rem;
-}
-
-.headlines-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-}
-
-.headline-item {
-    padding: 0.6rem;
-    background: rgba(102, 126, 234, 0.1);
-    border-radius: 12px;
-    border-left: 4px solid #667eea;
-}
-
-.headline-item a {
-    color: #2d3748;
-    text-decoration: none;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 500;
-}
-
-.headline-item a:hover {
-    color: #667eea;
+    background: #f9f9f9;
+    border-radius: 2px;
+    color: #1a1a1a;
+    font-weight: 400;
+    border: 1px solid #e5e5e5;
 }
 
 /* Smooth scroll */
@@ -392,14 +360,14 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(102, 126, 234, 0.1);
+    background: #f5f5f5;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #667eea;
-    border-radius: 5px;
+    background: #4a4a4a;
+    border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #764ba2;
+    background: #000000;
 }
