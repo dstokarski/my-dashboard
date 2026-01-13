@@ -45,6 +45,14 @@ function initializeFirebaseManager() {
     deleteCardBtn = document.getElementById('delete-card-btn');
 
     // Initialize authentication listener
+    console.log('Setting up onAuthStateChanged listener...');
+    console.log('Checking window.firebaseAuth again:', window.firebaseAuth);
+
+    if (!window.firebaseAuth || !window.firebaseAuth.onAuthStateChanged) {
+        console.error('Firebase Auth still not available!');
+        return;
+    }
+
     window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, (user) => {
         console.log('Auth state changed:', user ? user.email : 'No user');
         if (user) {
