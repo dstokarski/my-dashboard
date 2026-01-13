@@ -15,6 +15,17 @@
             <div class="time-section">
                 <div id="time" class="time"></div>
                 <div id="date" class="date"></div>
+                <div class="auth-controls-header">
+                    <span id="sign-in-btn" class="auth-link">Sign In to Edit</span>
+                    <div id="user-info" class="user-info-header" style="display: none;">
+                        <span id="user-name" class="user-name-text"></span>
+                        <span class="auth-separator">•</span>
+                        <span id="sign-out-btn" class="auth-link">Sign Out</span>
+                    </div>
+                    <span id="edit-mode-btn" class="auth-link" style="display: none;">
+                        <span id="edit-mode-text">Edit</span>
+                    </span>
+                </div>
             </div>
             <div class="weather-section">
                 <div class="weather-card">
@@ -151,24 +162,6 @@
                         <img id="daily-photo" src="" alt="Daily photograph">
                     </a>
                 </div>
-            </div>
-
-            <!-- Auth Controls Card -->
-            <div class="card card-controls">
-                <div id="auth-controls" class="auth-controls">
-                    <button id="sign-in-btn" class="auth-btn">Sign In to Edit</button>
-                    <div id="user-info" class="user-info" style="display: none;">
-                        <span id="user-name"></span>
-                        <button id="sign-out-btn" class="auth-btn">Sign Out</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Edit Mode Card -->
-            <div class="card card-controls" id="edit-mode-card" style="display: none;">
-                <button id="edit-mode-btn" class="edit-mode-btn">
-                    <span id="edit-mode-text">Edit</span>
-                </button>
             </div>
         </div>
 

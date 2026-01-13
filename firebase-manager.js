@@ -60,15 +60,15 @@ function initializeFirebaseManager() {
             signInBtn.style.display = 'none';
             userInfo.style.display = 'flex';
             userName.textContent = user.displayName || user.email;
-            document.getElementById('edit-mode-card').style.display = 'block';
+            editModeBtn.style.display = 'inline';
 
             // Check if we need to migrate data
             checkAndMigrateData();
         } else {
             currentUser = null;
-            signInBtn.style.display = 'block';
+            signInBtn.style.display = 'inline';
             userInfo.style.display = 'none';
-            document.getElementById('edit-mode-card').style.display = 'none';
+            editModeBtn.style.display = 'none';
             editMode = false;
             removeEditButtons();
         }
