@@ -60,7 +60,8 @@ function initializeFirebaseManager() {
             signInBtn.style.display = 'none';
             userInfo.style.display = 'flex';
             userName.textContent = user.displayName || user.email;
-            editModeBtn.style.display = 'block';
+            editModeBtn.style.display = 'inline-block';
+            console.log('Edit button should now be visible:', editModeBtn);
 
             // Check if we need to migrate data
             checkAndMigrateData();
