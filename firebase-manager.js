@@ -10,10 +10,18 @@ let editModal, modalClose, cardTitleInput, linksEditor, addLinkBtn, saveCardBtn,
 
 // Wait for DOM and Firebase to be ready
 function initializeFirebaseManager() {
+    console.log('initializeFirebaseManager called');
+    console.log('window.firebaseAuth:', window.firebaseAuth);
+    console.log('window.firebaseDB:', window.firebaseDB);
+
     // Check if Firebase is available
     if (!window.firebaseAuth || !window.firebaseDB) {
         console.log('Waiting for Firebase to initialize...');
-        setTimeout(initializeFirebaseManager, 100);
+        // Listen for the firebaseReady event
+        window.addEventListener('firebaseReady', () => {
+            console.log('firebaseReady event received');
+            initializeFirebaseManager();
+        }, { once: true });
         return;
     }
 
