@@ -384,40 +384,41 @@ html {
 .auth-controls-header {
     margin-top: 0.5rem;
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.813rem;
     color: #858585;
     font-weight: 400;
-    flex-wrap: wrap;
+    font-family: 'Consolas', 'Courier New', monospace;
 }
 
 .auth-link {
-    color: #858585;
+    color: #858585 !important;
     cursor: pointer;
     transition: color 0.1s ease;
     font-family: 'Consolas', 'Courier New', monospace;
     display: inline-block;
+    user-select: none;
 }
 
 .auth-link:hover {
-    color: #cccccc;
-    text-decoration: underline;
+    color: #cccccc !important;
 }
 
 .user-info-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    color: #858585;
 }
 
 .user-name-text {
-    color: #858585;
+    color: #858585 !important;
     font-family: 'Consolas', 'Courier New', monospace;
 }
 
 .auth-separator {
-    color: #858585;
+    color: #858585 !important;
 }
 
 /* Card Edit Buttons */

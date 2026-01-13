@@ -60,7 +60,7 @@ function initializeFirebaseManager() {
             signInBtn.style.display = 'none';
             userInfo.style.display = 'flex';
             userName.textContent = user.displayName || user.email;
-            editModeBtn.style.display = 'inline-block';
+            editModeBtn.style.display = 'block';
 
             // Check if we need to migrate data
             checkAndMigrateData();
