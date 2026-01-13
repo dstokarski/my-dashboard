@@ -60,13 +60,13 @@ function initializeFirebaseManager() {
             signInBtn.style.display = 'none';
             userInfo.style.display = 'flex';
             userName.textContent = user.displayName || user.email;
-            editModeBtn.style.display = 'inline';
+            editModeBtn.style.display = 'inline-block';
 
             // Check if we need to migrate data
             checkAndMigrateData();
         } else {
             currentUser = null;
-            signInBtn.style.display = 'inline';
+            signInBtn.style.display = 'inline-block';
             userInfo.style.display = 'none';
             editModeBtn.style.display = 'none';
             editMode = false;

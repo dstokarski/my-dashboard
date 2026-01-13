@@ -389,6 +389,7 @@ html {
     font-size: 0.875rem;
     color: #858585;
     font-weight: 400;
+    flex-wrap: wrap;
 }
 
 .auth-link {
@@ -396,10 +397,12 @@ html {
     cursor: pointer;
     transition: color 0.1s ease;
     font-family: 'Consolas', 'Courier New', monospace;
+    display: inline-block;
 }
 
 .auth-link:hover {
     color: #cccccc;
+    text-decoration: underline;
 }
 
 .user-info-header {
