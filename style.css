@@ -386,7 +386,8 @@ html {
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
-    min-height: 80px;
+    min-height: 60px;
+    background: #252526;
 }
 
 .auth-controls {
