@@ -60,7 +60,7 @@ function initializeFirebaseManager() {
             signInBtn.style.display = 'none';
             userInfo.style.display = 'flex';
             userName.textContent = user.displayName || user.email;
-            editModeBtn.style.display = 'block';
+            document.getElementById('edit-mode-card').style.display = 'block';
 
             // Check if we need to migrate data
             checkAndMigrateData();
@@ -68,7 +68,7 @@ function initializeFirebaseManager() {
             currentUser = null;
             signInBtn.style.display = 'block';
             userInfo.style.display = 'none';
-            editModeBtn.style.display = 'none';
+            document.getElementById('edit-mode-card').style.display = 'none';
             editMode = false;
             removeEditButtons();
         }

@@ -381,14 +381,20 @@ html {
 }
 
 /* Authentication Controls */
-.auth-controls {
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
-    z-index: 1000;
+.card-controls {
     display: flex;
     align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    min-height: 80px;
+}
+
+.auth-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 0.75rem;
+    width: 100%;
 }
 
 .auth-btn {
@@ -428,10 +434,6 @@ html {
 
 /* Edit Mode Button */
 .edit-mode-btn {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 1000;
     background: #0e639c;
     color: #cccccc;
     border: 1px solid #0e639c;
@@ -444,7 +446,7 @@ html {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    width: 100%;
 }
 
 .edit-mode-btn:hover {
@@ -717,14 +719,11 @@ html {
         margin-left: 0;
     }
 
-    .auth-controls {
-        bottom: 0.5rem;
-        right: 0.5rem;
+    .card-controls {
+        padding: 1rem;
     }
 
     .edit-mode-btn {
-        bottom: 1rem;
-        right: 1rem;
         padding: 0.625rem 1.25rem;
         font-size: 0.813rem;
     }

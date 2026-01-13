@@ -152,22 +152,27 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Auth Controls Card -->
+            <div class="card card-controls">
+                <div id="auth-controls" class="auth-controls">
+                    <button id="sign-in-btn" class="auth-btn">Sign In to Edit</button>
+                    <div id="user-info" class="user-info" style="display: none;">
+                        <span id="user-name"></span>
+                        <button id="sign-out-btn" class="auth-btn">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Mode Card -->
+            <div class="card card-controls" id="edit-mode-card" style="display: none;">
+                <button id="edit-mode-btn" class="edit-mode-btn">
+                    <span id="edit-mode-text">Edit</span>
+                </button>
+            </div>
         </div>
 
     </div>
-
-    <!-- Edit Mode Controls -->
-    <div id="auth-controls" class="auth-controls">
-        <button id="sign-in-btn" class="auth-btn">Sign In to Edit</button>
-        <div id="user-info" class="user-info" style="display: none;">
-            <span id="user-name"></span>
-            <button id="sign-out-btn" class="auth-btn">Sign Out</button>
-        </div>
-    </div>
-
-    <button id="edit-mode-btn" class="edit-mode-btn" style="display: none;">
-        <span id="edit-mode-text">Edit</span>
-    </button>
 
     <!-- Edit Modal -->
     <div id="edit-modal" class="modal">
