@@ -404,8 +404,13 @@ function createCardElement(cardData) {
 }
 
 // Start initialization when DOM is ready
+// We need to wait for both DOM and Firebase, so just set up the listener here
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeFirebaseManager);
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM ready, now waiting for Firebase...');
+        initializeFirebaseManager();
+    });
 } else {
+    console.log('DOM already ready, waiting for Firebase...');
     initializeFirebaseManager();
 }
