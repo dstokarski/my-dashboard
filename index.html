@@ -156,6 +156,73 @@
 
     </div>
 
+    <!-- Edit Mode Controls -->
+    <div id="auth-controls" class="auth-controls">
+        <button id="sign-in-btn" class="auth-btn">Sign In to Edit</button>
+        <div id="user-info" class="user-info" style="display: none;">
+            <span id="user-name"></span>
+            <button id="sign-out-btn" class="auth-btn">Sign Out</button>
+        </div>
+    </div>
+
+    <button id="edit-mode-btn" class="edit-mode-btn" style="display: none;">
+        <span id="edit-mode-text">Edit</span>
+    </button>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 id="modal-title">Edit Card</h2>
+
+            <div class="form-group">
+                <label for="card-title-input">Card Title:</label>
+                <input type="text" id="card-title-input" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label>Links:</label>
+                <div id="links-editor"></div>
+                <button id="add-link-btn" class="btn btn-secondary">+ Add Link</button>
+            </div>
+
+            <div class="modal-actions">
+                <button id="save-card-btn" class="btn btn-primary">Save</button>
+                <button id="cancel-edit-btn" class="btn btn-secondary">Cancel</button>
+                <button id="delete-card-btn" class="btn btn-danger">Delete Card</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, set, get, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC759vXRewzcVTSy60lhPx_q5Ezx3uL4Qw",
+            authDomain: "dashboard-links-4d73a.firebaseapp.com",
+            databaseURL: "https://dashboard-links-4d73a-default-rtdb.firebaseio.com",
+            projectId: "dashboard-links-4d73a",
+            storageBucket: "dashboard-links-4d73a.firebasestorage.app",
+            messagingSenderId: "91468827178",
+            appId: "1:91468827178:web:53c1485241023ae4785153"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // Make Firebase available globally
+        window.firebaseDB = { database, ref, set, get, remove };
+        window.firebaseAuth = { auth, provider, signInWithPopup, signOut, onAuthStateChanged };
+    </script>
+
     <script src="script.js"></script>
+    <script src="firebase-manager.js"></script>
 </body>
 </html>
