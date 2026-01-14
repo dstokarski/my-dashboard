@@ -361,12 +361,19 @@ async function moveCard(cardElement, direction) {
     const targetOrder = parseInt(targetCard.dataset.order) || 0;
 
     try {
-        const updates = {};
-        updates[`cards/${currentId}/order`] = targetOrder;
-        updates[`cards/${targetId}/order`] = currentOrder;
+        const currentOrderRef = window.firebase.db.ref(
+            window.firebase.db.database,
+            `cards/${currentId}/order`
+        );
+        const targetOrderRef = window.firebase.db.ref(
+            window.firebase.db.database,
+            `cards/${targetId}/order`
+        );
 
-        const dbRef = window.firebase.db.ref(window.firebase.db.database);
-        await window.firebase.db.update(dbRef, updates);
+        await Promise.all([
+            window.firebase.db.set(currentOrderRef, targetOrder),
+            window.firebase.db.set(targetOrderRef, currentOrder)
+        ]);
 
         await loadCardsFromFirebase();
     } catch (error) {
