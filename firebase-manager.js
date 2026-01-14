@@ -1,145 +1,84 @@
-// Firebase Manager - Handles authentication, edit mode, and data operations
-
 let currentUser = null;
 let editMode = false;
-let currentEditingCard = null; // Store the actual card data instead of just ID
+let currentEditingCard = null;
 
-// Global references to elements
-let signInBtn, signOutBtn, userInfo, userName, editModeBtn;
-let editModal, modalClose, cardTitleInput, linksEditor, addLinkBtn, saveCardBtn, cancelEditBtn, deleteCardBtn;
-
-// Wait for DOM and Firebase to be ready
 function initializeFirebaseManager() {
-    console.log('initializeFirebaseManager called');
-    console.log('window.firebaseAuth:', window.firebaseAuth);
-    console.log('window.firebaseDB:', window.firebaseDB);
-
-    // Check if Firebase is available
     if (!window.firebaseAuth || !window.firebaseDB) {
-        console.log('Waiting for Firebase to initialize...');
-        // Listen for the firebaseReady event
         window.addEventListener('firebaseReady', () => {
-            console.log('firebaseReady event received');
             initializeFirebaseManager();
         }, { once: true });
         return;
     }
 
-    console.log('Firebase initialized, setting up manager...');
+    const signInBtn = document.getElementById('sign-in-btn');
+    const signOutBtn = document.getElementById('sign-out-btn');
+    const userInfo = document.getElementById('user-info');
+    const userName = document.getElementById('user-name');
+    const editBtn = document.getElementById('edit-btn');
+    const modal = document.getElementById('edit-modal');
+    const modalClose = document.querySelector('.modal-close');
+    const cardTitleInput = document.getElementById('card-title-input');
+    const linksEditor = document.getElementById('links-editor');
+    const addLinkBtn = document.getElementById('add-link-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const deleteCardBtn = document.getElementById('delete-card-btn');
 
-    // Authentication UI Elements
-    signInBtn = document.getElementById('sign-in-btn');
-    signOutBtn = document.getElementById('sign-out-btn');
-    userInfo = document.getElementById('user-info');
-    userName = document.getElementById('user-name');
-    editModeBtn = document.getElementById('edit-mode-btn');
-
-    console.log('Edit mode button element:', editModeBtn);
-
-    // Modal Elements
-    editModal = document.getElementById('edit-modal');
-    modalClose = document.querySelector('.modal-close');
-    cardTitleInput = document.getElementById('card-title-input');
-    linksEditor = document.getElementById('links-editor');
-    addLinkBtn = document.getElementById('add-link-btn');
-    saveCardBtn = document.getElementById('save-card-btn');
-    cancelEditBtn = document.getElementById('cancel-edit-btn');
-    deleteCardBtn = document.getElementById('delete-card-btn');
-
-    // Initialize authentication listener
-    console.log('Setting up onAuthStateChanged listener...');
-    console.log('Checking window.firebaseAuth again:', window.firebaseAuth);
-
-    if (!window.firebaseAuth || !window.firebaseAuth.onAuthStateChanged) {
-        console.error('Firebase Auth still not available!');
-        return;
-    }
-
+    // Authentication
     window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, (user) => {
-        console.log('Auth state changed:', user ? user.email : 'No user');
         if (user) {
             currentUser = user;
             signInBtn.style.display = 'none';
             userInfo.style.display = 'flex';
             userName.textContent = user.displayName || user.email;
-            editModeBtn.style.display = 'inline-block';
-            console.log('Edit button should now be visible:', editModeBtn);
-
-            // Check if we need to migrate data
-            checkAndMigrateData();
+            checkAndLoadData();
         } else {
             currentUser = null;
             signInBtn.style.display = 'inline-block';
             userInfo.style.display = 'none';
-            editModeBtn.style.display = 'none';
             editMode = false;
-            removeEditButtons();
+            exitEditMode();
         }
     });
 
-    // Sign In
     signInBtn.addEventListener('click', async () => {
-        console.log('Sign in button clicked');
         try {
-            const result = await window.firebaseAuth.signInWithPopup(
+            await window.firebaseAuth.signInWithPopup(
                 window.firebaseAuth.auth,
                 window.firebaseAuth.provider
             );
-            console.log('Sign in successful:', result.user);
         } catch (error) {
             console.error('Sign in error:', error);
-            console.error('Error code:', error.code);
-            console.error('Error message:', error.message);
-            alert(`Failed to sign in: ${error.message}`);
+            alert('Failed to sign in. Please try again.');
         }
     });
 
-    // Sign Out
     signOutBtn.addEventListener('click', async () => {
         try {
             await window.firebaseAuth.signOut(window.firebaseAuth.auth);
-            editMode = false;
-            removeEditButtons();
         } catch (error) {
             console.error('Sign out error:', error);
         }
     });
 
-    // Toggle Edit Mode
-    if (editModeBtn) {
-        editModeBtn.addEventListener('click', (e) => {
-            console.log('Edit mode button clicked!');
-            e.preventDefault();
-            e.stopPropagation();
+    // Edit Mode
+    editBtn.addEventListener('click', () => {
+        editMode = !editMode;
+        editBtn.textContent = editMode ? 'Done' : 'Edit';
+        editBtn.classList.toggle('btn-primary', editMode);
+        editBtn.classList.toggle('btn-secondary', !editMode);
 
-            editMode = !editMode;
-            console.log('Edit mode is now:', editMode);
+        if (editMode) {
+            enterEditMode();
+        } else {
+            exitEditMode();
+        }
+    });
 
-            // Re-query the button element to ensure we have a fresh reference
-            const currentBtn = document.getElementById('edit-mode-btn');
-            console.log('Current button element:', currentBtn);
+    // Modal Controls
+    addLinkBtn.addEventListener('click', () => addLinkRow());
 
-            if (currentBtn) {
-                currentBtn.textContent = editMode ? 'Done' : 'Edit';
-                currentBtn.classList.toggle('active', editMode);
-            } else {
-                console.error('Edit mode button not found in DOM!');
-            }
-
-            if (editMode) {
-                console.log('Adding edit buttons...');
-                addEditButtons();
-            } else {
-                console.log('Removing edit buttons...');
-                removeEditButtons();
-            }
-        });
-    } else {
-        console.error('Edit mode button not found during initialization!');
-    }
-
-    // Save card
-    saveCardBtn.addEventListener('click', async () => {
+    saveBtn.addEventListener('click', async () => {
         const title = cardTitleInput.value.trim();
         if (!title) {
             alert('Card title is required');
@@ -166,14 +105,10 @@ function initializeFirebaseManager() {
             let cardId, order;
 
             if (currentEditingCard) {
-                // Editing existing card - preserve ID and order
                 cardId = currentEditingCard.id;
                 order = currentEditingCard.order;
             } else {
-                // Creating new card - generate new ID and order
                 cardId = `card-${Date.now()}`;
-
-                // Get the highest order number and add 1
                 const cardsRef = window.firebaseDB.ref(window.firebaseDB.database, 'cards');
                 const snapshot = await window.firebaseDB.get(cardsRef);
 
@@ -186,28 +121,18 @@ function initializeFirebaseManager() {
                 }
             }
 
-            const cardData = {
-                title,
-                links,
-                order
-            };
-
-            const cardRef = window.firebaseDB.ref(
-                window.firebaseDB.database,
-                `cards/${cardId}`
-            );
-
+            const cardData = { title, links, order };
+            const cardRef = window.firebaseDB.ref(window.firebaseDB.database, `cards/${cardId}`);
             await window.firebaseDB.set(cardRef, cardData);
 
-            closeEditModal();
-            await loadCardsFromFirebase();
+            closeModal();
+            await loadCards();
         } catch (error) {
             console.error('Error saving card:', error);
             alert('Failed to save card. Please try again.');
         }
     });
 
-    // Delete card
     deleteCardBtn.addEventListener('click', async () => {
         if (!currentEditingCard) return;
 
@@ -218,55 +143,80 @@ function initializeFirebaseManager() {
                 window.firebaseDB.database,
                 `cards/${currentEditingCard.id}`
             );
-
             await window.firebaseDB.remove(cardRef);
 
-            closeEditModal();
-            await loadCardsFromFirebase();
+            closeModal();
+            await loadCards();
         } catch (error) {
             console.error('Error deleting card:', error);
             alert('Failed to delete card. Please try again.');
         }
     });
 
-    // Cancel edit
-    cancelEditBtn.addEventListener('click', closeEditModal);
-    modalClose.addEventListener('click', closeEditModal);
+    cancelBtn.addEventListener('click', closeModal);
+    modalClose.addEventListener('click', closeModal);
 
-    // Add link button
-    addLinkBtn.addEventListener('click', () => addLinkRow());
-
-    // Close modal on outside click
-    editModal.addEventListener('click', (e) => {
-        if (e.target === editModal) {
-            closeEditModal();
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
         }
     });
 
-    console.log('Firebase manager setup complete');
+    // Make clear function available
+    window.clearFirebaseData = async function() {
+        if (!currentUser) {
+            alert('Please sign in first');
+            return;
+        }
+
+        if (!confirm('WARNING: This will permanently delete ALL cards from Firebase. Continue?')) {
+            return;
+        }
+
+        try {
+            const cardsRef = window.firebaseDB.ref(window.firebaseDB.database, 'cards');
+            await window.firebaseDB.remove(cardsRef);
+            alert('Database cleared');
+            location.reload();
+        } catch (error) {
+            console.error('Error clearing database:', error);
+            alert('Failed to clear database');
+        }
+    };
 }
 
-// Add edit buttons to all non-widget cards
+function enterEditMode() {
+    document.querySelector('.cards-grid').classList.add('edit-mode');
+    addEditButtons();
+    addAddCardButton();
+}
+
+function exitEditMode() {
+    document.querySelector('.cards-grid').classList.remove('edit-mode');
+    removeEditButtons();
+    removeAddCardButton();
+}
+
 function addEditButtons() {
-    const cards = document.querySelectorAll('.card:not(.card-widget)');
-    cards.forEach((card) => {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
         if (!card.querySelector('.card-edit-btn')) {
             const editBtn = document.createElement('button');
-            editBtn.className = 'card-edit-btn';
+            editBtn.className = 'btn btn-secondary btn-sm card-edit-btn';
             editBtn.textContent = 'Edit';
-
-            // Store card data in dataset
-            const cardId = card.dataset.cardId;
-            editBtn.dataset.cardId = cardId;
-
             editBtn.addEventListener('click', () => openEditModal(card));
-            card.querySelector('.card-title').appendChild(editBtn);
+            card.insertBefore(editBtn, card.firstChild);
         }
     });
+}
 
-    // Add "Add New Card" button
+function removeEditButtons() {
+    document.querySelectorAll('.card-edit-btn').forEach(btn => btn.remove());
+}
+
+function addAddCardButton() {
     if (!document.getElementById('add-card-btn')) {
-        const addCardBtn = document.createElement('button');
+        const addCardBtn = document.createElement('div');
         addCardBtn.id = 'add-card-btn';
         addCardBtn.className = 'add-card-btn';
         addCardBtn.textContent = '+ Add Card';
@@ -275,55 +225,42 @@ function addEditButtons() {
     }
 }
 
-// Remove all edit buttons
-function removeEditButtons() {
-    document.querySelectorAll('.card-edit-btn').forEach(btn => btn.remove());
+function removeAddCardButton() {
     const addCardBtn = document.getElementById('add-card-btn');
     if (addCardBtn) addCardBtn.remove();
 }
 
-// Open edit modal
 function openEditModal(card) {
     if (card) {
-        // Editing existing card - get the full card data
         const cardId = card.dataset.cardId;
-        const cardOrder = parseInt(card.dataset.cardOrder);
-        const title = card.querySelector('.card-title').textContent.replace('Edit', '').trim();
-        const links = Array.from(card.querySelectorAll('.links-list a')).map(a => ({
+        const order = parseInt(card.dataset.order);
+        const title = card.querySelector('.card-title').textContent;
+        const links = Array.from(card.querySelectorAll('.card-links a')).map(a => ({
             text: a.textContent,
             url: a.href
         }));
 
-        currentEditingCard = {
-            id: cardId,
-            order: cardOrder,
-            title,
-            links
-        };
-
-        cardTitleInput.value = title;
-        linksEditor.innerHTML = '';
+        currentEditingCard = { id: cardId, order, title, links };
+        document.getElementById('card-title-input').value = title;
+        document.getElementById('links-editor').innerHTML = '';
         links.forEach(link => addLinkRow(link.text, link.url));
-        deleteCardBtn.style.display = 'block';
+        document.getElementById('delete-card-btn').style.display = 'block';
     } else {
-        // Adding new card
         currentEditingCard = null;
-        cardTitleInput.value = '';
-        linksEditor.innerHTML = '';
+        document.getElementById('card-title-input').value = '';
+        document.getElementById('links-editor').innerHTML = '';
         addLinkRow('', '');
-        deleteCardBtn.style.display = 'none';
+        document.getElementById('delete-card-btn').style.display = 'none';
     }
 
-    editModal.style.display = 'flex';
+    document.getElementById('edit-modal').style.display = 'flex';
 }
 
-// Close edit modal
-function closeEditModal() {
-    editModal.style.display = 'none';
+function closeModal() {
+    document.getElementById('edit-modal').style.display = 'none';
     currentEditingCard = null;
 }
 
-// Add a link row to the editor
 function addLinkRow(text = '', url = '') {
     const row = document.createElement('div');
     row.className = 'link-row';
@@ -337,67 +274,51 @@ function addLinkRow(text = '', url = '') {
         row.remove();
     });
 
-    linksEditor.appendChild(row);
+    document.getElementById('links-editor').appendChild(row);
 }
 
-// Check if data needs to be migrated
-async function checkAndMigrateData() {
+async function checkAndLoadData() {
     try {
         const cardsRef = window.firebaseDB.ref(window.firebaseDB.database, 'cards');
         const snapshot = await window.firebaseDB.get(cardsRef);
 
         if (!snapshot.exists()) {
-            // No data in Firebase, migrate from HTML
-            console.log('No data found, migrating from HTML...');
-            await migrateDataFromHTML();
+            await migrateDefaultCards();
         } else {
-            // Data exists, load from Firebase
-            console.log('Data found, loading from Firebase...');
-            await loadCardsFromFirebase();
+            await loadCards();
         }
     } catch (error) {
         console.error('Error checking data:', error);
     }
 }
 
-// Migrate existing cards from HTML to Firebase
-async function migrateDataFromHTML() {
-    const cards = document.querySelectorAll('.card:not(.card-widget)');
+async function migrateDefaultCards() {
+    const cards = document.querySelectorAll('.card');
     const promises = [];
 
     cards.forEach((card, index) => {
-        const title = card.querySelector('.card-title').textContent.trim();
-        const links = Array.from(card.querySelectorAll('.links-list a')).map(a => ({
+        const cardId = card.dataset.cardId;
+        const title = card.querySelector('.card-title').textContent;
+        const links = Array.from(card.querySelectorAll('.card-links a')).map(a => ({
             text: a.textContent,
             url: a.href
         }));
 
-        const cardData = {
-            title,
-            links,
-            order: index
-        };
-
-        const cardId = `card-migrated-${index}`;
-        const cardRef = window.firebaseDB.ref(
-            window.firebaseDB.database,
-            `cards/${cardId}`
-        );
-
+        const cardData = { title, links, order: index };
+        const cardRef = window.firebaseDB.ref(window.firebaseDB.database, `cards/${cardId}`);
         promises.push(window.firebaseDB.set(cardRef, cardData));
     });
 
     try {
         await Promise.all(promises);
-        console.log('Data migration completed');
-        await loadCardsFromFirebase();
+        console.log('Default cards migrated to Firebase');
+        await loadCards();
     } catch (error) {
-        console.error('Error migrating data:', error);
+        console.error('Error migrating cards:', error);
     }
 }
 
-// Load cards from Firebase and render
-async function loadCardsFromFirebase() {
+async function loadCards() {
     try {
         const cardsRef = window.firebaseDB.ref(window.firebaseDB.database, 'cards');
         const snapshot = await window.firebaseDB.get(cardsRef);
@@ -410,28 +331,16 @@ async function loadCardsFromFirebase() {
             ...data
         }));
 
-        // Sort by order
         cardsArray.sort((a, b) => (a.order || 0) - (b.order || 0));
 
-        // Find the cards grid and remove existing non-widget cards
         const cardsGrid = document.querySelector('.cards-grid');
-        const existingCards = cardsGrid.querySelectorAll('.card:not(.card-widget)');
-        existingCards.forEach(card => card.remove());
+        cardsGrid.querySelectorAll('.card').forEach(card => card.remove());
 
-        // Get widget cards to insert regular cards before them
-        const firstWidget = cardsGrid.querySelector('.card-widget');
-
-        // Render cards
         cardsArray.forEach(cardData => {
             const cardElement = createCardElement(cardData);
-            if (firstWidget) {
-                cardsGrid.insertBefore(cardElement, firstWidget);
-            } else {
-                cardsGrid.appendChild(cardElement);
-            }
+            cardsGrid.appendChild(cardElement);
         });
 
-        // Re-add edit buttons if in edit mode
         if (editMode) {
             removeEditButtons();
             addEditButtons();
@@ -441,19 +350,18 @@ async function loadCardsFromFirebase() {
     }
 }
 
-// Create a card element from data
 function createCardElement(cardData) {
     const card = document.createElement('div');
     card.className = 'card';
     card.dataset.cardId = cardData.id;
-    card.dataset.cardOrder = cardData.order;
+    card.dataset.order = cardData.order;
 
     const title = document.createElement('h2');
     title.className = 'card-title';
     title.textContent = cardData.title;
 
     const linksList = document.createElement('ul');
-    linksList.className = 'links-list';
+    linksList.className = 'card-links';
 
     cardData.links.forEach(link => {
         const li = document.createElement('li');
@@ -471,14 +379,8 @@ function createCardElement(cardData) {
     return card;
 }
 
-// Start initialization when DOM is ready
-// We need to wait for both DOM and Firebase, so just set up the listener here
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM ready, now waiting for Firebase...');
-        initializeFirebaseManager();
-    });
+    document.addEventListener('DOMContentLoaded', initializeFirebaseManager);
 } else {
-    console.log('DOM already ready, waiting for Firebase...');
     initializeFirebaseManager();
 }

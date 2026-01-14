@@ -7,200 +7,117 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="background-overlay"></div>
-
     <div class="container">
-        <!-- Header Section -->
+        <!-- Header -->
         <header class="header">
-            <div class="time-section">
-                <div id="time" class="time"></div>
-                <div id="date" class="date"></div>
-                <div class="auth-controls-header">
-                    <span id="sign-in-btn" class="auth-link">Sign In to Edit</span>
-                    <div id="user-info" class="user-info-header" style="display: none;">
-                        <span id="user-name" class="user-name-text"></span>
-                        <span class="auth-separator">•</span>
-                        <span id="sign-out-btn" class="auth-link">Sign Out</span>
-                    </div>
-                    <span id="edit-mode-btn" class="auth-link" style="display: none;">Edit</span>
+            <div class="header-left">
+                <div class="time-date">
+                    <div id="time" class="time"></div>
+                    <div id="date" class="date"></div>
                 </div>
             </div>
-            <div class="weather-section">
-                <div class="weather-card">
-                    <h3>Ottawa</h3>
-                    <div id="weather-ottawa" class="weather-info">
-                        <div class="loading">Loading weather...</div>
-                    </div>
-                    <div class="weather-card-link">
-                        <a href="https://www.wunderground.com/forecast/ca/ottawa" class="generic-link">10 Day</a>
-                    </div>
-                </div>
-                <div class="weather-card">
-                    <h3>Chelsea, QC</h3>
-                    <div id="weather-chelsea" class="weather-info">
-                        <div class="loading">Loading weather...</div>
-                    </div>
-                    <div class="weather-card-link">
-                        <a href="https://www.wunderground.com/forecast/ca/chelsea" class="generic-link">10 Day</a>
-                    </div>
+            <div class="header-right">
+                <button id="sign-in-btn" class="btn btn-primary">Sign in with Google</button>
+                <div id="user-info" class="user-info" style="display: none;">
+                    <span id="user-name"></span>
+                    <button id="edit-btn" class="btn btn-secondary">Edit</button>
+                    <button id="sign-out-btn" class="btn btn-secondary">Sign out</button>
                 </div>
             </div>
         </header>
 
-        <!-- Cards Grid -->
-        <div class="cards-grid">
-            <!-- News -->
-            <div class="card">
-                <h2 class="card-title">Global News</h2>
-                <ul class="links-list">
-                    <li><a href="https://www.bbc.com/news" target="_blank">BBC News</a></li>
-                    <li><a href="https://www.nyt.com" target="_blank">NYT</a></li>
-                    <li><a href="https://www.theguardian.com/international" target="_blank">The Guardian</a></li>
-                    <li><a href="https://www.aljazeera.com" target="_blank">Al Jazeera</a></li>
-                    <li><a href="https://www.theatlantic.com" target="_blank">The Atlantic</a></li>
-                    <li><a href="https://www.cnn.com" target="_blank">CNN</a></li>
-                    <li><a href="https://www.npr.org" target="_blank">NPR</a></li>
-                    <li><a href="https://www.politico.com" target="_blank">Politico</a></li>
-                </ul>
-            </div>
-
-            <!-- Canada -->
-            <div class="card">
-                <h2 class="card-title">Canada</h2>
-                <ul class="links-list">
-                    <li><a href="https://www.cbc.ca/news" target="_blank">CBC News</a></li>
-                    <li><a href="https://www.ctvnews.ca" target="_blank">CTV News</a></li>
-                    <li><a href="https://globalnews.ca" target="_blank">Global News</a></li>
-                    <li><a href="https://www.theglobeandmail.com" target="_blank">The Globe and Mail</a></li>
-                </ul>
-            </div>
-
-            <!-- Local-->
-            <div class="card">
-                <h2 class="card-title">Local</h2>
-                <ul class="links-list">
-                    <li><a href="https://www.cbc.ca/news/canada/toronto" target="_blank">CBC Toronto</a></li>
-                    <li><a href="https://www.cbc.ca/news/canada/ottawa" target="_blank">CBC Ottawa</a></li>
-                    <li><a href="https://toronto.ctvnews.ca" target="_blank">CTV Toronto</a></li>
-                    <li><a href="https://ottawa.ctvnews.ca" target="_blank">CTV Ottawa</a></li>
-                    <li><a href="https://www.ottawamatters.com" target="_blank">Ottawa Matters</a></li>
-                    <li><a href="https://www.bytowne.ca" target="_blank">ByTowne Cinema</a></li>
-                    <li><a href="https://www.mayfairtheatres.com" target="_blank">Mayfair Theatres</a></li>
-                    <li><a href="https://www.ottawatourism.ca/events" target="_blank">Ottawa Events (Tourism)</a></li>
-                    <li><a href="https://www.eventbrite.ca/d/ottawa--on/events/" target="_blank">Eventbrite Ottawa</a></li>
-                </ul>
-            </div>
-               
-            <!-- Europe -->
-            <div class="card">
-                <h2 class="card-title">Europe</h2>
-                <ul class="links-list">
-                    <li><a href="https://www.bbc.com/news/world/europe" target="_blank">BBC Europe</a></li>
-                    <li><a href="https://www.theguardian.com/world/europe-news" target="_blank">Guardian Europe</a></li>
-                    <li><a href="https://www.euronews.com" target="_blank">Euronews</a></li>
-                    <li><a href="https://www.dw.com/en/top-stories/s-9097" target="_blank">Deutsche Welle</a></li>
-                    <li><a href="https://www.france24.com/en/" target="_blank">France 24</a></li>
-                </ul>
-            </div>
-
-            <!-- Progressive News -->
-            <div class="card">
-                <h2 class="card-title">Progressive News</h2>
-                <ul class="links-list">
-                    <li><a href="https://www.democracynow.org" target="_blank">Democracy Now</a></li>
-                    <li><a href="https://www.commondreams.org" target="_blank">Common Dreams</a></li>
-                    <li><a href="https://theintercept.com" target="_blank">The Intercept</a></li>
-                    <li><a href="https://www.motherjones.com" target="_blank">Mother Jones</a></li>
-                </ul>
-            </div>
-
-            <!-- Technology -->
-            <div class="card">
-                <h2 class="card-title">Technology</h2>
-                <ul class="links-list">
-                    <li><a href="https://techcrunch.com" target="_blank">TechCrunch</a></li>
-                    <li><a href="https://www.theverge.com" target="_blank">The Verge</a></li>
-                    <li><a href="https://arstechnica.com" target="_blank">Ars Technica</a></li>
-                    <li><a href="https://www.wired.com" target="_blank">Wired</a></li>
-                    <li><a href="https://news.ycombinator.com" target="_blank">Hacker News</a></li>
-                    <li><a href="https://www.engadget.com" target="_blank">Engadget</a></li>
-                </ul>
-            </div>
-
-            <!-- Other -->
-            <div class="card">
-                <h2 class="card-title">Other</h2>
-                <ul class="links-list">
-                    <li><a href="https://www.finewoodworking.com" target="_blank">Fine Woodworking</a></li>
-                    <li><a href="https://www.reddit.com/r/woodworking/" target="_blank">r/woodworking</a></li>
-                </ul>
-            </div>
-
-            <!-- Astronomy Widget -->
-            <div class="card card-widget">
-                <h2 class="card-title">Tonight's Sky</h2>
-                <div id="astronomy" class="astronomy-container">
-                    <p class="loading">Loading sky data...</p>
+        <!-- Weather Section -->
+        <div class="weather-section">
+            <div class="weather-card">
+                <h3>Ottawa, ON</h3>
+                <div id="weather-ottawa" class="weather-content">
+                    <p class="loading">Loading weather...</p>
                 </div>
             </div>
-
-            <!-- Inspirational Quote -->
-            <div class="card card-widget card-tall">
-                <h2 class="card-title">Daily Inspiration</h2>
-                <div id="quote" class="quote-container">
-                    <p class="quote-text" id="quote-text">Loading quote...</p>
-                    <p class="quote-author" id="quote-author"></p>
-                </div>
-            </div>
-
-            <!-- Daily Photograph -->
-            <div class="card card-widget card-wide photo-card">
-                <div id="photo" class="photo-container">
-                    <a id="photo-link" href="" target="_blank" rel="noopener">
-                        <img id="daily-photo" src="" alt="Daily photograph">
-                    </a>
+            <div class="weather-card">
+                <h3>Chelsea, QC</h3>
+                <div id="weather-chelsea" class="weather-content">
+                    <p class="loading">Loading weather...</p>
                 </div>
             </div>
         </div>
 
+        <!-- Cards Grid -->
+        <div class="cards-grid" id="cards-grid">
+            <!-- World News -->
+            <div class="card" data-card-id="world-news" data-order="0">
+                <h2 class="card-title">World News</h2>
+                <ul class="card-links">
+                    <li><a href="https://www.bbc.com/news" target="_blank">BBC News</a></li>
+                    <li><a href="https://www.nytimes.com" target="_blank">New York Times</a></li>
+                    <li><a href="https://www.theguardian.com" target="_blank">The Guardian</a></li>
+                    <li><a href="https://www.aljazeera.com" target="_blank">Al Jazeera</a></li>
+                    <li><a href="https://www.reuters.com" target="_blank">Reuters</a></li>
+                </ul>
+            </div>
+
+            <!-- Canada News -->
+            <div class="card" data-card-id="canada-news" data-order="1">
+                <h2 class="card-title">Canada News</h2>
+                <ul class="card-links">
+                    <li><a href="https://www.cbc.ca/news" target="_blank">CBC News</a></li>
+                    <li><a href="https://www.theglobeandmail.com" target="_blank">The Globe and Mail</a></li>
+                    <li><a href="https://www.ctvnews.ca" target="_blank">CTV News</a></li>
+                    <li><a href="https://globalnews.ca" target="_blank">Global News</a></li>
+                    <li><a href="https://nationalpost.com" target="_blank">National Post</a></li>
+                </ul>
+            </div>
+
+            <!-- Ottawa News -->
+            <div class="card" data-card-id="ottawa-news" data-order="2">
+                <h2 class="card-title">Ottawa News</h2>
+                <ul class="card-links">
+                    <li><a href="https://www.cbc.ca/news/canada/ottawa" target="_blank">CBC Ottawa</a></li>
+                    <li><a href="https://ottawa.ctvnews.ca" target="_blank">CTV Ottawa</a></li>
+                    <li><a href="https://ottawacitizen.com" target="_blank">Ottawa Citizen</a></li>
+                    <li><a href="https://www.ottawamatters.com" target="_blank">Ottawa Matters</a></li>
+                    <li><a href="https://www.apt613.ca" target="_blank">Apt613</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <!-- Edit Modal -->
     <div id="edit-modal" class="modal">
         <div class="modal-content">
-            <span class="modal-close">&times;</span>
-            <h2 id="modal-title">Edit Card</h2>
-
-            <div class="form-group">
-                <label for="card-title-input">Card Title:</label>
-                <input type="text" id="card-title-input" class="form-input">
+            <div class="modal-header">
+                <h2 id="modal-title">Edit Card</h2>
+                <button class="modal-close">&times;</button>
             </div>
-
-            <div class="form-group">
-                <label>Links:</label>
-                <div id="links-editor"></div>
-                <button id="add-link-btn" class="btn btn-secondary">+ Add Link</button>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="card-title-input">Card Title</label>
+                    <input type="text" id="card-title-input" class="form-input" placeholder="Enter card title">
+                </div>
+                <div class="form-group">
+                    <label>Links</label>
+                    <div id="links-editor"></div>
+                    <button id="add-link-btn" class="btn btn-secondary btn-sm">+ Add Link</button>
+                </div>
             </div>
-
-            <div class="modal-actions">
-                <button id="save-card-btn" class="btn btn-primary">Save</button>
-                <button id="cancel-edit-btn" class="btn btn-secondary">Cancel</button>
+            <div class="modal-footer">
                 <button id="delete-card-btn" class="btn btn-danger">Delete Card</button>
+                <div class="modal-actions">
+                    <button id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                    <button id="save-btn" class="btn btn-primary">Save Changes</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="script.js"></script>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getDatabase, ref, set, get, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
-        console.log('Firebase module loading...');
-
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyC759vXRewzcVTSy60lhPx_q5Ezx3uL4Qw",
             authDomain: "dashboard-links-4d73a.firebaseapp.com",
@@ -211,24 +128,15 @@
             appId: "1:91468827178:web:53c1485241023ae4785153"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        console.log('Firebase initialized:', { app, database, auth, provider });
-
-        // Make Firebase available globally
         window.firebaseDB = { database, ref, set, get, remove };
         window.firebaseAuth = { auth, provider, signInWithPopup, signOut, onAuthStateChanged };
-
-        console.log('Firebase globals set:', window.firebaseDB, window.firebaseAuth);
-
-        // Trigger custom event to notify firebase-manager
         window.dispatchEvent(new Event('firebaseReady'));
     </script>
-
     <script src="firebase-manager.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-//  Time and Date Display
+// Time and Date
 function updateTime() {
     const now = new Date();
     const options = { timeZone: 'America/Toronto', hour12: true };
@@ -21,11 +21,11 @@ function updateTime() {
     document.getElementById('date').textContent = dateString;
 }
 
-// Weather Data (using Open-Meteo API - no API key required)
-async function fetchWeather(lat, lon, elementId, cityName) {
+// Weather Data (using Open-Meteo API)
+async function fetchWeather(lat, lon, elementId) {
     try {
         const response = await fetch(
-            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=America%2FToronto&forecast_days=3`
+            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=America%2FToronto&forecast_days=5`
         );
         const data = await response.json();
 
@@ -34,23 +34,42 @@ async function fetchWeather(lat, lon, elementId, cityName) {
 
         const weatherCode = getWeatherDescription(current.weathercode);
         const temp = Math.round(current.temperature_2m);
-        const tempMax = Math.round(daily.temperature_2m_max[0]);
-        const tempMin = Math.round(daily.temperature_2m_min[0]);
+        const humidity = Math.round(current.relativehumidity_2m);
+        const windSpeed = Math.round(current.windspeed_10m);
+
+        let forecastHTML = '';
+        for (let i = 1; i < 5; i++) {
+            const date = new Date(daily.time[i]);
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+            const maxTemp = Math.round(daily.temperature_2m_max[i]);
+            const minTemp = Math.round(daily.temperature_2m_min[i]);
+
+            forecastHTML += `
+                <div class="forecast-day">
+                    <div class="forecast-day-name">${dayName}</div>
+                    <div class="forecast-temp">${maxTemp}° / ${minTemp}°</div>
+                </div>
+            `;
+        }
 
         const weatherHTML = `
-            <div class="current-weather">
-                <div style="font-size: 1.5rem; margin-bottom: 0.375rem; font-weight: 700; color: #000000; font-family: Georgia, 'Times New Roman', Times, serif;">${temp}°C</div>
-                <div style="color: #1a1a1a; margin-bottom: 0.375rem; font-weight: 400; font-size: 0.875rem;">${weatherCode}</div>
-                <div style="font-size: 0.75rem; color: #4a4a4a; font-weight: 400;">
-                    H: ${tempMax}° L: ${tempMin}°
+            <div class="weather-current">
+                <div class="weather-temp">${temp}°C</div>
+                <div class="weather-condition">${weatherCode}</div>
+                <div class="weather-details">
+                    <span>💧 ${humidity}%</span>
+                    <span>💨 ${windSpeed} km/h</span>
                 </div>
+            </div>
+            <div class="weather-forecast">
+                ${forecastHTML}
             </div>
         `;
 
         document.getElementById(elementId).innerHTML = weatherHTML;
     } catch (error) {
         console.error('Error fetching weather:', error);
-        document.getElementById(elementId).innerHTML = '<div style="color: #8b0000; font-weight: 400; font-size: 0.813rem;">Weather unavailable</div>';
+        document.getElementById(elementId).innerHTML = '<p class="loading">Weather unavailable</p>';
     }
 }
 
@@ -75,8 +94,8 @@ function getWeatherDescription(code) {
         80: 'Light Showers',
         81: 'Showers',
         82: 'Heavy Showers',
-        85: 'Light Snow Showers',
-        86: 'Snow Showers',
+        85: 'Light Snow',
+        86: 'Snow',
         95: 'Thunderstorm',
         96: 'Thunderstorm with Hail',
         99: 'Thunderstorm with Hail'
@@ -84,148 +103,23 @@ function getWeatherDescription(code) {
     return weatherCodes[code] || 'Unknown';
 }
 
-// Daily Quote
-const quotes = [
-    { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
-    { text: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs" },
-    { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
-    { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
-    { text: "Everything you've ever wanted is on the other side of fear.", author: "George Addair" },
-    { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
-    { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
-    { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
-    { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
-    { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
-    { text: "The future depends on what you do today.", author: "Mahatma Gandhi" },
-    { text: "Everything has beauty, but not everyone can see.", author: "Confucius" },
-    { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis" },
-    { text: "Try to be a rainbow in someone's cloud.", author: "Maya Angelou" },
-    { text: "You do not find the happy life. You make it.", author: "Camilla Eyring Kimball" },
-    { text: "Happiness is not by chance, but by choice.", author: "Jim Rohn" },
-    { text: "Life is 10% what happens to you and 90% how you react to it.", author: "Charles R. Swindoll" },
-    { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
-    { text: "Your limitation—it's only your imagination.", author: "Unknown" },
-    { text: "Great things never come from comfort zones.", author: "Unknown" }
-];
-
-function displayDailyQuote() {
-    // Try fetching a random quote from quotable.io; fallback to local list on failure
-    (async () => {
-        try {
-            const res = await fetch('https://api.quotable.io/random');
-            if (res.ok) {
-                const q = await res.json();
-                document.getElementById('quote-text').textContent = q.content;
-                document.getElementById('quote-author').textContent = q.author || '';
-                return;
-            }
-        } catch (e) {
-            console.warn('Quote API failed, using local fallback:', e);
-        }
-
-        // Local fallback: choose a random quote so it changes on each load
-        const idx = Math.floor(Math.random() * quotes.length);
-        const quote = quotes[idx];
-        document.getElementById('quote-text').textContent = quote.text;
-        document.getElementById('quote-author').textContent = quote.author || '';
-    })();
-}
-
-// Daily Photograph (using Unsplash API)
-async function displayDailyPhoto() {
-    try {
-        // Use picsum.photos with a seed so the photograph reliably appears and can be deterministic per day
-        const today = new Date().toISOString().split('T')[0];
-        const seed = today;
-
-        const categories = ['nature', 'landscape', 'architecture', 'wildlife', 'travel'];
-        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
-        const category = categories[dayOfYear % categories.length];
-
-        // Picsum supports seeded images via /seed/{seed}/{width}/{height}
-        const photoUrl = `https://picsum.photos/seed/${encodeURIComponent(category + '-' + seed)}/1200/600`;
-
-        const img = document.getElementById('daily-photo');
-        img.src = photoUrl;
-        img.alt = `Daily ${category} photograph`;
-
-        // Link to the picsum.photos source
-        const photoLink = document.getElementById('photo-link');
-        photoLink.href = photoUrl;
-    } catch (error) {
-        console.error('Error loading daily photo:', error);
-    }
-}
-
-// Astronomy Data (Sunrise, Sunset, Moon Phase)
-async function fetchAstronomyData() {
-    try {
-        const response = await fetch(
-            'https://api.open-meteo.com/v1/forecast?latitude=45.4215&longitude=-75.6972&daily=sunrise,sunset&timezone=America%2FToronto&forecast_days=1'
-        );
-        const data = await response.json();
-
-        const sunrise = new Date(data.daily.sunrise[0]).toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        const sunset = new Date(data.daily.sunset[0]).toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-
-        // Calculate moon phase (simplified)
-        const today = new Date();
-        const lunarCycle = 29.53; // days
-        const knownNewMoon = new Date(2024, 0, 11); // A known new moon date
-        const daysSinceNewMoon = (today - knownNewMoon) / (1000 * 60 * 60 * 24);
-        const moonPhase = ((daysSinceNewMoon % lunarCycle) / lunarCycle * 100).toFixed(0);
-        
-        const moonPhases = ['🌑 New Moon', '🌒 Waxing Crescent', '🌓 First Quarter', '🌔 Waxing Gibbous', '🌕 Full Moon', '🌖 Waning Gibbous', '🌗 Last Quarter', '🌘 Waning Crescent'];
-        const phaseIndex = Math.floor((moonPhase / 100) * 8) % 8;
-        const currentPhase = moonPhases[phaseIndex];
-
-        const astronomyHTML = `
-            <div class="astronomy-info">
-                <div class="astronomy-item"><strong>🌅 Sunrise:</strong> ${sunrise}</div>
-                <div class="astronomy-item"><strong>🌇 Sunset:</strong> ${sunset}</div>
-                <div class="astronomy-item"><strong>${currentPhase}</strong> (${moonPhase}%)</div>
-            </div>
-        `;
-
-        document.getElementById('astronomy').innerHTML = astronomyHTML;
-    } catch (error) {
-        console.error('Error fetching astronomy data:', error);
-        document.getElementById('astronomy').innerHTML = '<div style="color: #8b0000; font-weight: 400; font-size: 0.813rem;">Astronomy data unavailable</div>';
-    }
-}
-
-// Initialize everything
+// Initialize
 function init() {
-    // Update time immediately and then every second
     updateTime();
     setInterval(updateTime, 1000);
 
-    // Ottawa coordinates: 45.4215, -75.6972
-    // Chelsea, QC coordinates: 45.5, -75.8
-    fetchWeather(45.4215, -75.6972, 'weather-ottawa', 'Ottawa');
-    fetchWeather(45.5, -75.8, 'weather-chelsea', 'Chelsea, QC');
+    // Ottawa: 45.4215, -75.6972
+    // Chelsea: 45.5, -75.8
+    fetchWeather(45.4215, -75.6972, 'weather-ottawa');
+    fetchWeather(45.5, -75.8, 'weather-chelsea');
 
     // Refresh weather every 15 minutes
     setInterval(() => {
-        fetchWeather(45.4215, -75.6972, 'weather-ottawa', 'Ottawa');
-        fetchWeather(45.5, -75.8, 'weather-chelsea', 'Chelsea, QC');
+        fetchWeather(45.4215, -75.6972, 'weather-ottawa');
+        fetchWeather(45.5, -75.8, 'weather-chelsea');
     }, 15 * 60 * 1000);
-
-    // Display daily quote and photo
-    displayDailyQuote();
-    displayDailyPhoto();
-
-    // Fetch astronomy data
-    fetchAstronomyData();
 }
 
-// Start when page loads
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
