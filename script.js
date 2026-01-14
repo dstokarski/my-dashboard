@@ -39,9 +39,9 @@ async function fetchWeather(lat, lon, elementId, cityName) {
 
         const weatherHTML = `
             <div class="current-weather">
-                <div style="font-size: 1.25rem; margin-bottom: 0.25rem; font-weight: 600; color: #4ec9b0;">${temp}°C</div>
-                <div style="color: #cccccc; margin-bottom: 0.25rem; font-weight: 400; font-size: 0.75rem;">${weatherCode}</div>
-                <div style="font-size: 0.688rem; color: #858585; font-weight: 400;">
+                <div style="font-size: 1.5rem; margin-bottom: 0.375rem; font-weight: 700; color: #000000; font-family: Georgia, 'Times New Roman', Times, serif;">${temp}°C</div>
+                <div style="color: #1a1a1a; margin-bottom: 0.375rem; font-weight: 400; font-size: 0.875rem;">${weatherCode}</div>
+                <div style="font-size: 0.75rem; color: #4a4a4a; font-weight: 400;">
                     H: ${tempMax}° L: ${tempMin}°
                 </div>
             </div>
@@ -50,7 +50,7 @@ async function fetchWeather(lat, lon, elementId, cityName) {
         document.getElementById(elementId).innerHTML = weatherHTML;
     } catch (error) {
         console.error('Error fetching weather:', error);
-        document.getElementById(elementId).innerHTML = '<div style="color: #f48771; font-weight: 400; font-size: 0.75rem;">Weather unavailable</div>';
+        document.getElementById(elementId).innerHTML = '<div style="color: #8b0000; font-weight: 400; font-size: 0.813rem;">Weather unavailable</div>';
     }
 }
 
@@ -196,7 +196,7 @@ async function fetchAstronomyData() {
         document.getElementById('astronomy').innerHTML = astronomyHTML;
     } catch (error) {
         console.error('Error fetching astronomy data:', error);
-        document.getElementById('astronomy').innerHTML = '<div style="color: #f48771; font-weight: 400; font-size: 0.75rem;">Astronomy data unavailable</div>';
+        document.getElementById('astronomy').innerHTML = '<div style="color: #8b0000; font-weight: 400; font-size: 0.813rem;">Astronomy data unavailable</div>';
     }
 }
 

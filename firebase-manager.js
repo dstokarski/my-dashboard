@@ -114,7 +114,7 @@ function initializeFirebaseManager() {
         editMode = !editMode;
         console.log('Edit mode is now:', editMode);
 
-        document.getElementById('edit-mode-text').textContent = editMode ? 'Done' : 'Edit';
+        editModeBtn.textContent = editMode ? 'Done' : 'Edit';
         editModeBtn.classList.toggle('active', editMode);
 
         if (editMode) {

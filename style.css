@@ -6,18 +6,48 @@
 }
 
 body {
-    font-family: 'Consolas', 'Courier New', monospace;
-    background: #1e1e1e;
-    color: #cccccc;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    background: #ffffff;
+    color: #1a1a1a;
     min-height: 100vh;
-    font-size: 13px;
-    line-height: 1.6;
+    font-size: 14px;
+    line-height: 1.7;
+    position: relative;
+}
+
+/* Background Mountain Image */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=2000&q=80');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: grayscale(100%);
+    opacity: 0.35;
+    z-index: -1;
+}
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.4);
+    z-index: -1;
 }
 
 .container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 1rem;
+    position: relative;
+    z-index: 1;
 }
 
 /* Header Section */
@@ -25,10 +55,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
-    padding: 0.75rem 1rem;
-    background: #252526;
-    border-bottom: 1px solid #3c3c3c;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: #ffffff;
+    border-top: 3px solid #d4af37;
+    border-bottom: 2px solid #000000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     flex-wrap: wrap;
     gap: 1rem;
 }
@@ -39,17 +71,19 @@ body {
 }
 
 .time {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #4ec9b0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #000000;
     margin-bottom: 0.25rem;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    letter-spacing: -0.5px;
 }
 
 .date {
-    font-size: 0.813rem;
-    color: #858585;
+    font-size: 0.875rem;
+    color: #4a4a4a;
     font-weight: 400;
+    letter-spacing: 0.3px;
 }
 
 .weather-section {
@@ -59,26 +93,29 @@ body {
 }
 
 .weather-card {
-    background: #2d2d30;
-    border: 1px solid #3c3c3c;
-    border-radius: 0;
-    padding: 0.75rem;
-    min-width: 150px;
+    background: #ffffff;
+    border: 1px solid #d4d4d4;
+    border-radius: 2px;
+    padding: 1rem;
+    min-width: 160px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .weather-card h3 {
-    font-size: 0.813rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #569cd6;
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-bottom: 0.625rem;
+    color: #000000;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 0.375rem;
 }
 
 .weather-info {
-    font-size: 0.75rem;
-    line-height: 1.5;
-    color: #cccccc;
+    font-size: 0.813rem;
+    line-height: 1.6;
+    color: #1a1a1a;
 }
 
 .loading {
@@ -90,35 +127,36 @@ body {
 /* Cards Grid */
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1px;
-    background: #3c3c3c;
-    border: 1px solid #3c3c3c;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    background: transparent;
 }
 
 .card {
-    background: #252526;
-    border: none;
-    border-radius: 0;
-    padding: 0.75rem;
-    transition: background 0.1s ease;
+    background: #ffffff;
+    border: 1px solid #d4d4d4;
+    border-radius: 2px;
+    padding: 1rem;
+    transition: box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .card:hover {
-    background: #2d2d30;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
 }
 
 .card-title {
-    font-size: 0.813rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: #cccccc;
-    border-bottom: 1px solid #3c3c3c;
+    font-size: 0.938rem;
+    font-weight: 700;
+    margin-bottom: 0.875rem;
+    color: #000000;
+    border-bottom: 2px solid #d4af37;
     padding-bottom: 0.5rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .links-list {
@@ -133,45 +171,47 @@ body {
 }
 
 .links-list a {
-    color: #569cd6;
+    color: #326891;
     text-decoration: none;
-    font-size: 0.975rem;
-    transition: color 0.1s ease;
+    font-size: 0.938rem;
+    transition: all 0.15s ease;
     display: block;
-    padding: 0.25rem 0;
+    padding: 0.3rem 0;
     font-weight: 400;
+    border-bottom: 1px solid transparent;
 }
 
 .links-list a:hover {
-    color: #4ec9b0;
+    color: #1a4d6f;
+    text-decoration: underline;
 }
 
 /* Weather Card Links */
 .weather-card-link {
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid #3c3c3c;
+    margin-top: 0.625rem;
+    padding-top: 0.625rem;
+    border-top: 1px solid #e5e5e5;
     text-align: center;
 }
 
 .generic-link {
-    color: #cccccc;
-    background-color: #0e639c;
+    color: #000000;
+    background-color: #ffffff;
     text-decoration: none;
-    font-size: 0.688rem;
-    transition: background-color 0.1s ease;
+    font-size: 0.75rem;
+    transition: all 0.15s ease;
     display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid #0e639c;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #000000;
     border-radius: 0;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
 }
 
 .generic-link:hover {
-    background-color: #1177bb;
-    border-color: #1177bb;
+    background-color: #000000;
+    color: #ffffff;
 }
 
 /* Widget Cards */
@@ -197,29 +237,33 @@ body {
 }
 
 .quote-text {
-    font-size: 0.813rem;
+    font-size: 1rem;
     font-style: italic;
-    line-height: 1.6;
-    color: #ce9178;
-    margin-bottom: 0.5rem;
+    line-height: 1.75;
+    color: #1a1a1a;
+    margin-bottom: 0.75rem;
     font-weight: 400;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .quote-text::before {
     content: '"';
-    color: #608b4e;
+    color: #4a4a4a;
+    font-size: 1.25rem;
 }
 
 .quote-text::after {
     content: '"';
-    color: #608b4e;
+    color: #4a4a4a;
+    font-size: 1.25rem;
 }
 
 .quote-author {
-    font-size: 0.688rem;
-    color: #858585;
+    font-size: 0.813rem;
+    color: #4a4a4a;
     text-align: right;
     font-weight: 400;
+    font-style: normal;
 }
 
 .quote-author::before {
@@ -248,7 +292,8 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(20%) contrast(1.1);
+    filter: grayscale(80%) contrast(1.05);
+    border: 2px solid #000000;
 }
 
 /* Responsive Design */
@@ -333,17 +378,18 @@ body {
 }
 
 .astronomy-item {
-    padding: 0.5rem;
-    background: #2d2d30;
+    padding: 0.625rem;
+    background: #f9f9f9;
     border-radius: 0;
-    color: #cccccc;
+    color: #1a1a1a;
     font-weight: 400;
-    border: 1px solid #3c3c3c;
-    font-size: 0.75rem;
+    border: 1px solid #e5e5e5;
+    font-size: 0.813rem;
 }
 
 .astronomy-item strong {
-    color: #569cd6;
+    color: #000000;
+    font-weight: 600;
 }
 
 /* Smooth scroll */
@@ -353,31 +399,32 @@ html {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #1e1e1e;
+    background: #f9f9f9;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #424242;
+    background: #d4d4d4;
     border-radius: 0;
+    border: 2px solid #f9f9f9;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #4e4e4e;
+    background: #b0b0b0;
 }
 
 ::-webkit-scrollbar-corner {
-    background: #1e1e1e;
+    background: #f9f9f9;
 }
 
 /* Selection */
 ::selection {
-    background: #264f78;
-    color: #ffffff;
+    background: #d4af37;
+    color: #000000;
 }
 
 /* Authentication Controls in Header */
@@ -386,74 +433,75 @@ html {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    font-size: 0.813rem;
-    color: #858585;
+    font-size: 0.75rem;
+    color: #4a4a4a;
     font-weight: 400;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .auth-link {
-    color: #858585 !important;
+    color: #4a4a4a !important;
     cursor: pointer;
-    transition: color 0.1s ease;
-    font-family: 'Consolas', 'Courier New', monospace;
+    transition: color 0.15s ease;
+    font-family: Georgia, 'Times New Roman', Times, serif;
     display: inline-block;
     user-select: none;
+    text-decoration: underline;
 }
 
 .auth-link:hover {
-    color: #cccccc !important;
+    color: #000000 !important;
 }
 
 .user-info-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #858585;
+    color: #4a4a4a;
 }
 
 .user-name-text {
-    color: #858585 !important;
-    font-family: 'Consolas', 'Courier New', monospace;
+    color: #4a4a4a !important;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .auth-separator {
-    color: #858585 !important;
+    color: #4a4a4a !important;
 }
 
 /* Card Edit Buttons */
 .card-edit-btn {
-    background: #0e639c;
-    color: #cccccc;
-    border: 1px solid #0e639c;
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
     padding: 0.25rem 0.5rem;
     font-size: 0.688rem;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: Georgia, 'Times New Roman', Times, serif;
     cursor: pointer;
-    transition: background 0.1s ease;
+    transition: all 0.15s ease;
     border-radius: 0;
     margin-left: 0.5rem;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
 }
 
 .card-edit-btn:hover {
-    background: #1177bb;
-    border-color: #1177bb;
+    background: #000000;
+    color: #ffffff;
 }
 
 /* Add Card Button */
 .add-card-btn {
-    background: #252526;
-    border: 2px dashed #569cd6;
+    background: #ffffff;
+    border: 2px dashed #4a4a4a;
     border-radius: 0;
     padding: 2rem;
     font-size: 1rem;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: Georgia, 'Times New Roman', Times, serif;
     cursor: pointer;
-    transition: background 0.1s ease, border-color 0.1s ease;
-    color: #569cd6;
+    transition: all 0.2s ease;
+    color: #4a4a4a;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -463,9 +511,10 @@ html {
 }
 
 .add-card-btn:hover {
-    background: #2d2d30;
-    border-color: #4ec9b0;
-    color: #4ec9b0;
+    background: #f9f9f9;
+    border-color: #000000;
+    color: #000000;
+    border-style: solid;
 }
 
 /* Modal */
@@ -477,46 +526,47 @@ html {
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.75);
     align-items: center;
     justify-content: center;
 }
 
 .modal-content {
-    background: #252526;
-    border: 1px solid #3c3c3c;
+    background: #ffffff;
+    border: 2px solid #000000;
     border-radius: 0;
-    padding: 1.5rem;
+    padding: 2rem;
     width: 90%;
     max-width: 600px;
     max-height: 80vh;
     overflow-y: auto;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content h2 {
-    color: #cccccc;
-    font-size: 1.125rem;
-    font-weight: 600;
+    color: #000000;
+    font-size: 1.25rem;
+    font-weight: 700;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid #3c3c3c;
+    border-bottom: 2px solid #d4af37;
     padding-bottom: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .modal-close {
-    color: #858585;
+    color: #4a4a4a;
     float: right;
-    font-size: 1.75rem;
+    font-size: 2rem;
     font-weight: 400;
     cursor: pointer;
     line-height: 1;
-    transition: color 0.1s ease;
+    transition: color 0.15s ease;
 }
 
 .modal-close:hover {
-    color: #cccccc;
+    color: #000000;
 }
 
 /* Form Elements */
@@ -526,29 +576,30 @@ html {
 
 .form-group label {
     display: block;
-    color: #cccccc;
-    font-size: 0.813rem;
-    font-weight: 600;
+    color: #000000;
+    font-size: 0.875rem;
+    font-weight: 700;
     margin-bottom: 0.5rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
 }
 
 .form-input {
     width: 100%;
-    background: #1e1e1e;
-    border: 1px solid #3c3c3c;
+    background: #ffffff;
+    border: 1px solid #d4d4d4;
     border-radius: 0;
-    padding: 0.625rem;
-    color: #cccccc;
-    font-size: 0.875rem;
-    font-family: 'Consolas', 'Courier New', monospace;
-    transition: border-color 0.1s ease;
+    padding: 0.75rem;
+    color: #1a1a1a;
+    font-size: 0.938rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    transition: border-color 0.15s ease;
 }
 
 .form-input:focus {
     outline: none;
-    border-color: #569cd6;
+    border-color: #000000;
+    box-shadow: 0 0 0 1px #000000;
 }
 
 /* Link Editor */
@@ -568,39 +619,41 @@ html {
 
 .link-text,
 .link-url {
-    background: #1e1e1e;
-    border: 1px solid #3c3c3c;
+    background: #ffffff;
+    border: 1px solid #d4d4d4;
     border-radius: 0;
-    padding: 0.5rem;
-    color: #cccccc;
-    font-size: 0.813rem;
-    font-family: 'Consolas', 'Courier New', monospace;
-    transition: border-color 0.1s ease;
+    padding: 0.625rem;
+    color: #1a1a1a;
+    font-size: 0.875rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    transition: border-color 0.15s ease;
 }
 
 .link-text:focus,
 .link-url:focus {
     outline: none;
-    border-color: #569cd6;
+    border-color: #000000;
+    box-shadow: 0 0 0 1px #000000;
 }
 
 .remove-link-btn {
-    background: #2d2d30;
-    border: 1px solid #3c3c3c;
-    color: #f48771;
+    background: #ffffff;
+    border: 1px solid #d4d4d4;
+    color: #000000;
     width: 2rem;
     height: 2rem;
     cursor: pointer;
-    transition: background 0.1s ease;
+    transition: all 0.15s ease;
     font-size: 1.25rem;
     line-height: 1;
     border-radius: 0;
+    font-weight: 700;
 }
 
 .remove-link-btn:hover {
-    background: #f48771;
-    color: #1e1e1e;
-    border-color: #f48771;
+    background: #000000;
+    color: #ffffff;
+    border-color: #000000;
 }
 
 /* Modal Actions */
@@ -609,53 +662,54 @@ html {
     gap: 0.75rem;
     margin-top: 1.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #3c3c3c;
+    border-top: 1px solid #e5e5e5;
 }
 
 .btn {
-    padding: 0.625rem 1.25rem;
-    font-size: 0.813rem;
-    font-family: 'Consolas', 'Courier New', monospace;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-family: Georgia, 'Times New Roman', Times, serif;
     cursor: pointer;
     border-radius: 0;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: background 0.1s ease;
+    letter-spacing: 0.8px;
+    transition: all 0.15s ease;
 }
 
 .btn-primary {
-    background: #0e639c;
-    border: 1px solid #0e639c;
-    color: #cccccc;
+    background: #000000;
+    border: 2px solid #000000;
+    color: #ffffff;
 }
 
 .btn-primary:hover {
-    background: #1177bb;
-    border-color: #1177bb;
+    background: #1a1a1a;
+    border-color: #1a1a1a;
 }
 
 .btn-secondary {
-    background: #2d2d30;
-    border: 1px solid #3c3c3c;
-    color: #cccccc;
+    background: #ffffff;
+    border: 2px solid #d4d4d4;
+    color: #1a1a1a;
 }
 
 .btn-secondary:hover {
-    background: #3c3c3c;
+    background: #f9f9f9;
+    border-color: #4a4a4a;
 }
 
 .btn-danger {
-    background: #2d2d30;
-    border: 1px solid #3c3c3c;
-    color: #f48771;
+    background: #ffffff;
+    border: 2px solid #d4d4d4;
+    color: #8b0000;
     margin-left: auto;
 }
 
 .btn-danger:hover {
-    background: #f48771;
-    color: #1e1e1e;
-    border-color: #f48771;
+    background: #8b0000;
+    color: #ffffff;
+    border-color: #8b0000;
 }
 
 /* Responsive Modal */
