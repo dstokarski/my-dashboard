@@ -210,14 +210,143 @@ function fetchSuggestions() {
         <ul class="suggestions-list">
             ${dailySuggestions.map(s => `
                 <li>
-                    <a href="${s.url}" target="_blank">${s.text}</a>
-                    <span class="suggestion-desc">${s.desc}</span>
+                    <div class="suggestion-info">
+                        <a href="${s.url}" target="_blank">${s.text}</a>
+                        <span class="suggestion-desc">${s.desc}</span>
+                    </div>
+                    <button class="save-suggestion-btn" data-text="${s.text}" data-url="${s.url}" data-desc="${s.desc}" title="Save to Saved Sites">+</button>
                 </li>
             `).join('')}
         </ul>
     `;
 
     suggestionsEl.innerHTML = html;
+
+    // Add click handlers for save buttons
+    suggestionsEl.querySelectorAll('.save-suggestion-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const site = {
+                text: btn.dataset.text,
+                url: btn.dataset.url,
+                desc: btn.dataset.desc
+            };
+            saveSite(site);
+            btn.textContent = '✓';
+            btn.disabled = true;
+            btn.classList.add('saved');
+        });
+    });
+}
+
+// Saved Sites functionality
+let savedSitesEditMode = false;
+
+function getSavedSites() {
+    const saved = localStorage.getItem('savedSites');
+    return saved ? JSON.parse(saved) : [];
+}
+
+function setSavedSites(sites) {
+    localStorage.setItem('savedSites', JSON.stringify(sites));
+}
+
+function saveSite(site) {
+    const sites = getSavedSites();
+    // Check if already saved
+    if (!sites.some(s => s.url === site.url)) {
+        sites.push(site);
+        setSavedSites(sites);
+        renderSavedSites();
+    }
+}
+
+function removeSavedSite(url) {
+    const sites = getSavedSites().filter(s => s.url !== url);
+    setSavedSites(sites);
+    renderSavedSites();
+}
+
+function moveSavedSite(index, direction) {
+    const sites = getSavedSites();
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= sites.length) return;
+
+    [sites[index], sites[newIndex]] = [sites[newIndex], sites[index]];
+    setSavedSites(sites);
+    renderSavedSites();
+}
+
+function renderSavedSites() {
+    const contentEl = document.getElementById('saved-sites-content');
+    if (!contentEl) return;
+
+    const sites = getSavedSites();
+
+    if (sites.length === 0) {
+        contentEl.innerHTML = '<p class="loading">No saved sites yet</p>';
+        return;
+    }
+
+    if (savedSitesEditMode) {
+        const html = `
+            <ul class="saved-sites-list edit-mode">
+                ${sites.map((s, i) => `
+                    <li>
+                        <div class="saved-site-reorder">
+                            <button class="saved-site-move-btn" data-index="${i}" data-dir="up" ${i === 0 ? 'disabled' : ''}>↑</button>
+                            <button class="saved-site-move-btn" data-index="${i}" data-dir="down" ${i === sites.length - 1 ? 'disabled' : ''}>↓</button>
+                        </div>
+                        <div class="suggestion-info">
+                            <a href="${s.url}" target="_blank">${s.text}</a>
+                            <span class="suggestion-desc">${s.desc}</span>
+                        </div>
+                        <button class="remove-saved-site-btn" data-url="${s.url}" title="Remove">×</button>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+        contentEl.innerHTML = html;
+
+        // Add event listeners for edit mode
+        contentEl.querySelectorAll('.saved-site-move-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                moveSavedSite(parseInt(btn.dataset.index), btn.dataset.dir);
+            });
+        });
+
+        contentEl.querySelectorAll('.remove-saved-site-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                removeSavedSite(btn.dataset.url);
+            });
+        });
+    } else {
+        const html = `
+            <ul class="saved-sites-list">
+                ${sites.map(s => `
+                    <li>
+                        <div class="suggestion-info">
+                            <a href="${s.url}" target="_blank">${s.text}</a>
+                            <span class="suggestion-desc">${s.desc}</span>
+                        </div>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+        contentEl.innerHTML = html;
+    }
+}
+
+function setupSavedSitesEdit() {
+    const editBtn = document.getElementById('edit-saved-sites-btn');
+    if (!editBtn) return;
+
+    editBtn.addEventListener('click', () => {
+        savedSitesEditMode = !savedSitesEditMode;
+        editBtn.textContent = savedSitesEditMode ? 'Done' : 'Edit';
+        editBtn.classList.toggle('btn-primary', savedSitesEditMode);
+        editBtn.classList.toggle('btn-secondary', !savedSitesEditMode);
+        renderSavedSites();
+    });
 }
 
 // Fetch NHL standings
@@ -343,6 +472,8 @@ function init() {
     fetchSuggestions();
     fetchNHLStandings();
     fetchLeafsGames();
+    renderSavedSites();
+    setupSavedSitesEdit();
 }
 
 // Start when page loads

@@ -380,14 +380,28 @@ body {
     border-bottom: none;
 }
 
-.suggestions-list a {
+.suggestions-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.suggestion-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.suggestions-list a,
+.saved-sites-list a {
     color: var(--vscode-blue);
     text-decoration: none;
     font-size: 13px;
     display: block;
 }
 
-.suggestions-list a:hover {
+.suggestions-list a:hover,
+.saved-sites-list a:hover {
     color: var(--vscode-green);
 }
 
@@ -396,6 +410,116 @@ body {
     color: var(--vscode-text-muted);
     display: block;
     margin-top: 2px;
+}
+
+.save-suggestion-btn {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background-color: var(--vscode-sidebar);
+    border: 1px solid var(--vscode-border);
+    border-radius: 3px;
+    color: var(--vscode-green);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.save-suggestion-btn:hover:not(:disabled) {
+    background-color: var(--vscode-green);
+    color: var(--vscode-bg);
+}
+
+.save-suggestion-btn.saved {
+    background-color: var(--vscode-green);
+    color: var(--vscode-bg);
+    cursor: default;
+}
+
+/* Saved Sites Card */
+.saved-sites-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.saved-sites-header .static-card-title {
+    margin-bottom: 0;
+}
+
+.saved-sites-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.saved-sites-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--vscode-border);
+}
+
+.saved-sites-list li:last-child {
+    border-bottom: none;
+}
+
+.saved-site-reorder {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.saved-site-move-btn {
+    width: 20px;
+    height: 16px;
+    padding: 0;
+    background-color: var(--vscode-sidebar);
+    border: 1px solid var(--vscode-border);
+    border-radius: 2px;
+    color: var(--vscode-text);
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.saved-site-move-btn:hover:not(:disabled) {
+    border-color: var(--vscode-blue);
+    color: var(--vscode-blue);
+}
+
+.saved-site-move-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.remove-saved-site-btn {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background-color: var(--vscode-sidebar);
+    border: 1px solid var(--vscode-border);
+    border-radius: 3px;
+    color: var(--vscode-red);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.remove-saved-site-btn:hover {
+    background-color: var(--vscode-red);
+    color: var(--vscode-bg);
 }
 
 /* NHL Cards */
