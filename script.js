@@ -89,87 +89,86 @@ function getWeatherDescription(code) {
     return codes[code] || 'Unknown';
 }
 
-// Fetch random photos from Unsplash
-async function fetchPhotos() {
-    try {
-        // Photo 1 - Random interesting photo
+// Fetch random photos
+function fetchPhotos() {
+    const photo1 = document.getElementById('photo-1');
+    const photo2 = document.getElementById('photo-2');
+
+    if (photo1) {
         const img1 = document.createElement('img');
         img1.src = `https://picsum.photos/400/250?random=${Date.now()}`;
         img1.alt = 'Photo of the Day';
         img1.className = 'random-photo';
-        document.getElementById('photo-1').innerHTML = '';
-        document.getElementById('photo-1').appendChild(img1);
+        img1.onerror = () => { photo1.innerHTML = '<p class="loading">Photo unavailable</p>'; };
+        photo1.innerHTML = '';
+        photo1.appendChild(img1);
+    }
 
-        // Photo 2 - Nature photo
+    if (photo2) {
         const img2 = document.createElement('img');
-        img2.src = `https://picsum.photos/400/250?random=${Date.now() + 1}&nature`;
+        img2.src = `https://picsum.photos/400/250?random=${Date.now() + 1}`;
         img2.alt = 'Nature';
         img2.className = 'random-photo';
-        document.getElementById('photo-2').innerHTML = '';
-        document.getElementById('photo-2').appendChild(img2);
-    } catch (error) {
-        console.error('Photo fetch error:', error);
+        img2.onerror = () => { photo2.innerHTML = '<p class="loading">Photo unavailable</p>'; };
+        photo2.innerHTML = '';
+        photo2.appendChild(img2);
     }
 }
 
 // Fetch inspirational quote
-async function fetchQuote() {
-    try {
-        const response = await fetch('https://api.quotable.io/random?tags=inspirational|motivational|wisdom');
-        if (!response.ok) throw new Error('Quote API failed');
-        const data = await response.json();
-        document.getElementById('quote-content').innerHTML = `
-            <blockquote class="quote-text">"${data.content}"</blockquote>
-            <cite class="quote-author">— ${data.author}</cite>
-        `;
-    } catch (error) {
-        console.error('Quote fetch error:', error);
-        // Fallback quotes
-        const fallbackQuotes = [
-            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
-            { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
-            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
-            { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
-            { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle" }
-        ];
-        const quote = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
-        document.getElementById('quote-content').innerHTML = `
-            <blockquote class="quote-text">"${quote.text}"</blockquote>
-            <cite class="quote-author">— ${quote.author}</cite>
-        `;
-    }
+function fetchQuote() {
+    const quoteEl = document.getElementById('quote-content');
+    if (!quoteEl) return;
+
+    const fallbackQuotes = [
+        { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+        { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
+        { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+        { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+        { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle" },
+        { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+        { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
+        { text: "Your time is limited, don't waste it living someone else's life.", author: "Steve Jobs" }
+    ];
+
+    // Use fallback quotes directly (APIs often have CORS issues)
+    const quote = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
+    quoteEl.innerHTML = `
+        <blockquote class="quote-text">"${quote.text}"</blockquote>
+        <cite class="quote-author">— ${quote.author}</cite>
+    `;
 }
 
 // Fetch daily joke
-async function fetchJoke() {
-    try {
-        const response = await fetch('https://official-joke-api.appspot.com/random_joke');
-        if (!response.ok) throw new Error('Joke API failed');
-        const data = await response.json();
-        document.getElementById('joke-content').innerHTML = `
-            <p class="joke-setup">${data.setup}</p>
-            <p class="joke-punchline">${data.punchline}</p>
-        `;
-    } catch (error) {
-        console.error('Joke fetch error:', error);
-        // Fallback jokes
-        const fallbackJokes = [
-            { setup: "Why don't scientists trust atoms?", punchline: "Because they make up everything!" },
-            { setup: "Why did the scarecrow win an award?", punchline: "He was outstanding in his field!" },
-            { setup: "What do you call a fake noodle?", punchline: "An impasta!" },
-            { setup: "Why don't eggs tell jokes?", punchline: "They'd crack each other up!" },
-            { setup: "What do you call a bear with no teeth?", punchline: "A gummy bear!" }
-        ];
-        const joke = fallbackJokes[Math.floor(Math.random() * fallbackJokes.length)];
-        document.getElementById('joke-content').innerHTML = `
-            <p class="joke-setup">${joke.setup}</p>
-            <p class="joke-punchline">${joke.punchline}</p>
-        `;
-    }
+function fetchJoke() {
+    const jokeEl = document.getElementById('joke-content');
+    if (!jokeEl) return;
+
+    const jokes = [
+        { setup: "Why don't scientists trust atoms?", punchline: "Because they make up everything!" },
+        { setup: "Why did the scarecrow win an award?", punchline: "He was outstanding in his field!" },
+        { setup: "What do you call a fake noodle?", punchline: "An impasta!" },
+        { setup: "Why don't eggs tell jokes?", punchline: "They'd crack each other up!" },
+        { setup: "What do you call a bear with no teeth?", punchline: "A gummy bear!" },
+        { setup: "Why don't skeletons fight each other?", punchline: "They don't have the guts!" },
+        { setup: "What do you call cheese that isn't yours?", punchline: "Nacho cheese!" },
+        { setup: "Why did the bicycle fall over?", punchline: "Because it was two-tired!" },
+        { setup: "What do you call a fish without eyes?", punchline: "A fsh!" },
+        { setup: "Why can't you give Elsa a balloon?", punchline: "Because she will let it go!" }
+    ];
+
+    const joke = jokes[Math.floor(Math.random() * jokes.length)];
+    jokeEl.innerHTML = `
+        <p class="joke-setup">${joke.setup}</p>
+        <p class="joke-punchline">${joke.punchline}</p>
+    `;
 }
 
 // Fetch daily suggestions - interesting websites that change daily
 function fetchSuggestions() {
+    const suggestionsEl = document.getElementById('suggestions-content');
+    if (!suggestionsEl) return;
+
     const allSuggestions = [
         { text: "Atlas Obscura", url: "https://www.atlasobscura.com", desc: "Discover hidden wonders" },
         { text: "Brain Pickings", url: "https://www.themarginalian.org", desc: "Wisdom and creativity" },
@@ -218,7 +217,7 @@ function fetchSuggestions() {
         </ul>
     `;
 
-    document.getElementById('suggestions-content').innerHTML = html;
+    suggestionsEl.innerHTML = html;
 }
 
 // Initialize
