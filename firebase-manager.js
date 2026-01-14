@@ -189,15 +189,21 @@ function openEditModal(cardElement) {
     if (cardElement) {
         // Editing existing card
         const cardId = cardElement.dataset.cardId;
+        if (!cardId) {
+            console.error('Card ID is missing from element');
+            alert('Unable to edit this card - missing ID');
+            return;
+        }
         const title = cardElement.querySelector('.card-title').textContent;
         const links = Array.from(cardElement.querySelectorAll('.card-links a')).map(a => ({
             text: a.textContent,
             url: a.href
         }));
 
+        const order = parseInt(cardElement.dataset.order);
         currentEditingCard = {
             id: cardId,
-            order: parseInt(cardElement.dataset.order)
+            order: isNaN(order) ? 0 : order
         };
 
         titleInput.value = title;
@@ -264,7 +270,7 @@ async function saveCard() {
 
         if (currentEditingCard) {
             cardId = currentEditingCard.id;
-            order = currentEditingCard.order;
+            order = currentEditingCard.order ?? 0;
         } else {
             cardId = `card-${Date.now()}`;
             const cardsRef = window.firebase.db.ref(window.firebase.db.database, 'cards');
