@@ -570,6 +570,27 @@ body {
     text-decoration: underline;
 }
 
+.nhl-link-primary {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--vscode-blue);
+    color: var(--vscode-bg);
+    border-radius: 3px;
+    font-weight: 500;
+}
+
+.nhl-link-primary:hover {
+    background-color: var(--vscode-green);
+    text-decoration: none;
+}
+
+.nhl-fallback-msg {
+    color: var(--vscode-text-muted);
+    font-size: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
 /* Leafs Games */
 .leafs-games-list {
     display: flex;

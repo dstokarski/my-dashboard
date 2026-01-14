@@ -392,7 +392,11 @@ async function fetchNHLStandings() {
         standingsEl.innerHTML = html;
     } catch (error) {
         console.error('NHL standings error:', error);
-        standingsEl.innerHTML = '<p class="loading">Unable to load standings</p>';
+        // Show link to view standings on NHL.com
+        standingsEl.innerHTML = `
+            <p class="nhl-fallback-msg">Live standings require visiting NHL.com</p>
+            <a href="https://www.nhl.com/standings" target="_blank" class="nhl-link nhl-link-primary">View NHL Standings</a>
+        `;
     }
 }
 
@@ -445,7 +449,11 @@ async function fetchLeafsGames() {
         gamesEl.innerHTML = html;
     } catch (error) {
         console.error('Leafs games error:', error);
-        gamesEl.innerHTML = '<p class="loading">Unable to load games</p>';
+        // Show link to view schedule on NHL.com
+        gamesEl.innerHTML = `
+            <p class="nhl-fallback-msg">Live scores require visiting NHL.com</p>
+            <a href="https://www.nhl.com/mapleleafs/schedule" target="_blank" class="nhl-link nhl-link-primary">View Leafs Schedule</a>
+        `;
     }
 }
 
