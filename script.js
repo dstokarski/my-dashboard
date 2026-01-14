@@ -224,63 +224,101 @@ function fetchSuggestions() {
 
     // Add click handlers for save buttons
     suggestionsEl.querySelectorAll('.save-suggestion-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             const site = {
                 text: btn.dataset.text,
                 url: btn.dataset.url,
                 desc: btn.dataset.desc
             };
-            saveSite(site);
-            btn.textContent = '✓';
+            btn.textContent = '...';
             btn.disabled = true;
+            await saveSite(site);
+            btn.textContent = '✓';
             btn.classList.add('saved');
         });
     });
 }
 
-// Saved Sites functionality
+// Saved Sites functionality - uses Firebase when signed in, localStorage as fallback
 let savedSitesEditMode = false;
+let cachedSavedSites = [];
 
-function getSavedSites() {
+function isUserSignedIn() {
+    // Check both the currentUser variable from firebase-manager.js and Firebase auth
+    return (typeof currentUser !== 'undefined' && currentUser !== null) ||
+           (window.firebase && window.firebase.auth && window.firebase.auth.auth && window.firebase.auth.auth.currentUser);
+}
+
+async function getSavedSites() {
+    // Check if Firebase is available and user is signed in
+    if (window.firebase && isUserSignedIn()) {
+        try {
+            const sitesRef = window.firebase.db.ref(window.firebase.db.database, 'savedSites');
+            const snapshot = await window.firebase.db.get(sitesRef);
+            if (snapshot.exists()) {
+                cachedSavedSites = snapshot.val();
+                return cachedSavedSites;
+            }
+            return [];
+        } catch (error) {
+            console.error('Error loading saved sites from Firebase:', error);
+            return [];
+        }
+    }
+    // Fallback to localStorage if not signed in
     const saved = localStorage.getItem('savedSites');
     return saved ? JSON.parse(saved) : [];
 }
 
-function setSavedSites(sites) {
+async function setSavedSites(sites) {
+    cachedSavedSites = sites;
+    // Save to Firebase if signed in
+    if (window.firebase && isUserSignedIn()) {
+        try {
+            const sitesRef = window.firebase.db.ref(window.firebase.db.database, 'savedSites');
+            await window.firebase.db.set(sitesRef, sites);
+            console.log('Saved sites to Firebase:', sites.length, 'sites');
+        } catch (error) {
+            console.error('Error saving sites to Firebase:', error);
+        }
+    } else {
+        console.log('User not signed in, saving to localStorage only');
+    }
+    // Also save to localStorage as backup
     localStorage.setItem('savedSites', JSON.stringify(sites));
 }
 
-function saveSite(site) {
-    const sites = getSavedSites();
+async function saveSite(site) {
+    const sites = await getSavedSites();
     // Check if already saved
     if (!sites.some(s => s.url === site.url)) {
         sites.push(site);
-        setSavedSites(sites);
-        renderSavedSites();
+        await setSavedSites(sites);
+        await renderSavedSites();
     }
 }
 
-function removeSavedSite(url) {
-    const sites = getSavedSites().filter(s => s.url !== url);
-    setSavedSites(sites);
-    renderSavedSites();
+async function removeSavedSite(url) {
+    const sites = (await getSavedSites()).filter(s => s.url !== url);
+    await setSavedSites(sites);
+    await renderSavedSites();
 }
 
-function moveSavedSite(index, direction) {
-    const sites = getSavedSites();
+async function moveSavedSite(index, direction) {
+    const sites = await getSavedSites();
     const newIndex = direction === 'up' ? index - 1 : index + 1;
     if (newIndex < 0 || newIndex >= sites.length) return;
 
     [sites[index], sites[newIndex]] = [sites[newIndex], sites[index]];
-    setSavedSites(sites);
-    renderSavedSites();
+    await setSavedSites(sites);
+    await renderSavedSites();
 }
 
-function renderSavedSites() {
+async function renderSavedSites() {
     const contentEl = document.getElementById('saved-sites-content');
     if (!contentEl) return;
 
-    const sites = getSavedSites();
+    const sites = await getSavedSites();
 
     if (sites.length === 0) {
         contentEl.innerHTML = '<p class="loading">No saved sites yet</p>';
@@ -298,7 +336,7 @@ function renderSavedSites() {
                         </div>
                         <div class="suggestion-info">
                             <a href="${s.url}" target="_blank">${s.text}</a>
-                            <span class="suggestion-desc">${s.desc}</span>
+                            <span class="suggestion-desc">${s.desc || ''}</span>
                         </div>
                         <button class="remove-saved-site-btn" data-url="${s.url}" title="Remove">×</button>
                     </li>
@@ -326,7 +364,7 @@ function renderSavedSites() {
                     <li>
                         <div class="suggestion-info">
                             <a href="${s.url}" target="_blank">${s.text}</a>
-                            <span class="suggestion-desc">${s.desc}</span>
+                            <span class="suggestion-desc">${s.desc || ''}</span>
                         </div>
                     </li>
                 `).join('')}

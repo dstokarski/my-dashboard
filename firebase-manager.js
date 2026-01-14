@@ -75,12 +75,20 @@ function initFirebase() {
             userSection.style.display = 'flex';
             userName.textContent = user.displayName || user.email;
             loadCardsFromFirebase();
+            // Reload saved sites from Firebase after sign in
+            if (typeof renderSavedSites === 'function') {
+                renderSavedSites();
+            }
         } else {
             currentUser = null;
             signInBtn.style.display = 'inline-flex';
             userSection.style.display = 'none';
             exitEditMode();
             renderDefaultCards();
+            // Reload saved sites from localStorage after sign out
+            if (typeof renderSavedSites === 'function') {
+                renderSavedSites();
+            }
         }
     });
 
