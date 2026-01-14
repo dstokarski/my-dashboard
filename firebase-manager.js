@@ -38,6 +38,20 @@ const DEFAULT_CARDS = [
             { text: 'Ottawa Matters', url: 'https://www.ottawamatters.com' },
             { text: 'Apt613', url: 'https://www.apt613.ca' }
         ]
+    },
+    {
+        id: 'sports',
+        title: 'Sports',
+        order: 3,
+        links: [
+            { text: 'NHL Standings', url: 'https://www.nhl.com/standings' },
+            { text: 'MLB Standings', url: 'https://www.mlb.com/standings' },
+            { text: 'Toronto Maple Leafs', url: 'https://www.nhl.com/mapleleafs' },
+            { text: 'Toronto Blue Jays', url: 'https://www.mlb.com/bluejays' },
+            { text: 'TSN', url: 'https://www.tsn.ca' },
+            { text: 'ESPN', url: 'https://www.espn.com' },
+            { text: 'BBC Sport', url: 'https://www.bbc.com/sport' }
+        ]
     }
 ];
 
