@@ -34,6 +34,8 @@ function initializeFirebaseManager() {
     userName = document.getElementById('user-name');
     editModeBtn = document.getElementById('edit-mode-btn');
 
+    console.log('Edit mode button element:', editModeBtn);
+
     // Modal Elements
     editModal = document.getElementById('edit-modal');
     modalClose = document.querySelector('.modal-close');
@@ -104,14 +106,22 @@ function initializeFirebaseManager() {
     });
 
     // Toggle Edit Mode
-    editModeBtn.addEventListener('click', () => {
+    editModeBtn.addEventListener('click', (e) => {
+        console.log('Edit mode button clicked!');
+        e.preventDefault();
+        e.stopPropagation();
+
         editMode = !editMode;
+        console.log('Edit mode is now:', editMode);
+
         document.getElementById('edit-mode-text').textContent = editMode ? 'Done' : 'Edit';
         editModeBtn.classList.toggle('active', editMode);
 
         if (editMode) {
+            console.log('Adding edit buttons...');
             addEditButtons();
         } else {
+            console.log('Removing edit buttons...');
             removeEditButtons();
         }
     });
