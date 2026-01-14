@@ -106,25 +106,32 @@ function initializeFirebaseManager() {
     });
 
     // Toggle Edit Mode
-    editModeBtn.addEventListener('click', (e) => {
-        console.log('Edit mode button clicked!');
-        e.preventDefault();
-        e.stopPropagation();
+    if (editModeBtn) {
+        editModeBtn.addEventListener('click', (e) => {
+            console.log('Edit mode button clicked!');
+            console.log('editModeBtn at click time:', editModeBtn);
+            e.preventDefault();
+            e.stopPropagation();
 
-        editMode = !editMode;
-        console.log('Edit mode is now:', editMode);
+            editMode = !editMode;
+            console.log('Edit mode is now:', editMode);
 
-        editModeBtn.textContent = editMode ? 'Done' : 'Edit';
-        editModeBtn.classList.toggle('active', editMode);
+            if (editModeBtn) {
+                editModeBtn.textContent = editMode ? 'Done' : 'Edit';
+                editModeBtn.classList.toggle('active', editMode);
+            }
 
-        if (editMode) {
-            console.log('Adding edit buttons...');
-            addEditButtons();
-        } else {
-            console.log('Removing edit buttons...');
-            removeEditButtons();
-        }
-    });
+            if (editMode) {
+                console.log('Adding edit buttons...');
+                addEditButtons();
+            } else {
+                console.log('Removing edit buttons...');
+                removeEditButtons();
+            }
+        });
+    } else {
+        console.error('Edit mode button not found during initialization!');
+    }
 
     // Save card
     saveCardBtn.addEventListener('click', async () => {
