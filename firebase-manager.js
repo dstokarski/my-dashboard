@@ -270,7 +270,7 @@ async function saveCard() {
 
         if (currentEditingCard) {
             cardId = currentEditingCard.id;
-            order = currentEditingCard.order ?? 0;
+            order = Number.isFinite(currentEditingCard.order) ? currentEditingCard.order : 0;
         } else {
             cardId = `card-${Date.now()}`;
             const cardsRef = window.firebase.db.ref(window.firebase.db.database, 'cards');
