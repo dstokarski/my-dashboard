@@ -164,6 +164,13 @@ function fetchJoke() {
     `;
 }
 
+// Check if user is signed in
+function isUserSignedIn() {
+    // Check both the currentUser variable from firebase-manager.js and Firebase auth
+    return (typeof currentUser !== 'undefined' && currentUser !== null) ||
+           (window.firebase && window.firebase.auth && window.firebase.auth.auth && window.firebase.auth.auth.currentUser);
+}
+
 // Fetch daily suggestions - interesting websites that change daily
 function fetchSuggestions() {
     const suggestionsEl = document.getElementById('suggestions-content');
@@ -206,6 +213,8 @@ function fetchSuggestions() {
 
     const dailySuggestions = shuffled.slice(0, 5);
 
+    const signedIn = isUserSignedIn();
+
     const html = `
         <ul class="suggestions-list">
             ${dailySuggestions.map(s => `
@@ -214,7 +223,7 @@ function fetchSuggestions() {
                         <a href="${s.url}" target="_blank">${s.text}</a>
                         <span class="suggestion-desc">${s.desc}</span>
                     </div>
-                    <button class="save-suggestion-btn" data-text="${s.text}" data-url="${s.url}" data-desc="${s.desc}" title="Save to Saved Sites">+</button>
+                    ${signedIn ? `<button class="save-suggestion-btn" data-text="${s.text}" data-url="${s.url}" data-desc="${s.desc}" title="Save to Saved Sites">+</button>` : ''}
                 </li>
             `).join('')}
         </ul>
@@ -222,32 +231,28 @@ function fetchSuggestions() {
 
     suggestionsEl.innerHTML = html;
 
-    // Add click handlers for save buttons
-    suggestionsEl.querySelectorAll('.save-suggestion-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const site = {
-                text: btn.dataset.text,
-                url: btn.dataset.url,
-                desc: btn.dataset.desc
-            };
-            btn.textContent = '...';
-            btn.disabled = true;
-            await saveSite(site);
-            btn.textContent = '✓';
-            btn.classList.add('saved');
+    // Add click handlers for save buttons (only if signed in)
+    if (signedIn) {
+        suggestionsEl.querySelectorAll('.save-suggestion-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const site = {
+                    text: btn.dataset.text,
+                    url: btn.dataset.url,
+                    desc: btn.dataset.desc
+                };
+                btn.textContent = '...';
+                btn.disabled = true;
+                await saveSite(site);
+                btn.textContent = '✓';
+                btn.classList.add('saved');
+            });
         });
-    });
+    }
 }
 
 // Saved Sites functionality - uses Firebase when signed in, localStorage as fallback
 let savedSitesEditMode = false;
 let cachedSavedSites = [];
-
-function isUserSignedIn() {
-    // Check both the currentUser variable from firebase-manager.js and Firebase auth
-    return (typeof currentUser !== 'undefined' && currentUser !== null) ||
-           (window.firebase && window.firebase.auth && window.firebase.auth.auth && window.firebase.auth.auth.currentUser);
-}
 
 async function getSavedSites() {
     // Check if Firebase is available and user is signed in
@@ -378,6 +383,9 @@ function setupSavedSitesEdit() {
     const editBtn = document.getElementById('edit-saved-sites-btn');
     if (!editBtn) return;
 
+    // Initially hide/show based on sign-in status
+    editBtn.style.display = isUserSignedIn() ? 'inline-flex' : 'none';
+
     editBtn.addEventListener('click', () => {
         savedSitesEditMode = !savedSitesEditMode;
         editBtn.textContent = savedSitesEditMode ? 'Done' : 'Edit';
@@ -385,6 +393,25 @@ function setupSavedSitesEdit() {
         editBtn.classList.toggle('btn-secondary', !savedSitesEditMode);
         renderSavedSites();
     });
+}
+
+// Update UI elements based on sign-in status (called when auth state changes)
+function updateSavedSitesUI() {
+    const editBtn = document.getElementById('edit-saved-sites-btn');
+    if (editBtn) {
+        editBtn.style.display = isUserSignedIn() ? 'inline-flex' : 'none';
+        // Reset edit mode when signing out
+        if (!isUserSignedIn()) {
+            savedSitesEditMode = false;
+            editBtn.textContent = 'Edit';
+            editBtn.classList.remove('btn-primary');
+            editBtn.classList.add('btn-secondary');
+        }
+    }
+    // Re-render suggestions to show/hide save buttons
+    fetchSuggestions();
+    // Re-render saved sites
+    renderSavedSites();
 }
 
 // Initialize

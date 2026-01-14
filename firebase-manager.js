@@ -75,9 +75,9 @@ function initFirebase() {
             userSection.style.display = 'flex';
             userName.textContent = user.displayName || user.email;
             loadCardsFromFirebase();
-            // Reload saved sites from Firebase after sign in
-            if (typeof renderSavedSites === 'function') {
-                renderSavedSites();
+            // Update saved sites UI after sign in
+            if (typeof updateSavedSitesUI === 'function') {
+                updateSavedSitesUI();
             }
         } else {
             currentUser = null;
@@ -85,9 +85,9 @@ function initFirebase() {
             userSection.style.display = 'none';
             exitEditMode();
             renderDefaultCards();
-            // Reload saved sites from localStorage after sign out
-            if (typeof renderSavedSites === 'function') {
-                renderSavedSites();
+            // Update saved sites UI after sign out
+            if (typeof updateSavedSitesUI === 'function') {
+                updateSavedSitesUI();
             }
         }
     });
