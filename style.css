@@ -216,6 +216,21 @@ body {
     font-size: 12px;
 }
 
+.weather-link {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--vscode-border);
+    color: var(--vscode-accent);
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.weather-link:hover {
+    text-decoration: underline;
+}
+
 /* Cards */
 .cards-container {
     padding: 24px;

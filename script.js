@@ -24,7 +24,7 @@ function updateTime() {
 }
 
 // Weather Data using Open-Meteo API
-async function fetchWeather(lat, lon, elementId) {
+async function fetchWeather(lat, lon, elementId, wundergroundUrl) {
     try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=America%2FToronto&forecast_days=5`;
 
@@ -66,6 +66,7 @@ async function fetchWeather(lat, lon, elementId) {
             <div class="weather-forecast">
                 ${forecastHTML}
             </div>
+            <a href="${wundergroundUrl}" target="_blank" class="weather-link">10 Day Forecast</a>
         `;
 
         document.getElementById(elementId).innerHTML = weatherHTML;
@@ -95,13 +96,13 @@ function init() {
     setInterval(updateTime, 1000);
 
     // Fetch weather for Ottawa and Chelsea
-    fetchWeather(45.4215, -75.6972, 'weather-ottawa');
-    fetchWeather(45.5, -75.8, 'weather-chelsea');
+    fetchWeather(45.4215, -75.6972, 'weather-ottawa', 'https://www.wunderground.com/forecast/ca/ottawa');
+    fetchWeather(45.5, -75.8, 'weather-chelsea', 'https://www.wunderground.com/forecast/ca/chelsea');
 
     // Refresh weather every 15 minutes
     setInterval(() => {
-        fetchWeather(45.4215, -75.6972, 'weather-ottawa');
-        fetchWeather(45.5, -75.8, 'weather-chelsea');
+        fetchWeather(45.4215, -75.6972, 'weather-ottawa', 'https://www.wunderground.com/forecast/ca/ottawa');
+        fetchWeather(45.5, -75.8, 'weather-chelsea', 'https://www.wunderground.com/forecast/ca/chelsea');
     }, 15 * 60 * 1000);
 }
 
