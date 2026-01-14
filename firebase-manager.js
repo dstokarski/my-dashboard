@@ -52,6 +52,82 @@ const DEFAULT_CARDS = [
             { text: 'ESPN', url: 'https://www.espn.com' },
             { text: 'BBC Sport', url: 'https://www.bbc.com/sport' }
         ]
+    },
+    {
+        id: 'ottawa-events',
+        title: 'Ottawa Events',
+        order: 4,
+        links: [
+            { text: 'Bronson Centre', url: 'https://bronsoncentre.ca' },
+            { text: 'Mayfair Theatre', url: 'https://mayfairtheatre.ca' },
+            { text: 'Bytowne Cinema', url: 'https://bytowne.ca' },
+            { text: 'Ottawa Bluesfest', url: 'https://ottawabluesfest.ca' },
+            { text: 'Ottawa Folk Festival', url: 'https://ottawafolkfest.com' },
+            { text: 'National Arts Centre', url: 'https://nac-cna.ca' },
+            { text: 'Lansdowne Events', url: 'https://lansdowneottawa.ca' },
+            { text: 'Eventbrite Ottawa', url: 'https://www.eventbrite.ca/d/canada--ottawa/events/' },
+            { text: 'Ottawa Tourism Events', url: 'https://ottawatourism.ca/en/events' }
+        ]
+    },
+    {
+        id: 'google-news',
+        title: 'Google News',
+        order: 5,
+        links: [
+            { text: 'World News', url: 'https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtVnVHZ0pWVXlnQVAB' },
+            { text: 'Canada News', url: 'https://news.google.com/topics/CAAqJQgKIh9DQkFTRVFvSUwyMHZNRE55YXpBU0JXVnVMVU5CSWdBUAE' },
+            { text: 'Ottawa News', url: 'https://news.google.com/search?q=ottawa&hl=en-CA&gl=CA&ceid=CA:en' },
+            { text: 'Technology', url: 'https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB' },
+            { text: 'Science', url: 'https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp0Y1RjU0FtVnVHZ0pWVXlnQVAB' }
+        ]
+    },
+    {
+        id: 'technology',
+        title: 'Technology',
+        order: 6,
+        links: [
+            { text: 'The Verge', url: 'https://www.theverge.com' },
+            { text: 'Ars Technica', url: 'https://arstechnica.com' },
+            { text: 'Wired', url: 'https://www.wired.com' },
+            { text: 'TechCrunch', url: 'https://techcrunch.com' },
+            { text: 'Hacker News', url: 'https://news.ycombinator.com' }
+        ]
+    },
+    {
+        id: 'science',
+        title: 'Science',
+        order: 7,
+        links: [
+            { text: 'Nature', url: 'https://www.nature.com' },
+            { text: 'Science Magazine', url: 'https://www.science.org' },
+            { text: 'Scientific American', url: 'https://www.scientificamerican.com' },
+            { text: 'New Scientist', url: 'https://www.newscientist.com' },
+            { text: 'Quanta Magazine', url: 'https://www.quantamagazine.org' }
+        ]
+    },
+    {
+        id: 'finance',
+        title: 'Finance',
+        order: 8,
+        links: [
+            { text: 'Yahoo Finance', url: 'https://finance.yahoo.com' },
+            { text: 'Bloomberg', url: 'https://www.bloomberg.com' },
+            { text: 'Financial Post', url: 'https://financialpost.com' },
+            { text: 'Google Finance', url: 'https://www.google.com/finance' },
+            { text: 'MarketWatch', url: 'https://www.marketwatch.com' }
+        ]
+    },
+    {
+        id: 'entertainment',
+        title: 'Entertainment',
+        order: 9,
+        links: [
+            { text: 'IMDb', url: 'https://www.imdb.com' },
+            { text: 'Rotten Tomatoes', url: 'https://www.rottentomatoes.com' },
+            { text: 'Variety', url: 'https://variety.com' },
+            { text: 'The Hollywood Reporter', url: 'https://www.hollywoodreporter.com' },
+            { text: 'Metacritic', url: 'https://www.metacritic.com' }
+        ]
     }
 ];
 
@@ -448,6 +524,32 @@ async function loadCardsFromFirebase() {
         }
 
         const cardsData = snapshot.val();
+        const existingIds = Object.keys(cardsData);
+
+        // Check for missing default cards and add them
+        const missingCards = DEFAULT_CARDS.filter(card => !existingIds.includes(card.id));
+        if (missingCards.length > 0) {
+            // Find the max order in existing cards
+            const maxOrder = Math.max(...Object.values(cardsData).map(c => c.order || 0));
+
+            const promises = missingCards.map((card, index) => {
+                const cardRef = window.firebase.db.ref(
+                    window.firebase.db.database,
+                    `cards/${card.id}`
+                );
+                return window.firebase.db.set(cardRef, {
+                    title: card.title,
+                    links: card.links,
+                    order: maxOrder + 1 + index
+                });
+            });
+
+            await Promise.all(promises);
+            // Reload after adding missing cards
+            await loadCardsFromFirebase();
+            return;
+        }
+
         const cardsArray = Object.entries(cardsData).map(([id, data]) => ({
             id,
             ...data
