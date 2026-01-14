@@ -1,19 +1,17 @@
-/* GitHub-inspired theme */
+/* VSCode Dark Theme */
 :root {
-    --color-canvas-default: #0d1117;
-    --color-canvas-subtle: #161b22;
-    --color-border-default: #30363d;
-    --color-border-muted: #21262d;
-    --color-fg-default: #c9d1d9;
-    --color-fg-muted: #8b949e;
-    --color-fg-subtle: #6e7681;
-    --color-accent-fg: #58a6ff;
-    --color-accent-emphasis: #1f6feb;
-    --color-success-emphasis: #238636;
-    --color-danger-emphasis: #da3633;
-    --color-btn-bg: #21262d;
-    --color-btn-border: #30363d;
-    --color-btn-hover-bg: #30363d;
+    --vscode-bg: #1e1e1e;
+    --vscode-sidebar: #252526;
+    --vscode-border: #3c3c3c;
+    --vscode-hover: #2a2d2e;
+    --vscode-text: #cccccc;
+    --vscode-text-muted: #858585;
+    --vscode-blue: #569cd6;
+    --vscode-green: #4ec9b0;
+    --vscode-red: #f48771;
+    --vscode-orange: #ce9178;
+    --vscode-purple: #c586c0;
+    --vscode-yellow: #dcdcaa;
 }
 
 * {
@@ -23,145 +21,146 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-    background-color: var(--color-canvas-default);
-    color: var(--color-fg-default);
-    line-height: 1.5;
-    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--vscode-bg);
+    color: var(--vscode-text);
+    line-height: 1.6;
+    font-size: 13px;
 }
 
 .container {
-    max-width: 1280px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 24px;
+    padding: 0;
 }
 
 /* Header */
 .header {
+    background-color: var(--vscode-sidebar);
+    border-bottom: 1px solid var(--vscode-border);
+    padding: 12px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--color-border-default);
-    margin-bottom: 24px;
     flex-wrap: wrap;
     gap: 16px;
 }
 
-.time-date {
+.time-display {
     display: flex;
     flex-direction: column;
+    gap: 4px;
 }
 
 .time {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 600;
-    color: var(--color-fg-default);
+    color: var(--vscode-green);
+    font-family: 'Consolas', 'Courier New', monospace;
 }
 
 .date {
-    font-size: 14px;
-    color: var(--color-fg-muted);
-    margin-top: 4px;
+    font-size: 12px;
+    color: var(--vscode-text-muted);
 }
 
 .header-right {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
 }
 
-.user-info {
+.user-section {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-#user-name {
-    color: var(--color-fg-default);
-    font-weight: 500;
+.user-name {
+    color: var(--vscode-text);
+    font-size: 13px;
 }
 
 /* Buttons */
 .btn {
-    display: inline-block;
-    padding: 5px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
-    white-space: nowrap;
-    vertical-align: middle;
+    padding: 6px 14px;
+    border: 1px solid var(--vscode-border);
+    border-radius: 2px;
+    background-color: var(--vscode-sidebar);
+    color: var(--vscode-text);
+    font-size: 13px;
     cursor: pointer;
-    user-select: none;
-    border: 1px solid;
-    border-radius: 6px;
-    appearance: none;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn:hover {
+    background-color: var(--vscode-hover);
 }
 
 .btn-primary {
+    background-color: var(--vscode-blue);
+    border-color: var(--vscode-blue);
     color: #ffffff;
-    background-color: var(--color-success-emphasis);
-    border-color: rgba(240, 246, 252, 0.1);
 }
 
 .btn-primary:hover {
-    background-color: #2ea043;
+    background-color: #4a90d9;
 }
 
 .btn-secondary {
-    color: var(--color-fg-default);
-    background-color: var(--color-btn-bg);
-    border-color: var(--color-btn-border);
-}
-
-.btn-secondary:hover {
-    background-color: var(--color-btn-hover-bg);
-    border-color: var(--color-fg-subtle);
+    background-color: var(--vscode-sidebar);
+    border-color: var(--vscode-border);
 }
 
 .btn-danger {
-    color: var(--color-danger-emphasis);
-    background-color: var(--color-btn-bg);
-    border-color: var(--color-btn-border);
+    background-color: var(--vscode-sidebar);
+    border-color: var(--vscode-red);
+    color: var(--vscode-red);
 }
 
 .btn-danger:hover {
+    background-color: var(--vscode-red);
     color: #ffffff;
-    background-color: var(--color-danger-emphasis);
-    border-color: var(--color-danger-emphasis);
 }
 
 .btn-sm {
-    padding: 3px 12px;
+    padding: 4px 10px;
     font-size: 12px;
 }
 
-/* Weather Section */
-.weather-section {
+.btn-icon {
+    font-size: 14px;
+}
+
+/* Weather Grid */
+.weather-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 16px;
-    margin-bottom: 24px;
+    padding: 24px;
 }
 
 .weather-card {
-    background-color: var(--color-canvas-subtle);
-    border: 1px solid var(--color-border-default);
-    border-radius: 6px;
+    background-color: var(--vscode-sidebar);
+    border: 1px solid var(--vscode-border);
+    border-radius: 3px;
     padding: 16px;
 }
 
-.weather-card h3 {
-    font-size: 16px;
+.weather-title {
+    font-size: 14px;
     font-weight: 600;
+    color: var(--vscode-blue);
     margin-bottom: 12px;
-    color: var(--color-fg-default);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .weather-content {
-    font-size: 14px;
-    color: var(--color-fg-muted);
+    color: var(--vscode-text);
 }
 
 .weather-current {
@@ -169,14 +168,14 @@ body {
 }
 
 .weather-temp {
-    font-size: 36px;
+    font-size: 32px;
     font-weight: 600;
-    color: var(--color-fg-default);
+    color: var(--vscode-green);
 }
 
 .weather-condition {
-    font-size: 14px;
-    color: var(--color-fg-muted);
+    font-size: 13px;
+    color: var(--vscode-text-muted);
     margin-top: 4px;
 }
 
@@ -184,17 +183,16 @@ body {
     display: flex;
     gap: 16px;
     font-size: 12px;
-    color: var(--color-fg-subtle);
+    color: var(--vscode-text-muted);
     margin-top: 8px;
 }
 
 .weather-forecast {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
-    margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px solid var(--color-border-muted);
+    border-top: 1px solid var(--vscode-border);
 }
 
 .forecast-day {
@@ -202,48 +200,53 @@ body {
 }
 
 .forecast-day-name {
-    font-size: 12px;
-    color: var(--color-fg-subtle);
+    font-size: 11px;
+    color: var(--vscode-text-muted);
     margin-bottom: 4px;
 }
 
 .forecast-temp {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-fg-default);
+    font-size: 13px;
+    color: var(--vscode-text);
 }
 
 .loading {
-    color: var(--color-fg-subtle);
+    color: var(--vscode-text-muted);
     font-style: italic;
+    font-size: 12px;
 }
 
-/* Cards Grid */
+/* Cards */
+.cards-container {
+    padding: 24px;
+}
+
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
 }
 
 .card {
-    background-color: var(--color-canvas-subtle);
-    border: 1px solid var(--color-border-default);
-    border-radius: 6px;
+    background-color: var(--vscode-sidebar);
+    border: 1px solid var(--vscode-border);
+    border-radius: 3px;
     padding: 16px;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s;
+    position: relative;
 }
 
 .card:hover {
-    border-color: var(--color-fg-subtle);
+    border-color: var(--vscode-blue);
 }
 
 .card-title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
+    color: var(--vscode-yellow);
     margin-bottom: 12px;
-    color: var(--color-fg-default);
-    border-bottom: 1px solid var(--color-border-muted);
     padding-bottom: 8px;
+    border-bottom: 1px solid var(--vscode-border);
 }
 
 .card-links {
@@ -255,19 +258,18 @@ body {
 }
 
 .card-links a {
-    color: var(--color-accent-fg);
+    color: var(--vscode-blue);
     text-decoration: none;
-    transition: color 0.2s ease;
+    font-size: 13px;
+    transition: color 0.2s;
 }
 
 .card-links a:hover {
-    color: var(--color-fg-default);
-    text-decoration: underline;
+    color: var(--vscode-green);
 }
 
-/* Edit Mode Styles */
+/* Edit Mode */
 .edit-mode .card {
-    position: relative;
     padding-top: 48px;
 }
 
@@ -275,52 +277,57 @@ body {
     position: absolute;
     top: 12px;
     right: 12px;
-    padding: 4px 12px;
-    font-size: 12px;
 }
 
 .add-card-btn {
-    background-color: var(--color-canvas-subtle);
-    border: 2px dashed var(--color-border-default);
-    border-radius: 6px;
-    padding: 48px 16px;
+    background-color: var(--vscode-sidebar);
+    border: 2px dashed var(--vscode-border);
+    border-radius: 3px;
+    padding: 48px 24px;
     text-align: center;
-    color: var(--color-fg-muted);
-    font-size: 16px;
-    font-weight: 500;
+    color: var(--vscode-text-muted);
+    font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
 }
 
 .add-card-btn:hover {
-    border-color: var(--color-accent-fg);
-    color: var(--color-accent-fg);
-    background-color: rgba(88, 166, 255, 0.1);
+    border-color: var(--vscode-blue);
+    color: var(--vscode-blue);
 }
 
 /* Modal */
 .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
-    left: 0;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(1, 4, 9, 0.8);
+    z-index: 1000;
     align-items: center;
     justify-content: center;
 }
 
-.modal-content {
-    background-color: var(--color-canvas-subtle);
-    border: 1px solid var(--color-border-default);
-    border-radius: 6px;
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-dialog {
+    position: relative;
+    background-color: var(--vscode-sidebar);
+    border: 1px solid var(--vscode-border);
+    border-radius: 3px;
     width: 90%;
     max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 8px 24px rgba(1, 4, 9, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 .modal-header {
@@ -328,19 +335,19 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
-    border-bottom: 1px solid var(--color-border-default);
+    border-bottom: 1px solid var(--vscode-border);
 }
 
 .modal-header h2 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
-    color: var(--color-fg-default);
+    color: var(--vscode-text);
 }
 
 .modal-close {
     background: none;
     border: none;
-    color: var(--color-fg-muted);
+    color: var(--vscode-text-muted);
     font-size: 24px;
     cursor: pointer;
     padding: 0;
@@ -348,7 +355,7 @@ body {
 }
 
 .modal-close:hover {
-    color: var(--color-fg-default);
+    color: var(--vscode-text);
 }
 
 .modal-body {
@@ -360,7 +367,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
-    border-top: 1px solid var(--color-border-default);
+    border-top: 1px solid var(--vscode-border);
 }
 
 .modal-actions {
@@ -370,35 +377,37 @@ body {
 
 /* Form Elements */
 .form-group {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
     display: block;
+    font-size: 12px;
     font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--color-fg-default);
+    color: var(--vscode-text);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.form-input {
+.form-control {
     width: 100%;
-    padding: 5px 12px;
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--color-fg-default);
-    background-color: var(--color-canvas-default);
-    border: 1px solid var(--color-border-default);
-    border-radius: 6px;
+    padding: 8px 12px;
+    background-color: var(--vscode-bg);
+    border: 1px solid var(--vscode-border);
+    border-radius: 2px;
+    color: var(--vscode-text);
+    font-size: 13px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-control:focus {
     outline: none;
+    border-color: var(--vscode-blue);
 }
 
-.form-input:focus {
-    border-color: var(--color-accent-emphasis);
-    box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.1);
-}
-
-/* Links Editor */
-#links-editor {
+/* Links Container */
+.links-container {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -413,55 +422,50 @@ body {
 }
 
 .link-row input {
-    padding: 5px 12px;
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--color-fg-default);
-    background-color: var(--color-canvas-default);
-    border: 1px solid var(--color-border-default);
-    border-radius: 6px;
-    outline: none;
+    padding: 6px 10px;
+    background-color: var(--vscode-bg);
+    border: 1px solid var(--vscode-border);
+    border-radius: 2px;
+    color: var(--vscode-text);
+    font-size: 12px;
 }
 
 .link-row input:focus {
-    border-color: var(--color-accent-emphasis);
+    outline: none;
+    border-color: var(--vscode-blue);
 }
 
 .remove-link-btn {
-    padding: 5px 12px;
-    font-size: 14px;
-    color: var(--color-danger-emphasis);
-    background-color: var(--color-btn-bg);
-    border: 1px solid var(--color-btn-border);
-    border-radius: 6px;
+    padding: 6px 10px;
+    background-color: var(--vscode-sidebar);
+    border: 1px solid var(--vscode-border);
+    border-radius: 2px;
+    color: var(--vscode-red);
     cursor: pointer;
+    font-size: 16px;
 }
 
 .remove-link-btn:hover {
-    background-color: var(--color-danger-emphasis);
+    background-color: var(--vscode-red);
     color: #ffffff;
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 768px) {
-    .container {
-        padding: 16px;
-    }
-
     .header {
-        flex-direction: column;
-        align-items: flex-start;
+        padding: 12px 16px;
     }
 
-    .time {
-        font-size: 24px;
+    .weather-grid,
+    .cards-container {
+        padding: 16px;
     }
 
     .cards-grid {
         grid-template-columns: 1fr;
     }
 
-    .weather-section {
+    .weather-grid {
         grid-template-columns: 1fr;
     }
 
@@ -469,7 +473,11 @@ body {
         grid-template-columns: 1fr;
     }
 
-    .modal-content {
+    .modal-dialog {
         width: 95%;
+    }
+
+    .weather-forecast {
+        grid-template-columns: repeat(2, 1fr);
     }
 }

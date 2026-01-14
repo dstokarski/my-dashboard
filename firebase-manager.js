@@ -2,187 +2,135 @@ let currentUser = null;
 let editMode = false;
 let currentEditingCard = null;
 
-function initializeFirebaseManager() {
-    if (!window.firebaseAuth || !window.firebaseDB) {
-        window.addEventListener('firebaseReady', () => {
-            initializeFirebaseManager();
-        }, { once: true });
+const DEFAULT_CARDS = [
+    {
+        id: 'world-news',
+        title: 'World News',
+        order: 0,
+        links: [
+            { text: 'BBC News', url: 'https://www.bbc.com/news' },
+            { text: 'CNN', url: 'https://www.cnn.com' },
+            { text: 'The Guardian', url: 'https://www.theguardian.com' },
+            { text: 'Al Jazeera', url: 'https://www.aljazeera.com' },
+            { text: 'Reuters', url: 'https://www.reuters.com' }
+        ]
+    },
+    {
+        id: 'canada-news',
+        title: 'Canada News',
+        order: 1,
+        links: [
+            { text: 'CBC News', url: 'https://www.cbc.ca/news' },
+            { text: 'CTV News', url: 'https://www.ctvnews.ca' },
+            { text: 'Global News', url: 'https://globalnews.ca' },
+            { text: 'The Globe and Mail', url: 'https://www.theglobeandmail.com' },
+            { text: 'National Post', url: 'https://nationalpost.com' }
+        ]
+    },
+    {
+        id: 'ottawa-news',
+        title: 'Ottawa News',
+        order: 2,
+        links: [
+            { text: 'CBC Ottawa', url: 'https://www.cbc.ca/news/canada/ottawa' },
+            { text: 'CTV Ottawa', url: 'https://ottawa.ctvnews.ca' },
+            { text: 'Ottawa Citizen', url: 'https://ottawacitizen.com' },
+            { text: 'Ottawa Matters', url: 'https://www.ottawamatters.com' },
+            { text: 'Apt613', url: 'https://www.apt613.ca' }
+        ]
+    }
+];
+
+function initFirebase() {
+    if (!window.firebase) {
+        window.addEventListener('firebaseReady', initFirebase, { once: true });
         return;
     }
 
     const signInBtn = document.getElementById('sign-in-btn');
     const signOutBtn = document.getElementById('sign-out-btn');
-    const userInfo = document.getElementById('user-info');
+    const userSection = document.getElementById('user-section');
     const userName = document.getElementById('user-name');
     const editBtn = document.getElementById('edit-btn');
-    const modal = document.getElementById('edit-modal');
-    const modalClose = document.querySelector('.modal-close');
-    const cardTitleInput = document.getElementById('card-title-input');
-    const linksEditor = document.getElementById('links-editor');
-    const addLinkBtn = document.getElementById('add-link-btn');
-    const saveBtn = document.getElementById('save-btn');
-    const cancelBtn = document.getElementById('cancel-btn');
-    const deleteCardBtn = document.getElementById('delete-card-btn');
 
-    // Authentication
-    window.firebaseAuth.onAuthStateChanged(window.firebaseAuth.auth, (user) => {
+    // Auth state listener
+    window.firebase.auth.onAuthStateChanged(window.firebase.auth.auth, (user) => {
         if (user) {
             currentUser = user;
             signInBtn.style.display = 'none';
-            userInfo.style.display = 'flex';
+            userSection.style.display = 'flex';
             userName.textContent = user.displayName || user.email;
-            checkAndLoadData();
+            loadCardsFromFirebase();
         } else {
             currentUser = null;
-            signInBtn.style.display = 'inline-block';
-            userInfo.style.display = 'none';
-            editMode = false;
+            signInBtn.style.display = 'inline-flex';
+            userSection.style.display = 'none';
             exitEditMode();
+            renderDefaultCards();
         }
     });
 
+    // Sign in
     signInBtn.addEventListener('click', async () => {
         try {
-            await window.firebaseAuth.signInWithPopup(
-                window.firebaseAuth.auth,
-                window.firebaseAuth.provider
+            await window.firebase.auth.signInWithPopup(
+                window.firebase.auth.auth,
+                window.firebase.auth.provider
             );
         } catch (error) {
             console.error('Sign in error:', error);
-            alert('Failed to sign in. Please try again.');
+            alert('Sign in failed. Please try again.');
         }
     });
 
+    // Sign out
     signOutBtn.addEventListener('click', async () => {
         try {
-            await window.firebaseAuth.signOut(window.firebaseAuth.auth);
+            await window.firebase.auth.signOut(window.firebase.auth.auth);
         } catch (error) {
             console.error('Sign out error:', error);
         }
     });
 
-    // Edit Mode
+    // Edit mode toggle
     editBtn.addEventListener('click', () => {
         editMode = !editMode;
-        editBtn.textContent = editMode ? 'Done' : 'Edit';
-        editBtn.classList.toggle('btn-primary', editMode);
-        editBtn.classList.toggle('btn-secondary', !editMode);
-
         if (editMode) {
             enterEditMode();
+            editBtn.textContent = 'Done';
+            editBtn.classList.remove('btn-secondary');
+            editBtn.classList.add('btn-primary');
         } else {
             exitEditMode();
+            editBtn.textContent = 'Edit';
+            editBtn.classList.remove('btn-primary');
+            editBtn.classList.add('btn-secondary');
         }
     });
 
-    // Modal Controls
-    addLinkBtn.addEventListener('click', () => addLinkRow());
+    setupModal();
+    renderDefaultCards();
+}
 
-    saveBtn.addEventListener('click', async () => {
-        const title = cardTitleInput.value.trim();
-        if (!title) {
-            alert('Card title is required');
-            return;
-        }
+function setupModal() {
+    const modal = document.getElementById('edit-modal');
+    const modalClose = document.getElementById('modal-close');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const deleteBtn = document.getElementById('delete-card-btn');
+    const addLinkBtn = document.getElementById('add-link-btn');
 
-        const linkRows = linksEditor.querySelectorAll('.link-row');
-        const links = [];
-
-        linkRows.forEach(row => {
-            const text = row.querySelector('.link-text').value.trim();
-            const url = row.querySelector('.link-url').value.trim();
-            if (text && url) {
-                links.push({ text, url });
-            }
-        });
-
-        if (links.length === 0) {
-            alert('At least one link is required');
-            return;
-        }
-
-        try {
-            let cardId, order;
-
-            if (currentEditingCard) {
-                cardId = currentEditingCard.id;
-                order = currentEditingCard.order;
-            } else {
-                cardId = `card-${Date.now()}`;
-                const cardsRef = window.firebaseDB.ref(window.firebaseDB.database, 'cards');
-                const snapshot = await window.firebaseDB.get(cardsRef);
-
-                if (snapshot.exists()) {
-                    const cardsData = snapshot.val();
-                    const maxOrder = Math.max(...Object.values(cardsData).map(card => card.order || 0));
-                    order = maxOrder + 1;
-                } else {
-                    order = 0;
-                }
-            }
-
-            const cardData = { title, links, order };
-            const cardRef = window.firebaseDB.ref(window.firebaseDB.database, `cards/${cardId}`);
-            await window.firebaseDB.set(cardRef, cardData);
-
-            closeModal();
-            await loadCards();
-        } catch (error) {
-            console.error('Error saving card:', error);
-            alert('Failed to save card. Please try again.');
-        }
-    });
-
-    deleteCardBtn.addEventListener('click', async () => {
-        if (!currentEditingCard) return;
-
-        if (!confirm('Are you sure you want to delete this card?')) return;
-
-        try {
-            const cardRef = window.firebaseDB.ref(
-                window.firebaseDB.database,
-                `cards/${currentEditingCard.id}`
-            );
-            await window.firebaseDB.remove(cardRef);
-
-            closeModal();
-            await loadCards();
-        } catch (error) {
-            console.error('Error deleting card:', error);
-            alert('Failed to delete card. Please try again.');
-        }
-    });
-
-    cancelBtn.addEventListener('click', closeModal);
     modalClose.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
 
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
+    modal.querySelector('.modal-overlay').addEventListener('click', closeModal);
+
+    addLinkBtn.addEventListener('click', () => {
+        addLinkRow();
     });
 
-    // Make clear function available
-    window.clearFirebaseData = async function() {
-        if (!currentUser) {
-            alert('Please sign in first');
-            return;
-        }
-
-        if (!confirm('WARNING: This will permanently delete ALL cards from Firebase. Continue?')) {
-            return;
-        }
-
-        try {
-            const cardsRef = window.firebaseDB.ref(window.firebaseDB.database, 'cards');
-            await window.firebaseDB.remove(cardsRef);
-            alert('Database cleared');
-            location.reload();
-        } catch (error) {
-            console.error('Error clearing database:', error);
-            alert('Failed to clear database');
-        }
-    };
+    saveBtn.addEventListener('click', saveCard);
+    deleteBtn.addEventListener('click', deleteCard);
 }
 
 function enterEditMode() {
@@ -201,11 +149,11 @@ function addEditButtons() {
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
         if (!card.querySelector('.card-edit-btn')) {
-            const editBtn = document.createElement('button');
-            editBtn.className = 'btn btn-secondary btn-sm card-edit-btn';
-            editBtn.textContent = 'Edit';
-            editBtn.addEventListener('click', () => openEditModal(card));
-            card.insertBefore(editBtn, card.firstChild);
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-secondary btn-sm card-edit-btn';
+            btn.textContent = 'Edit';
+            btn.addEventListener('click', () => openEditModal(card));
+            card.appendChild(btn);
         }
     });
 }
@@ -216,44 +164,54 @@ function removeEditButtons() {
 
 function addAddCardButton() {
     if (!document.getElementById('add-card-btn')) {
-        const addCardBtn = document.createElement('div');
-        addCardBtn.id = 'add-card-btn';
-        addCardBtn.className = 'add-card-btn';
-        addCardBtn.textContent = '+ Add Card';
-        addCardBtn.addEventListener('click', () => openEditModal(null));
-        document.querySelector('.cards-grid').appendChild(addCardBtn);
+        const btn = document.createElement('div');
+        btn.id = 'add-card-btn';
+        btn.className = 'add-card-btn';
+        btn.textContent = '+ Add Card';
+        btn.addEventListener('click', () => openEditModal(null));
+        document.querySelector('.cards-grid').appendChild(btn);
     }
 }
 
 function removeAddCardButton() {
-    const addCardBtn = document.getElementById('add-card-btn');
-    if (addCardBtn) addCardBtn.remove();
+    const btn = document.getElementById('add-card-btn');
+    if (btn) btn.remove();
 }
 
-function openEditModal(card) {
-    if (card) {
-        const cardId = card.dataset.cardId;
-        const order = parseInt(card.dataset.order);
-        const title = card.querySelector('.card-title').textContent;
-        const links = Array.from(card.querySelectorAll('.card-links a')).map(a => ({
+function openEditModal(cardElement) {
+    const modal = document.getElementById('edit-modal');
+    const titleInput = document.getElementById('card-title-input');
+    const linksContainer = document.getElementById('links-container');
+    const deleteBtn = document.getElementById('delete-card-btn');
+
+    linksContainer.innerHTML = '';
+
+    if (cardElement) {
+        // Editing existing card
+        const cardId = cardElement.dataset.cardId;
+        const title = cardElement.querySelector('.card-title').textContent;
+        const links = Array.from(cardElement.querySelectorAll('.card-links a')).map(a => ({
             text: a.textContent,
             url: a.href
         }));
 
-        currentEditingCard = { id: cardId, order, title, links };
-        document.getElementById('card-title-input').value = title;
-        document.getElementById('links-editor').innerHTML = '';
+        currentEditingCard = {
+            id: cardId,
+            order: parseInt(cardElement.dataset.order)
+        };
+
+        titleInput.value = title;
         links.forEach(link => addLinkRow(link.text, link.url));
-        document.getElementById('delete-card-btn').style.display = 'block';
+        deleteBtn.style.display = 'block';
     } else {
+        // Adding new card
         currentEditingCard = null;
-        document.getElementById('card-title-input').value = '';
-        document.getElementById('links-editor').innerHTML = '';
-        addLinkRow('', '');
-        document.getElementById('delete-card-btn').style.display = 'none';
+        titleInput.value = '';
+        addLinkRow();
+        deleteBtn.style.display = 'none';
     }
 
-    document.getElementById('edit-modal').style.display = 'flex';
+    modal.style.display = 'flex';
 }
 
 function closeModal() {
@@ -262,6 +220,7 @@ function closeModal() {
 }
 
 function addLinkRow(text = '', url = '') {
+    const container = document.getElementById('links-container');
     const row = document.createElement('div');
     row.className = 'link-row';
     row.innerHTML = `
@@ -274,56 +233,94 @@ function addLinkRow(text = '', url = '') {
         row.remove();
     });
 
-    document.getElementById('links-editor').appendChild(row);
+    container.appendChild(row);
 }
 
-async function checkAndLoadData() {
-    try {
-        const cardsRef = window.firebaseDB.ref(window.firebaseDB.database, 'cards');
-        const snapshot = await window.firebaseDB.get(cardsRef);
-
-        if (!snapshot.exists()) {
-            await migrateDefaultCards();
-        } else {
-            await loadCards();
-        }
-    } catch (error) {
-        console.error('Error checking data:', error);
+async function saveCard() {
+    const title = document.getElementById('card-title-input').value.trim();
+    if (!title) {
+        alert('Title is required');
+        return;
     }
-}
 
-async function migrateDefaultCards() {
-    const cards = document.querySelectorAll('.card');
-    const promises = [];
+    const linkRows = document.querySelectorAll('.link-row');
+    const links = [];
 
-    cards.forEach((card, index) => {
-        const cardId = card.dataset.cardId;
-        const title = card.querySelector('.card-title').textContent;
-        const links = Array.from(card.querySelectorAll('.card-links a')).map(a => ({
-            text: a.textContent,
-            url: a.href
-        }));
-
-        const cardData = { title, links, order: index };
-        const cardRef = window.firebaseDB.ref(window.firebaseDB.database, `cards/${cardId}`);
-        promises.push(window.firebaseDB.set(cardRef, cardData));
+    linkRows.forEach(row => {
+        const text = row.querySelector('.link-text').value.trim();
+        const url = row.querySelector('.link-url').value.trim();
+        if (text && url) {
+            links.push({ text, url });
+        }
     });
 
+    if (links.length === 0) {
+        alert('At least one link is required');
+        return;
+    }
+
     try {
-        await Promise.all(promises);
-        console.log('Default cards migrated to Firebase');
-        await loadCards();
+        let cardId, order;
+
+        if (currentEditingCard) {
+            cardId = currentEditingCard.id;
+            order = currentEditingCard.order;
+        } else {
+            cardId = `card-${Date.now()}`;
+            const cardsRef = window.firebase.db.ref(window.firebase.db.database, 'cards');
+            const snapshot = await window.firebase.db.get(cardsRef);
+
+            if (snapshot.exists()) {
+                const cards = snapshot.val();
+                const maxOrder = Math.max(...Object.values(cards).map(c => c.order || 0));
+                order = maxOrder + 1;
+            } else {
+                order = 0;
+            }
+        }
+
+        const cardData = { title, links, order };
+        const cardRef = window.firebase.db.ref(window.firebase.db.database, `cards/${cardId}`);
+        await window.firebase.db.set(cardRef, cardData);
+
+        closeModal();
+        await loadCardsFromFirebase();
     } catch (error) {
-        console.error('Error migrating cards:', error);
+        console.error('Save error:', error);
+        alert('Failed to save card');
     }
 }
 
-async function loadCards() {
-    try {
-        const cardsRef = window.firebaseDB.ref(window.firebaseDB.database, 'cards');
-        const snapshot = await window.firebaseDB.get(cardsRef);
+async function deleteCard() {
+    if (!currentEditingCard) return;
 
-        if (!snapshot.exists()) return;
+    if (!confirm('Delete this card?')) return;
+
+    try {
+        const cardRef = window.firebase.db.ref(
+            window.firebase.db.database,
+            `cards/${currentEditingCard.id}`
+        );
+        await window.firebase.db.remove(cardRef);
+
+        closeModal();
+        await loadCardsFromFirebase();
+    } catch (error) {
+        console.error('Delete error:', error);
+        alert('Failed to delete card');
+    }
+}
+
+async function loadCardsFromFirebase() {
+    try {
+        const cardsRef = window.firebase.db.ref(window.firebase.db.database, 'cards');
+        const snapshot = await window.firebase.db.get(cardsRef);
+
+        if (!snapshot.exists()) {
+            // Migrate default cards
+            await migrateDefaultCards();
+            return;
+        }
 
         const cardsData = snapshot.val();
         const cardsArray = Object.entries(cardsData).map(([id, data]) => ({
@@ -332,21 +329,49 @@ async function loadCards() {
         }));
 
         cardsArray.sort((a, b) => (a.order || 0) - (b.order || 0));
+        renderCards(cardsArray);
+    } catch (error) {
+        console.error('Load error:', error);
+    }
+}
 
-        const cardsGrid = document.querySelector('.cards-grid');
-        cardsGrid.querySelectorAll('.card').forEach(card => card.remove());
-
-        cardsArray.forEach(cardData => {
-            const cardElement = createCardElement(cardData);
-            cardsGrid.appendChild(cardElement);
+async function migrateDefaultCards() {
+    try {
+        const promises = DEFAULT_CARDS.map(card => {
+            const cardRef = window.firebase.db.ref(
+                window.firebase.db.database,
+                `cards/${card.id}`
+            );
+            return window.firebase.db.set(cardRef, {
+                title: card.title,
+                links: card.links,
+                order: card.order
+            });
         });
 
-        if (editMode) {
-            removeEditButtons();
-            addEditButtons();
-        }
+        await Promise.all(promises);
+        await loadCardsFromFirebase();
     } catch (error) {
-        console.error('Error loading cards:', error);
+        console.error('Migration error:', error);
+    }
+}
+
+function renderDefaultCards() {
+    renderCards(DEFAULT_CARDS);
+}
+
+function renderCards(cards) {
+    const grid = document.querySelector('.cards-grid');
+    grid.querySelectorAll('.card').forEach(card => card.remove());
+
+    cards.forEach(cardData => {
+        const card = createCardElement(cardData);
+        grid.appendChild(card);
+    });
+
+    if (editMode) {
+        removeEditButtons();
+        addEditButtons();
     }
 }
 
@@ -356,7 +381,7 @@ function createCardElement(cardData) {
     card.dataset.cardId = cardData.id;
     card.dataset.order = cardData.order;
 
-    const title = document.createElement('h2');
+    const title = document.createElement('h3');
     title.className = 'card-title';
     title.textContent = cardData.title;
 
@@ -379,8 +404,9 @@ function createCardElement(cardData) {
     return card;
 }
 
+// Initialize
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeFirebaseManager);
+    document.addEventListener('DOMContentLoaded', initFirebase);
 } else {
-    initializeFirebaseManager();
+    initFirebase();
 }

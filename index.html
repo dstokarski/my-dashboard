@@ -8,18 +8,20 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
+        <!-- Top Bar -->
         <header class="header">
             <div class="header-left">
-                <div class="time-date">
+                <div class="time-display">
                     <div id="time" class="time"></div>
                     <div id="date" class="date"></div>
                 </div>
             </div>
             <div class="header-right">
-                <button id="sign-in-btn" class="btn btn-primary">Sign in with Google</button>
-                <div id="user-info" class="user-info" style="display: none;">
-                    <span id="user-name"></span>
+                <button id="sign-in-btn" class="btn btn-primary">
+                    <span class="btn-icon">👤</span> Sign in
+                </button>
+                <div id="user-section" class="user-section" style="display: none;">
+                    <span id="user-name" class="user-name"></span>
                     <button id="edit-btn" class="btn btn-secondary">Edit</button>
                     <button id="sign-out-btn" class="btn btn-secondary">Sign out</button>
                 </div>
@@ -27,84 +29,53 @@
         </header>
 
         <!-- Weather Section -->
-        <div class="weather-section">
+        <section class="weather-grid">
             <div class="weather-card">
-                <h3>Ottawa, ON</h3>
+                <h3 class="weather-title">Ottawa, ON</h3>
                 <div id="weather-ottawa" class="weather-content">
-                    <p class="loading">Loading weather...</p>
+                    <p class="loading">Loading weather data...</p>
                 </div>
             </div>
             <div class="weather-card">
-                <h3>Chelsea, QC</h3>
+                <h3 class="weather-title">Chelsea, QC</h3>
                 <div id="weather-chelsea" class="weather-content">
-                    <p class="loading">Loading weather...</p>
+                    <p class="loading">Loading weather data...</p>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Cards Grid -->
-        <div class="cards-grid" id="cards-grid">
-            <!-- World News -->
-            <div class="card" data-card-id="world-news" data-order="0">
-                <h2 class="card-title">World News</h2>
-                <ul class="card-links">
-                    <li><a href="https://www.bbc.com/news" target="_blank">BBC News</a></li>
-                    <li><a href="https://www.nytimes.com" target="_blank">New York Times</a></li>
-                    <li><a href="https://www.theguardian.com" target="_blank">The Guardian</a></li>
-                    <li><a href="https://www.aljazeera.com" target="_blank">Al Jazeera</a></li>
-                    <li><a href="https://www.reuters.com" target="_blank">Reuters</a></li>
-                </ul>
-            </div>
-
-            <!-- Canada News -->
-            <div class="card" data-card-id="canada-news" data-order="1">
-                <h2 class="card-title">Canada News</h2>
-                <ul class="card-links">
-                    <li><a href="https://www.cbc.ca/news" target="_blank">CBC News</a></li>
-                    <li><a href="https://www.theglobeandmail.com" target="_blank">The Globe and Mail</a></li>
-                    <li><a href="https://www.ctvnews.ca" target="_blank">CTV News</a></li>
-                    <li><a href="https://globalnews.ca" target="_blank">Global News</a></li>
-                    <li><a href="https://nationalpost.com" target="_blank">National Post</a></li>
-                </ul>
-            </div>
-
-            <!-- Ottawa News -->
-            <div class="card" data-card-id="ottawa-news" data-order="2">
-                <h2 class="card-title">Ottawa News</h2>
-                <ul class="card-links">
-                    <li><a href="https://www.cbc.ca/news/canada/ottawa" target="_blank">CBC Ottawa</a></li>
-                    <li><a href="https://ottawa.ctvnews.ca" target="_blank">CTV Ottawa</a></li>
-                    <li><a href="https://ottawacitizen.com" target="_blank">Ottawa Citizen</a></li>
-                    <li><a href="https://www.ottawamatters.com" target="_blank">Ottawa Matters</a></li>
-                    <li><a href="https://www.apt613.ca" target="_blank">Apt613</a></li>
-                </ul>
-            </div>
-        </div>
+        <section class="cards-container">
+            <div id="cards-grid" class="cards-grid"></div>
+        </section>
     </div>
 
     <!-- Edit Modal -->
     <div id="edit-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-overlay"></div>
+        <div class="modal-dialog">
             <div class="modal-header">
                 <h2 id="modal-title">Edit Card</h2>
-                <button class="modal-close">&times;</button>
+                <button class="modal-close" id="modal-close">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="card-title-input">Card Title</label>
-                    <input type="text" id="card-title-input" class="form-input" placeholder="Enter card title">
+                    <label for="card-title-input">Title</label>
+                    <input type="text" id="card-title-input" class="form-control" placeholder="Card title">
                 </div>
                 <div class="form-group">
                     <label>Links</label>
-                    <div id="links-editor"></div>
-                    <button id="add-link-btn" class="btn btn-secondary btn-sm">+ Add Link</button>
+                    <div id="links-container" class="links-container"></div>
+                    <button id="add-link-btn" class="btn btn-secondary btn-sm">
+                        <span class="btn-icon">+</span> Add Link
+                    </button>
                 </div>
             </div>
             <div class="modal-footer">
                 <button id="delete-card-btn" class="btn btn-danger">Delete Card</button>
                 <div class="modal-actions">
                     <button id="cancel-btn" class="btn btn-secondary">Cancel</button>
-                    <button id="save-btn" class="btn btn-primary">Save Changes</button>
+                    <button id="save-btn" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </div>
@@ -133,8 +104,11 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        window.firebaseDB = { database, ref, set, get, remove };
-        window.firebaseAuth = { auth, provider, signInWithPopup, signOut, onAuthStateChanged };
+        window.firebase = {
+            db: { database, ref, set, get, remove },
+            auth: { auth, provider, signInWithPopup, signOut, onAuthStateChanged }
+        };
+
         window.dispatchEvent(new Event('firebaseReady'));
     </script>
     <script src="firebase-manager.js"></script>

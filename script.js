@@ -1,39 +1,41 @@
-// Time and Date
+// Time and Date Display
 function updateTime() {
     const now = new Date();
-    const options = { timeZone: 'America/Toronto', hour12: true };
-
-    const timeString = now.toLocaleTimeString('en-US', {
-        ...options,
+    const timeOptions = {
+        timeZone: 'America/Toronto',
+        hour12: true,
         hour: '2-digit',
         minute: '2-digit'
-    });
+    };
 
-    const dateString = now.toLocaleDateString('en-US', {
-        ...options,
+    const dateOptions = {
+        timeZone: 'America/Toronto',
         weekday: 'long',
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-    });
+    };
+
+    const timeString = now.toLocaleTimeString('en-US', timeOptions);
+    const dateString = now.toLocaleDateString('en-US', dateOptions);
 
     document.getElementById('time').textContent = timeString;
     document.getElementById('date').textContent = dateString;
 }
 
-// Weather Data (using Open-Meteo API)
+// Weather Data using Open-Meteo API
 async function fetchWeather(lat, lon, elementId) {
     try {
-        const response = await fetch(
-            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=America%2FToronto&forecast_days=5`
-        );
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=America%2FToronto&forecast_days=5`;
+
+        const response = await fetch(url);
         const data = await response.json();
 
         const current = data.current;
         const daily = data.daily;
 
-        const weatherCode = getWeatherDescription(current.weathercode);
         const temp = Math.round(current.temperature_2m);
+        const weatherDesc = getWeatherDescription(current.weathercode);
         const humidity = Math.round(current.relativehumidity_2m);
         const windSpeed = Math.round(current.windspeed_10m);
 
@@ -55,7 +57,7 @@ async function fetchWeather(lat, lon, elementId) {
         const weatherHTML = `
             <div class="weather-current">
                 <div class="weather-temp">${temp}°C</div>
-                <div class="weather-condition">${weatherCode}</div>
+                <div class="weather-condition">${weatherDesc}</div>
                 <div class="weather-details">
                     <span>💧 ${humidity}%</span>
                     <span>💨 ${windSpeed} km/h</span>
@@ -68,48 +70,31 @@ async function fetchWeather(lat, lon, elementId) {
 
         document.getElementById(elementId).innerHTML = weatherHTML;
     } catch (error) {
-        console.error('Error fetching weather:', error);
-        document.getElementById(elementId).innerHTML = '<p class="loading">Weather unavailable</p>';
+        console.error('Weather fetch error:', error);
+        document.getElementById(elementId).innerHTML = '<p class="loading">Unable to load weather</p>';
     }
 }
 
 function getWeatherDescription(code) {
-    const weatherCodes = {
-        0: 'Clear',
-        1: 'Mainly Clear',
-        2: 'Partly Cloudy',
-        3: 'Overcast',
-        45: 'Foggy',
-        48: 'Foggy',
-        51: 'Light Drizzle',
-        53: 'Drizzle',
-        55: 'Heavy Drizzle',
-        61: 'Light Rain',
-        63: 'Rain',
-        65: 'Heavy Rain',
-        71: 'Light Snow',
-        73: 'Snow',
-        75: 'Heavy Snow',
-        77: 'Snow Grains',
-        80: 'Light Showers',
-        81: 'Showers',
-        82: 'Heavy Showers',
-        85: 'Light Snow',
-        86: 'Snow',
-        95: 'Thunderstorm',
-        96: 'Thunderstorm with Hail',
-        99: 'Thunderstorm with Hail'
+    const codes = {
+        0: 'Clear', 1: 'Mainly Clear', 2: 'Partly Cloudy', 3: 'Overcast',
+        45: 'Foggy', 48: 'Foggy', 51: 'Light Drizzle', 53: 'Drizzle',
+        55: 'Heavy Drizzle', 61: 'Light Rain', 63: 'Rain', 65: 'Heavy Rain',
+        71: 'Light Snow', 73: 'Snow', 75: 'Heavy Snow', 77: 'Snow Grains',
+        80: 'Light Showers', 81: 'Showers', 82: 'Heavy Showers',
+        85: 'Light Snow Showers', 86: 'Snow Showers',
+        95: 'Thunderstorm', 96: 'Thunderstorm with Hail', 99: 'Severe Thunderstorm'
     };
-    return weatherCodes[code] || 'Unknown';
+    return codes[code] || 'Unknown';
 }
 
 // Initialize
 function init() {
+    // Update time immediately and every second
     updateTime();
     setInterval(updateTime, 1000);
 
-    // Ottawa: 45.4215, -75.6972
-    // Chelsea: 45.5, -75.8
+    // Fetch weather for Ottawa and Chelsea
     fetchWeather(45.4215, -75.6972, 'weather-ottawa');
     fetchWeather(45.5, -75.8, 'weather-chelsea');
 
@@ -120,6 +105,7 @@ function init() {
     }, 15 * 60 * 1000);
 }
 
+// Start when page loads
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
