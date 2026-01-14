@@ -222,7 +222,7 @@ body {
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid var(--vscode-border);
-    color: var(--vscode-accent);
+    color: var(--vscode-blue);
     text-decoration: none;
     font-size: 13px;
 }
@@ -288,10 +288,34 @@ body {
     padding-top: 48px;
 }
 
-.card-edit-btn {
+.card-edit-controls {
     position: absolute;
     top: 12px;
+    left: 12px;
     right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-reorder-btns {
+    display: flex;
+    gap: 4px;
+}
+
+.card-move-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.card-move-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 .add-card-btn {

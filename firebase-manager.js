@@ -147,19 +147,47 @@ function exitEditMode() {
 
 function addEditButtons() {
     const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
+    const totalCards = cards.length;
+
+    cards.forEach((card, index) => {
         if (!card.querySelector('.card-edit-btn')) {
-            const btn = document.createElement('button');
-            btn.className = 'btn btn-secondary btn-sm card-edit-btn';
-            btn.textContent = 'Edit';
-            btn.addEventListener('click', () => openEditModal(card));
-            card.appendChild(btn);
+            const btnContainer = document.createElement('div');
+            btnContainer.className = 'card-edit-controls';
+
+            const reorderBtns = document.createElement('div');
+            reorderBtns.className = 'card-reorder-btns';
+
+            const upBtn = document.createElement('button');
+            upBtn.className = 'btn btn-secondary btn-sm card-move-btn';
+            upBtn.textContent = '↑';
+            upBtn.title = 'Move up';
+            upBtn.disabled = index === 0;
+            upBtn.addEventListener('click', () => moveCard(card, 'up'));
+
+            const downBtn = document.createElement('button');
+            downBtn.className = 'btn btn-secondary btn-sm card-move-btn';
+            downBtn.textContent = '↓';
+            downBtn.title = 'Move down';
+            downBtn.disabled = index === totalCards - 1;
+            downBtn.addEventListener('click', () => moveCard(card, 'down'));
+
+            reorderBtns.appendChild(upBtn);
+            reorderBtns.appendChild(downBtn);
+
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn btn-secondary btn-sm card-edit-btn';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => openEditModal(card));
+
+            btnContainer.appendChild(reorderBtns);
+            btnContainer.appendChild(editBtn);
+            card.appendChild(btnContainer);
         }
     });
 }
 
 function removeEditButtons() {
-    document.querySelectorAll('.card-edit-btn').forEach(btn => btn.remove());
+    document.querySelectorAll('.card-edit-controls').forEach(el => el.remove());
 }
 
 function addAddCardButton() {
@@ -314,6 +342,36 @@ async function deleteCard() {
     } catch (error) {
         console.error('Delete error:', error);
         alert('Failed to delete card');
+    }
+}
+
+async function moveCard(cardElement, direction) {
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const currentIndex = cards.indexOf(cardElement);
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+
+    if (targetIndex < 0 || targetIndex >= cards.length) return;
+
+    const currentCard = cardElement;
+    const targetCard = cards[targetIndex];
+
+    const currentId = currentCard.dataset.cardId;
+    const targetId = targetCard.dataset.cardId;
+    const currentOrder = parseInt(currentCard.dataset.order) || 0;
+    const targetOrder = parseInt(targetCard.dataset.order) || 0;
+
+    try {
+        const updates = {};
+        updates[`cards/${currentId}/order`] = targetOrder;
+        updates[`cards/${targetId}/order`] = currentOrder;
+
+        const dbRef = window.firebase.db.ref(window.firebase.db.database);
+        await window.firebase.db.update(dbRef, updates);
+
+        await loadCardsFromFirebase();
+    } catch (error) {
+        console.error('Move error:', error);
+        alert('Failed to move card');
     }
 }
 
