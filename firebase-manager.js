@@ -258,6 +258,10 @@ function addLinkRow(text = '', url = '') {
     const row = document.createElement('div');
     row.className = 'link-row';
     row.innerHTML = `
+        <div class="link-reorder-btns">
+            <button class="link-move-btn link-move-up" type="button" title="Move up">↑</button>
+            <button class="link-move-btn link-move-down" type="button" title="Move down">↓</button>
+        </div>
         <input type="text" class="link-text" placeholder="Link text" value="${text}">
         <input type="url" class="link-url" placeholder="https://example.com" value="${url}">
         <button class="remove-link-btn" type="button">×</button>
@@ -265,9 +269,37 @@ function addLinkRow(text = '', url = '') {
 
     row.querySelector('.remove-link-btn').addEventListener('click', () => {
         row.remove();
+        updateLinkMoveButtons();
+    });
+
+    row.querySelector('.link-move-up').addEventListener('click', () => {
+        const prev = row.previousElementSibling;
+        if (prev) {
+            container.insertBefore(row, prev);
+            updateLinkMoveButtons();
+        }
+    });
+
+    row.querySelector('.link-move-down').addEventListener('click', () => {
+        const next = row.nextElementSibling;
+        if (next) {
+            container.insertBefore(next, row);
+            updateLinkMoveButtons();
+        }
     });
 
     container.appendChild(row);
+    updateLinkMoveButtons();
+}
+
+function updateLinkMoveButtons() {
+    const rows = document.querySelectorAll('.link-row');
+    rows.forEach((row, index) => {
+        const upBtn = row.querySelector('.link-move-up');
+        const downBtn = row.querySelector('.link-move-down');
+        upBtn.disabled = index === 0;
+        downBtn.disabled = index === rows.length - 1;
+    });
 }
 
 async function saveCard() {

@@ -455,9 +455,40 @@ body {
 
 .link-row {
     display: grid;
-    grid-template-columns: 1fr 2fr auto;
+    grid-template-columns: auto 1fr 2fr auto;
     gap: 8px;
     align-items: center;
+}
+
+.link-reorder-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.link-move-btn {
+    width: 24px;
+    height: 18px;
+    padding: 0;
+    background-color: var(--vscode-sidebar);
+    border: 1px solid var(--vscode-border);
+    border-radius: 2px;
+    color: var(--vscode-text);
+    cursor: pointer;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.link-move-btn:hover:not(:disabled) {
+    border-color: var(--vscode-blue);
+    color: var(--vscode-blue);
+}
+
+.link-move-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 .link-row input {
