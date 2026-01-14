@@ -398,6 +398,101 @@ body {
     margin-top: 2px;
 }
 
+/* NHL Cards */
+.nhl-standings-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.nhl-standings-table th,
+.nhl-standings-table td {
+    padding: 6px 8px;
+    text-align: center;
+}
+
+.nhl-standings-table th {
+    color: var(--vscode-text-muted);
+    font-weight: 500;
+    border-bottom: 1px solid var(--vscode-border);
+}
+
+.nhl-standings-table td {
+    color: var(--vscode-text);
+}
+
+.nhl-standings-table .team-name {
+    text-align: left;
+    font-weight: 500;
+}
+
+.nhl-standings-table .points {
+    color: var(--vscode-green);
+    font-weight: 600;
+}
+
+.nhl-link {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--vscode-border);
+    color: var(--vscode-blue);
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.nhl-link:hover {
+    text-decoration: underline;
+}
+
+/* Leafs Games */
+.leafs-games-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.leafs-game {
+    display: grid;
+    grid-template-columns: 50px 70px 50px 30px;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--vscode-border);
+}
+
+.leafs-game:last-child {
+    border-bottom: none;
+}
+
+.game-date {
+    color: var(--vscode-text-muted);
+}
+
+.game-opponent {
+    color: var(--vscode-text);
+}
+
+.game-score {
+    color: var(--vscode-text);
+    font-weight: 500;
+}
+
+.game-result {
+    font-weight: 600;
+    text-align: center;
+}
+
+.game-result.win {
+    color: var(--vscode-green);
+}
+
+.game-result.loss {
+    color: var(--vscode-red);
+}
+
 /* Edit Mode */
 .edit-mode .card {
     padding-top: 48px;

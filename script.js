@@ -220,6 +220,106 @@ function fetchSuggestions() {
     suggestionsEl.innerHTML = html;
 }
 
+// Fetch NHL standings
+async function fetchNHLStandings() {
+    const standingsEl = document.getElementById('nhl-standings');
+    if (!standingsEl) return;
+
+    try {
+        const response = await fetch('https://api-web.nhle.com/v1/standings/now');
+        if (!response.ok) throw new Error('NHL API failed');
+        const data = await response.json();
+
+        // Get top 8 teams by points
+        const teams = data.standings
+            .sort((a, b) => b.points - a.points)
+            .slice(0, 8);
+
+        const html = `
+            <table class="nhl-standings-table">
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th>GP</th>
+                        <th>W</th>
+                        <th>L</th>
+                        <th>PTS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${teams.map(team => `
+                        <tr>
+                            <td class="team-name">${team.teamAbbrev.default}</td>
+                            <td>${team.gamesPlayed}</td>
+                            <td>${team.wins}</td>
+                            <td>${team.losses}</td>
+                            <td class="points">${team.points}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            <a href="https://www.nhl.com/standings" target="_blank" class="nhl-link">Full Standings</a>
+        `;
+        standingsEl.innerHTML = html;
+    } catch (error) {
+        console.error('NHL standings error:', error);
+        standingsEl.innerHTML = '<p class="loading">Unable to load standings</p>';
+    }
+}
+
+// Fetch Maple Leafs recent games
+async function fetchLeafsGames() {
+    const gamesEl = document.getElementById('leafs-games');
+    if (!gamesEl) return;
+
+    try {
+        // Toronto Maple Leafs team abbreviation is TOR
+        const response = await fetch('https://api-web.nhle.com/v1/club-schedule-season/TOR/now');
+        if (!response.ok) throw new Error('Leafs API failed');
+        const data = await response.json();
+
+        // Get completed games and take last 5
+        const completedGames = data.games
+            .filter(game => game.gameState === 'OFF' || game.gameState === 'FINAL')
+            .slice(-5)
+            .reverse();
+
+        if (completedGames.length === 0) {
+            gamesEl.innerHTML = '<p class="loading">No recent games</p>';
+            return;
+        }
+
+        const html = `
+            <div class="leafs-games-list">
+                ${completedGames.map(game => {
+                    const isHome = game.homeTeam.abbrev === 'TOR';
+                    const leafsScore = isHome ? game.homeTeam.score : game.awayTeam.score;
+                    const oppScore = isHome ? game.awayTeam.score : game.homeTeam.score;
+                    const opponent = isHome ? game.awayTeam.abbrev : game.homeTeam.abbrev;
+                    const result = leafsScore > oppScore ? 'W' : 'L';
+                    const resultClass = result === 'W' ? 'win' : 'loss';
+                    const gameDate = new Date(game.gameDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    const homeAway = isHome ? 'vs' : '@';
+
+                    return `
+                        <div class="leafs-game">
+                            <span class="game-date">${gameDate}</span>
+                            <span class="game-opponent">${homeAway} ${opponent}</span>
+                            <span class="game-score">${leafsScore}-${oppScore}</span>
+                            <span class="game-result ${resultClass}">${result}</span>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            <a href="https://www.nhl.com/mapleleafs/schedule" target="_blank" class="nhl-link">Full Schedule</a>
+        `;
+        gamesEl.innerHTML = html;
+    } catch (error) {
+        console.error('Leafs games error:', error);
+        gamesEl.innerHTML = '<p class="loading">Unable to load games</p>';
+    }
+}
+
 // Initialize
 function init() {
     // Update time immediately and every second
@@ -241,6 +341,8 @@ function init() {
     fetchQuote();
     fetchJoke();
     fetchSuggestions();
+    fetchNHLStandings();
+    fetchLeafsGames();
 }
 
 // Start when page loads
