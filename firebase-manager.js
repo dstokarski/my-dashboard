@@ -109,16 +109,21 @@ function initializeFirebaseManager() {
     if (editModeBtn) {
         editModeBtn.addEventListener('click', (e) => {
             console.log('Edit mode button clicked!');
-            console.log('editModeBtn at click time:', editModeBtn);
             e.preventDefault();
             e.stopPropagation();
 
             editMode = !editMode;
             console.log('Edit mode is now:', editMode);
 
-            if (editModeBtn) {
-                editModeBtn.textContent = editMode ? 'Done' : 'Edit';
-                editModeBtn.classList.toggle('active', editMode);
+            // Re-query the button element to ensure we have a fresh reference
+            const currentBtn = document.getElementById('edit-mode-btn');
+            console.log('Current button element:', currentBtn);
+
+            if (currentBtn) {
+                currentBtn.textContent = editMode ? 'Done' : 'Edit';
+                currentBtn.classList.toggle('active', editMode);
+            } else {
+                console.error('Edit mode button not found in DOM!');
             }
 
             if (editMode) {
