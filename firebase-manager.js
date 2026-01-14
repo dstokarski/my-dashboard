@@ -2,7 +2,7 @@
 
 let currentUser = null;
 let editMode = false;
-let currentEditingCardId = null;
+let currentEditingCard = null; // Store the actual card data instead of just ID
 
 // Global references to elements
 let signInBtn, signOutBtn, userInfo, userName, editModeBtn;
@@ -141,11 +141,33 @@ function initializeFirebaseManager() {
         }
 
         try {
-            const cardId = currentEditingCardId || `card-${Date.now()}`;
+            let cardId, order;
+
+            if (currentEditingCard) {
+                // Editing existing card - preserve ID and order
+                cardId = currentEditingCard.id;
+                order = currentEditingCard.order;
+            } else {
+                // Creating new card - generate new ID and order
+                cardId = `card-${Date.now()}`;
+
+                // Get the highest order number and add 1
+                const cardsRef = window.firebaseDB.ref(window.firebaseDB.database, 'cards');
+                const snapshot = await window.firebaseDB.get(cardsRef);
+
+                if (snapshot.exists()) {
+                    const cardsData = snapshot.val();
+                    const maxOrder = Math.max(...Object.values(cardsData).map(card => card.order || 0));
+                    order = maxOrder + 1;
+                } else {
+                    order = 0;
+                }
+            }
+
             const cardData = {
                 title,
                 links,
-                order: currentEditingCardId ? null : Date.now()
+                order
             };
 
             const cardRef = window.firebaseDB.ref(
@@ -165,14 +187,14 @@ function initializeFirebaseManager() {
 
     // Delete card
     deleteCardBtn.addEventListener('click', async () => {
-        if (!currentEditingCardId) return;
+        if (!currentEditingCard) return;
 
         if (!confirm('Are you sure you want to delete this card?')) return;
 
         try {
             const cardRef = window.firebaseDB.ref(
                 window.firebaseDB.database,
-                `cards/${currentEditingCardId}`
+                `cards/${currentEditingCard.id}`
             );
 
             await window.firebaseDB.remove(cardRef);
@@ -205,13 +227,17 @@ function initializeFirebaseManager() {
 // Add edit buttons to all non-widget cards
 function addEditButtons() {
     const cards = document.querySelectorAll('.card:not(.card-widget)');
-    cards.forEach((card, index) => {
+    cards.forEach((card) => {
         if (!card.querySelector('.card-edit-btn')) {
             const editBtn = document.createElement('button');
             editBtn.className = 'card-edit-btn';
             editBtn.textContent = 'Edit';
-            editBtn.dataset.cardId = `card-${index}`;
-            editBtn.addEventListener('click', () => openEditModal(card, `card-${index}`));
+
+            // Store card data in dataset
+            const cardId = card.dataset.cardId;
+            editBtn.dataset.cardId = cardId;
+
+            editBtn.addEventListener('click', () => openEditModal(card));
             card.querySelector('.card-title').appendChild(editBtn);
         }
     });
@@ -222,7 +248,7 @@ function addEditButtons() {
         addCardBtn.id = 'add-card-btn';
         addCardBtn.className = 'add-card-btn';
         addCardBtn.textContent = '+ Add Card';
-        addCardBtn.addEventListener('click', () => openEditModal(null, null));
+        addCardBtn.addEventListener('click', () => openEditModal(null));
         document.querySelector('.cards-grid').appendChild(addCardBtn);
     }
 }
@@ -235,16 +261,23 @@ function removeEditButtons() {
 }
 
 // Open edit modal
-function openEditModal(card, cardId) {
-    currentEditingCardId = cardId;
-
+function openEditModal(card) {
     if (card) {
-        // Editing existing card
+        // Editing existing card - get the full card data
+        const cardId = card.dataset.cardId;
+        const cardOrder = parseInt(card.dataset.cardOrder);
         const title = card.querySelector('.card-title').textContent.replace('Edit', '').trim();
         const links = Array.from(card.querySelectorAll('.links-list a')).map(a => ({
             text: a.textContent,
             url: a.href
         }));
+
+        currentEditingCard = {
+            id: cardId,
+            order: cardOrder,
+            title,
+            links
+        };
 
         cardTitleInput.value = title;
         linksEditor.innerHTML = '';
@@ -252,6 +285,7 @@ function openEditModal(card, cardId) {
         deleteCardBtn.style.display = 'block';
     } else {
         // Adding new card
+        currentEditingCard = null;
         cardTitleInput.value = '';
         linksEditor.innerHTML = '';
         addLinkRow('', '');
@@ -264,7 +298,7 @@ function openEditModal(card, cardId) {
 // Close edit modal
 function closeEditModal() {
     editModal.style.display = 'none';
-    currentEditingCardId = null;
+    currentEditingCard = null;
 }
 
 // Add a link row to the editor
@@ -322,9 +356,10 @@ async function migrateDataFromHTML() {
             order: index
         };
 
+        const cardId = `card-migrated-${index}`;
         const cardRef = window.firebaseDB.ref(
             window.firebaseDB.database,
-            `cards/card-${index}`
+            `cards/${cardId}`
         );
 
         promises.push(window.firebaseDB.set(cardRef, cardData));
@@ -354,7 +389,7 @@ async function loadCardsFromFirebase() {
         }));
 
         // Sort by order
-        cardsArray.sort((a, b) => a.order - b.order);
+        cardsArray.sort((a, b) => (a.order || 0) - (b.order || 0));
 
         // Find the cards grid and remove existing non-widget cards
         const cardsGrid = document.querySelector('.cards-grid');
@@ -388,6 +423,8 @@ async function loadCardsFromFirebase() {
 function createCardElement(cardData) {
     const card = document.createElement('div');
     card.className = 'card';
+    card.dataset.cardId = cardData.id;
+    card.dataset.cardOrder = cardData.order;
 
     const title = document.createElement('h2');
     title.className = 'card-title';
