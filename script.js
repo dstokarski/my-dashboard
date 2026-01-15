@@ -414,6 +414,128 @@ function updateSavedSitesUI() {
     renderSavedSites();
 }
 
+// Google Calendar setup
+function setupCalendar() {
+    const iframe = document.getElementById('google-calendar-iframe');
+    const instructions = document.querySelector('.calendar-instructions');
+
+    // Use a public Google Calendar embed URL
+    // Users can replace this with their own calendar ID
+    // Format: https://calendar.google.com/calendar/embed?src=CALENDAR_ID&ctz=America/Toronto
+    const calendarUrl = 'https://calendar.google.com/calendar/embed?src=en.canadian%23holiday%40group.v.calendar.google.com&ctz=America/Toronto&mode=AGENDA&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=0&bgcolor=%231e1e1e&color=%234285f4';
+
+    if (iframe) {
+        iframe.src = calendarUrl;
+        iframe.style.display = 'block';
+        if (instructions) {
+            instructions.style.display = 'none';
+        }
+    }
+}
+
+// RSS Feed Reader
+const RSS_FEEDS = [
+    { name: 'BBC News', url: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+    { name: 'CBC News', url: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
+    { name: 'Reuters', url: 'https://www.reutersagency.com/feed/?best-topics=tech&post_type=best' },
+    { name: 'The Verge', url: 'https://www.theverge.com/rss/index.xml' },
+    { name: 'Ars Technica', url: 'https://feeds.arstechnica.com/arstechnica/index' },
+    { name: 'Hacker News', url: 'https://hnrss.org/frontpage' },
+    { name: 'Nature', url: 'https://www.nature.com/nature.rss' },
+    { name: 'Science Daily', url: 'https://www.sciencedaily.com/rss/all.xml' }
+];
+
+// RSS proxy to avoid CORS issues
+const RSS_PROXY = 'https://api.rss2json.com/v1/api.json?rss_url=';
+
+async function fetchRSSFeed(feed) {
+    try {
+        const response = await fetch(`${RSS_PROXY}${encodeURIComponent(feed.url)}`);
+        const data = await response.json();
+
+        if (data.status === 'ok' && data.items) {
+            return data.items.slice(0, 3).map(item => ({
+                source: feed.name,
+                title: item.title,
+                link: item.link,
+                pubDate: item.pubDate,
+                description: item.description ? item.description.replace(/<[^>]*>/g, '').slice(0, 150) : ''
+            }));
+        }
+        return [];
+    } catch (error) {
+        console.error(`Error fetching ${feed.name}:`, error);
+        return [];
+    }
+}
+
+async function fetchAllRSSFeeds() {
+    const rssContent = document.getElementById('rss-content');
+    if (!rssContent) return;
+
+    rssContent.innerHTML = '<p class="rss-loading">Loading news feeds...</p>';
+
+    try {
+        const feedPromises = RSS_FEEDS.map(feed => fetchRSSFeed(feed));
+        const results = await Promise.all(feedPromises);
+
+        // Flatten and sort by date
+        const allItems = results.flat().sort((a, b) => {
+            return new Date(b.pubDate) - new Date(a.pubDate);
+        });
+
+        if (allItems.length === 0) {
+            rssContent.innerHTML = '<p class="rss-error">Unable to load news feeds. Please try again later.</p>';
+            return;
+        }
+
+        const html = allItems.slice(0, 24).map(item => {
+            const date = new Date(item.pubDate);
+            const timeAgo = getTimeAgo(date);
+
+            return `
+                <div class="rss-item">
+                    <div class="rss-item-source">${item.source}</div>
+                    <h4 class="rss-item-title">
+                        <a href="${item.link}" target="_blank">${item.title}</a>
+                    </h4>
+                    <div class="rss-item-date">${timeAgo}</div>
+                    ${item.description ? `<p class="rss-item-description">${item.description}</p>` : ''}
+                </div>
+            `;
+        }).join('');
+
+        rssContent.innerHTML = html;
+    } catch (error) {
+        console.error('Error fetching RSS feeds:', error);
+        rssContent.innerHTML = '<p class="rss-error">Unable to load news feeds. Please try again later.</p>';
+    }
+}
+
+function getTimeAgo(date) {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} min ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+
+    return date.toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
+}
+
+function setupRSSRefresh() {
+    const refreshBtn = document.getElementById('refresh-rss-btn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            fetchAllRSSFeeds();
+        });
+    }
+}
+
 // Initialize
 function init() {
     // Update time immediately and every second
@@ -437,6 +559,14 @@ function init() {
     fetchSuggestions();
     renderSavedSites();
     setupSavedSitesEdit();
+
+    // Setup calendar and RSS
+    setupCalendar();
+    fetchAllRSSFeeds();
+    setupRSSRefresh();
+
+    // Refresh RSS feeds every 30 minutes
+    setInterval(fetchAllRSSFeeds, 30 * 60 * 1000);
 }
 
 // Start when page loads

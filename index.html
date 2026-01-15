@@ -93,6 +93,37 @@
                 </div>
             </div>
         </section>
+
+        <!-- Google Calendar Section -->
+        <section class="calendar-section">
+            <div class="full-width-card">
+                <h3 class="full-width-card-title">Calendar</h3>
+                <div id="calendar-content" class="calendar-content">
+                    <p class="calendar-instructions">To display your calendar, sign in with Google and enable calendar access, or embed your public calendar.</p>
+                    <iframe id="google-calendar-iframe"
+                        src=""
+                        style="border: 0; display: none;"
+                        width="100%"
+                        height="400"
+                        frameborder="0"
+                        scrolling="no">
+                    </iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- RSS Feed Section -->
+        <section class="rss-section">
+            <div class="full-width-card">
+                <div class="rss-header">
+                    <h3 class="full-width-card-title">News Feed</h3>
+                    <button id="refresh-rss-btn" class="btn btn-secondary btn-sm">Refresh</button>
+                </div>
+                <div id="rss-content" class="rss-content">
+                    <p class="loading">Loading news feeds...</p>
+                </div>
+            </div>
+        </section>
     </div>
 
     <!-- Edit Modal -->
