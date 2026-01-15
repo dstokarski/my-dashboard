@@ -461,11 +461,19 @@ async function deleteCard() {
     if (!confirm('Delete this card?')) return;
 
     try {
+        const cardId = currentEditingCard.id;
         const cardRef = window.firebase.db.ref(
             window.firebase.db.database,
-            `cards/${currentEditingCard.id}`
+            `cards/${cardId}`
         );
         await window.firebase.db.remove(cardRef);
+
+        // Track deleted cards so they don't get re-added
+        const deletedRef = window.firebase.db.ref(
+            window.firebase.db.database,
+            `deletedCards/${cardId}`
+        );
+        await window.firebase.db.set(deletedRef, true);
 
         closeModal();
         await loadCardsFromFirebase();
@@ -518,38 +526,22 @@ async function loadCardsFromFirebase() {
         const snapshot = await window.firebase.db.get(cardsRef);
 
         if (!snapshot.exists()) {
-            // Migrate default cards
+            // Check if user has deleted cards before (meaning they're not a new user)
+            const deletedRef = window.firebase.db.ref(window.firebase.db.database, 'deletedCards');
+            const deletedSnapshot = await window.firebase.db.get(deletedRef);
+
+            if (deletedSnapshot.exists()) {
+                // User has deleted all cards, show empty grid
+                renderCards([]);
+                return;
+            }
+
+            // New user - migrate default cards
             await migrateDefaultCards();
             return;
         }
 
         const cardsData = snapshot.val();
-        const existingIds = Object.keys(cardsData);
-
-        // Check for missing default cards and add them
-        const missingCards = DEFAULT_CARDS.filter(card => !existingIds.includes(card.id));
-        if (missingCards.length > 0) {
-            // Find the max order in existing cards
-            const maxOrder = Math.max(...Object.values(cardsData).map(c => c.order || 0));
-
-            const promises = missingCards.map((card, index) => {
-                const cardRef = window.firebase.db.ref(
-                    window.firebase.db.database,
-                    `cards/${card.id}`
-                );
-                return window.firebase.db.set(cardRef, {
-                    title: card.title,
-                    links: card.links,
-                    order: maxOrder + 1 + index
-                });
-            });
-
-            await Promise.all(promises);
-            // Reload after adding missing cards
-            await loadCardsFromFirebase();
-            return;
-        }
-
         const cardsArray = Object.entries(cardsData).map(([id, data]) => ({
             id,
             ...data
