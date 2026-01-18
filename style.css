@@ -522,6 +522,19 @@ body {
     color: var(--vscode-bg);
 }
 
+/* Hacker News badge */
+.hn-badge {
+    display: inline-block;
+    background-color: #ff6600;
+    color: white;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 1px 4px;
+    border-radius: 2px;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
 /* Edit Mode */
 .edit-mode .card {
     padding-top: 48px;

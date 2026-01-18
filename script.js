@@ -171,59 +171,196 @@ function isUserSignedIn() {
            (window.firebase && window.firebase.auth && window.firebase.auth.auth && window.firebase.auth.auth.currentUser);
 }
 
-// Fetch daily suggestions - interesting websites that change daily
-function fetchSuggestions() {
+// Curated suggestions list - expanded for variety
+const CURATED_SUGGESTIONS = [
+    { text: "Atlas Obscura", url: "https://www.atlasobscura.com", desc: "Discover hidden wonders" },
+    { text: "Brain Pickings", url: "https://www.themarginalian.org", desc: "Wisdom and creativity" },
+    { text: "Astronomy Picture of the Day", url: "https://apod.nasa.gov", desc: "Daily space images" },
+    { text: "Open Culture", url: "https://www.openculture.com", desc: "Free cultural media" },
+    { text: "Wait But Why", url: "https://waitbutwhy.com", desc: "Deep dives into topics" },
+    { text: "Smithsonian Magazine", url: "https://www.smithsonianmag.com", desc: "History and science" },
+    { text: "Aeon", url: "https://aeon.co", desc: "Ideas and culture" },
+    { text: "Nautilus", url: "https://nautil.us", desc: "Science storytelling" },
+    { text: "The Pudding", url: "https://pudding.cool", desc: "Visual essays" },
+    { text: "99% Invisible", url: "https://99percentinvisible.org", desc: "Design stories" },
+    { text: "Longform", url: "https://longform.org", desc: "Best journalism" },
+    { text: "The School of Life", url: "https://www.theschooloflife.com", desc: "Emotional education" },
+    { text: "Letters of Note", url: "https://lettersofnote.com", desc: "Historic letters" },
+    { text: "Mental Floss", url: "https://www.mentalfloss.com", desc: "Fun facts and trivia" },
+    { text: "TED Ideas", url: "https://ideas.ted.com", desc: "Ideas worth spreading" },
+    { text: "Pocket Worthy", url: "https://getpocket.com/explore", desc: "Curated reads" },
+    { text: "Farnam Street", url: "https://fs.blog", desc: "Mental models" },
+    { text: "Quanta Magazine", url: "https://www.quantamagazine.org", desc: "Math and science" },
+    { text: "The Conversation", url: "https://theconversation.com", desc: "Academic insights" },
+    { text: "Longreads", url: "https://longreads.com", desc: "Long-form stories" },
+    { text: "The Browser", url: "https://thebrowser.com", desc: "Writing worth reading" },
+    { text: "Damn Interesting", url: "https://www.damninteresting.com", desc: "Fascinating true stories" },
+    { text: "Lapham's Quarterly", url: "https://www.laphamsquarterly.org", desc: "History and literature" },
+    { text: "Public Domain Review", url: "https://publicdomainreview.org", desc: "Curious works" },
+    { text: "Knowable Magazine", url: "https://knowablemagazine.org", desc: "Science journalism" },
+    { text: "Psyche", url: "https://psyche.co", desc: "Psychology insights" },
+    { text: "Rest of World", url: "https://restofworld.org", desc: "Global tech stories" },
+    { text: "Works in Progress", url: "https://worksinprogress.co", desc: "Progress studies" },
+    { text: "Asterisk Magazine", url: "https://asteriskmag.com", desc: "Effective ideas" },
+    { text: "Noema Magazine", url: "https://www.noemamag.com", desc: "Ideas shaping our world" },
+    { text: "Slate Star Codex", url: "https://slatestarcodex.com", desc: "Rationalist essays" },
+    { text: "LessWrong", url: "https://www.lesswrong.com", desc: "Rationality community" },
+    { text: "Gwern.net", url: "https://gwern.net", desc: "Essays and research" },
+    { text: "Marginal Revolution", url: "https://marginalrevolution.com", desc: "Economics blog" },
+    { text: "Overcoming Bias", url: "https://www.overcomingbias.com", desc: "Contrarian ideas" },
+    { text: "Art of Manliness", url: "https://www.artofmanliness.com", desc: "Life skills" },
+    { text: "Cool Tools", url: "https://kk.org/cooltools", desc: "Useful things" },
+    { text: "Kottke", url: "https://kottke.org", desc: "Eclectic links" },
+    { text: "Boing Boing", url: "https://boingboing.net", desc: "Tech and culture" },
+    { text: "Metafilter", url: "https://www.metafilter.com", desc: "Best of the web" }
+];
+
+// Get today's date key for caching (changes at midnight)
+function getTodayKey() {
+    const now = new Date();
+    return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+}
+
+// Seeded random number generator for consistent daily results
+function seededRandom(seed) {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+}
+
+// Get day of year as seed
+function getDayOfYear() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    return Math.floor((now - start) / (1000 * 60 * 60 * 24));
+}
+
+// Fetch top stories from Hacker News
+async function fetchHackerNewsStories() {
+    const cacheKey = `hn_stories_${getTodayKey()}`;
+    const cached = localStorage.getItem(cacheKey);
+
+    // Return cached data if available for today
+    if (cached) {
+        try {
+            return JSON.parse(cached);
+        } catch (e) {
+            localStorage.removeItem(cacheKey);
+        }
+    }
+
+    try {
+        // Fetch top story IDs
+        const response = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
+        const storyIds = await response.json();
+
+        // Use day of year to select which stories to fetch (consistent per day)
+        const dayOfYear = getDayOfYear();
+        const startIndex = (dayOfYear * 7) % 100; // Rotate through top 100 stories
+        const selectedIds = storyIds.slice(startIndex, startIndex + 10);
+
+        // Fetch story details
+        const stories = await Promise.all(
+            selectedIds.map(async (id) => {
+                const storyResponse = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`);
+                return storyResponse.json();
+            })
+        );
+
+        // Filter and format stories (only those with URLs)
+        const formattedStories = stories
+            .filter(story => story && story.url && story.title)
+            .slice(0, 5)
+            .map(story => ({
+                text: story.title.length > 50 ? story.title.substring(0, 47) + '...' : story.title,
+                url: story.url,
+                desc: `HN: ${story.score} points`,
+                source: 'hn'
+            }));
+
+        // Cache for today
+        localStorage.setItem(cacheKey, JSON.stringify(formattedStories));
+
+        // Clean up old cache entries
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('hn_stories_') && key !== cacheKey) {
+                localStorage.removeItem(key);
+            }
+        });
+
+        return formattedStories;
+    } catch (error) {
+        console.error('Error fetching Hacker News:', error);
+        return [];
+    }
+}
+
+// Get curated suggestions for today (deterministic based on date)
+function getCuratedSuggestionsForToday(count = 3) {
+    const dayOfYear = getDayOfYear();
+    const year = new Date().getFullYear();
+    const seed = dayOfYear + year * 365;
+
+    // Create shuffled copy using seeded random
+    const shuffled = [...CURATED_SUGGESTIONS];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(seededRandom(seed + i) * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled.slice(0, count).map(s => ({ ...s, source: 'curated' }));
+}
+
+// Fetch daily suggestions - mix of curated sites and Hacker News
+async function fetchSuggestions() {
     const suggestionsEl = document.getElementById('suggestions-content');
     if (!suggestionsEl) return;
 
-    const allSuggestions = [
-        { text: "Atlas Obscura", url: "https://www.atlasobscura.com", desc: "Discover hidden wonders" },
-        { text: "Brain Pickings", url: "https://www.themarginalian.org", desc: "Wisdom and creativity" },
-        { text: "Astronomy Picture of the Day", url: "https://apod.nasa.gov", desc: "Daily space images" },
-        { text: "Open Culture", url: "https://www.openculture.com", desc: "Free cultural media" },
-        { text: "Wait But Why", url: "https://waitbutwhy.com", desc: "Deep dives into topics" },
-        { text: "Smithsonian Magazine", url: "https://www.smithsonianmag.com", desc: "History and science" },
-        { text: "Aeon", url: "https://aeon.co", desc: "Ideas and culture" },
-        { text: "Nautilus", url: "https://nautil.us", desc: "Science storytelling" },
-        { text: "The Pudding", url: "https://pudding.cool", desc: "Visual essays" },
-        { text: "99% Invisible", url: "https://99percentinvisible.org", desc: "Design stories" },
-        { text: "Longform", url: "https://longform.org", desc: "Best journalism" },
-        { text: "Curious", url: "https://www.curiouscurio.us", desc: "Explore curiosities" },
-        { text: "The School of Life", url: "https://www.theschooloflife.com", desc: "Emotional education" },
-        { text: "Letters of Note", url: "https://lettersofnote.com", desc: "Historic letters" },
-        { text: "Mental Floss", url: "https://www.mentalfloss.com", desc: "Fun facts and trivia" },
-        { text: "TED Ideas", url: "https://ideas.ted.com", desc: "Ideas worth spreading" },
-        { text: "Pocket Worthy", url: "https://getpocket.com/explore", desc: "Curated reads" },
-        { text: "Farnam Street", url: "https://fs.blog", desc: "Mental models" },
-        { text: "Quanta Magazine", url: "https://www.quantamagazine.org", desc: "Math and science" },
-        { text: "The Conversation", url: "https://theconversation.com", desc: "Academic insights" }
-    ];
+    // Show loading state
+    suggestionsEl.innerHTML = '<p class="loading">Loading suggestions...</p>';
 
-    // Use day of year as seed for consistent daily selection
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const dayOfYear = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+    try {
+        // Get curated suggestions (3) and HN stories (2)
+        const [hnStories] = await Promise.all([
+            fetchHackerNewsStories()
+        ]);
 
-    // Shuffle based on day
-    const shuffled = [...allSuggestions].sort((a, b) => {
-        const hashA = (dayOfYear * 31 + allSuggestions.indexOf(a)) % 100;
-        const hashB = (dayOfYear * 31 + allSuggestions.indexOf(b)) % 100;
-        return hashA - hashB;
-    });
+        const curatedSuggestions = getCuratedSuggestionsForToday(3);
+        const hnSuggestions = hnStories.slice(0, 2);
 
-    const dailySuggestions = shuffled.slice(0, 5);
+        // Combine: curated first, then HN
+        const dailySuggestions = [...curatedSuggestions, ...hnSuggestions];
+
+        // If HN failed, fill with more curated
+        if (dailySuggestions.length < 5) {
+            const moreCurated = getCuratedSuggestionsForToday(5).slice(dailySuggestions.length);
+            dailySuggestions.push(...moreCurated);
+        }
+
+        renderSuggestions(dailySuggestions.slice(0, 5));
+    } catch (error) {
+        console.error('Error fetching suggestions:', error);
+        // Fallback to curated only
+        const curatedSuggestions = getCuratedSuggestionsForToday(5);
+        renderSuggestions(curatedSuggestions);
+    }
+}
+
+// Render suggestions to the DOM
+function renderSuggestions(suggestions) {
+    const suggestionsEl = document.getElementById('suggestions-content');
+    if (!suggestionsEl) return;
 
     const signedIn = isUserSignedIn();
 
     const html = `
         <ul class="suggestions-list">
-            ${dailySuggestions.map(s => `
+            ${suggestions.map(s => `
                 <li>
                     <div class="suggestion-info">
                         <a href="${s.url}" target="_blank">${s.text}</a>
-                        <span class="suggestion-desc">${s.desc}</span>
+                        <span class="suggestion-desc">${s.desc}${s.source === 'hn' ? ' <span class="hn-badge">HN</span>' : ''}</span>
                     </div>
-                    ${signedIn ? `<button class="save-suggestion-btn" data-text="${s.text}" data-url="${s.url}" data-desc="${s.desc}" title="Save to Saved Sites">+</button>` : ''}
+                    ${signedIn ? `<button class="save-suggestion-btn" data-text="${escapeHtml(s.text)}" data-url="${escapeHtml(s.url)}" data-desc="${escapeHtml(s.desc)}" title="Save to Saved Sites">+</button>` : ''}
                 </li>
             `).join('')}
         </ul>
@@ -248,6 +385,13 @@ function fetchSuggestions() {
             });
         });
     }
+}
+
+// Helper to escape HTML in data attributes
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // Saved Sites functionality - uses Firebase when signed in, localStorage as fallback

@@ -461,6 +461,36 @@ function createCardElement(cardData) {
     return card;
 }
 
+// Debug function to display all database contents
+async function showDatabaseContents() {
+    if (!window.firebase) {
+        console.log('Firebase not initialized');
+        return;
+    }
+
+    try {
+        // Get all data from root
+        const rootRef = window.firebase.db.ref(window.firebase.db.database, '/');
+        const snapshot = await window.firebase.db.get(rootRef);
+
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            console.log('=== FIREBASE DATABASE CONTENTS ===');
+            console.log(JSON.stringify(data, null, 2));
+            return data;
+        } else {
+            console.log('Database is empty');
+            return null;
+        }
+    } catch (error) {
+        console.error('Error reading database:', error);
+        return null;
+    }
+}
+
+// Make it available globally for console access
+window.showDatabaseContents = showDatabaseContents;
+
 // Initialize
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initFirebase);
