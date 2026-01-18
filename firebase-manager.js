@@ -2,135 +2,6 @@ let currentUser = null;
 let editMode = false;
 let currentEditingCard = null;
 
-const DEFAULT_CARDS = [
-    {
-        id: 'world-news',
-        title: 'World News',
-        order: 0,
-        links: [
-            { text: 'BBC News', url: 'https://www.bbc.com/news' },
-            { text: 'CNN', url: 'https://www.cnn.com' },
-            { text: 'The Guardian', url: 'https://www.theguardian.com' },
-            { text: 'Al Jazeera', url: 'https://www.aljazeera.com' },
-            { text: 'Reuters', url: 'https://www.reuters.com' }
-        ]
-    },
-    {
-        id: 'canada-news',
-        title: 'Canada News',
-        order: 1,
-        links: [
-            { text: 'CBC News', url: 'https://www.cbc.ca/news' },
-            { text: 'CTV News', url: 'https://www.ctvnews.ca' },
-            { text: 'Global News', url: 'https://globalnews.ca' },
-            { text: 'The Globe and Mail', url: 'https://www.theglobeandmail.com' },
-            { text: 'National Post', url: 'https://nationalpost.com' }
-        ]
-    },
-    {
-        id: 'ottawa-news',
-        title: 'Ottawa News',
-        order: 2,
-        links: [
-            { text: 'CBC Ottawa', url: 'https://www.cbc.ca/news/canada/ottawa' },
-            { text: 'CTV Ottawa', url: 'https://ottawa.ctvnews.ca' },
-            { text: 'Ottawa Citizen', url: 'https://ottawacitizen.com' },
-            { text: 'Ottawa Matters', url: 'https://www.ottawamatters.com' },
-            { text: 'Apt613', url: 'https://www.apt613.ca' }
-        ]
-    },
-    {
-        id: 'sports',
-        title: 'Sports',
-        order: 3,
-        links: [
-            { text: 'NHL Standings', url: 'https://www.nhl.com/standings' },
-            { text: 'MLB Standings', url: 'https://www.mlb.com/standings' },
-            { text: 'Toronto Maple Leafs', url: 'https://www.nhl.com/mapleleafs' },
-            { text: 'Toronto Blue Jays', url: 'https://www.mlb.com/bluejays' },
-            { text: 'TSN', url: 'https://www.tsn.ca' },
-            { text: 'ESPN', url: 'https://www.espn.com' },
-            { text: 'BBC Sport', url: 'https://www.bbc.com/sport' }
-        ]
-    },
-    {
-        id: 'ottawa-events',
-        title: 'Ottawa Events',
-        order: 4,
-        links: [
-            { text: 'Bronson Centre', url: 'https://bronsoncentre.ca' },
-            { text: 'Mayfair Theatre', url: 'https://mayfairtheatre.ca' },
-            { text: 'Bytowne Cinema', url: 'https://bytowne.ca' },
-            { text: 'Ottawa Bluesfest', url: 'https://ottawabluesfest.ca' },
-            { text: 'Ottawa Folk Festival', url: 'https://ottawafolkfest.com' },
-            { text: 'National Arts Centre', url: 'https://nac-cna.ca' },
-            { text: 'Lansdowne Events', url: 'https://lansdowneottawa.ca' },
-            { text: 'Eventbrite Ottawa', url: 'https://www.eventbrite.ca/d/canada--ottawa/events/' },
-            { text: 'Ottawa Tourism Events', url: 'https://ottawatourism.ca/en/events' }
-        ]
-    },
-    {
-        id: 'google-news',
-        title: 'Google News',
-        order: 5,
-        links: [
-            { text: 'World News', url: 'https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtVnVHZ0pWVXlnQVAB' },
-            { text: 'Canada News', url: 'https://news.google.com/topics/CAAqJQgKIh9DQkFTRVFvSUwyMHZNRE55YXpBU0JXVnVMVU5CSWdBUAE' },
-            { text: 'Ottawa News', url: 'https://news.google.com/search?q=ottawa&hl=en-CA&gl=CA&ceid=CA:en' },
-            { text: 'Technology', url: 'https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB' },
-            { text: 'Science', url: 'https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp0Y1RjU0FtVnVHZ0pWVXlnQVAB' }
-        ]
-    },
-    {
-        id: 'technology',
-        title: 'Technology',
-        order: 6,
-        links: [
-            { text: 'The Verge', url: 'https://www.theverge.com' },
-            { text: 'Ars Technica', url: 'https://arstechnica.com' },
-            { text: 'Wired', url: 'https://www.wired.com' },
-            { text: 'TechCrunch', url: 'https://techcrunch.com' },
-            { text: 'Hacker News', url: 'https://news.ycombinator.com' }
-        ]
-    },
-    {
-        id: 'science',
-        title: 'Science',
-        order: 7,
-        links: [
-            { text: 'Nature', url: 'https://www.nature.com' },
-            { text: 'Science Magazine', url: 'https://www.science.org' },
-            { text: 'Scientific American', url: 'https://www.scientificamerican.com' },
-            { text: 'New Scientist', url: 'https://www.newscientist.com' },
-            { text: 'Quanta Magazine', url: 'https://www.quantamagazine.org' }
-        ]
-    },
-    {
-        id: 'finance',
-        title: 'Finance',
-        order: 8,
-        links: [
-            { text: 'Yahoo Finance', url: 'https://finance.yahoo.com' },
-            { text: 'Bloomberg', url: 'https://www.bloomberg.com' },
-            { text: 'Financial Post', url: 'https://financialpost.com' },
-            { text: 'Google Finance', url: 'https://www.google.com/finance' },
-            { text: 'MarketWatch', url: 'https://www.marketwatch.com' }
-        ]
-    },
-    {
-        id: 'entertainment',
-        title: 'Entertainment',
-        order: 9,
-        links: [
-            { text: 'IMDb', url: 'https://www.imdb.com' },
-            { text: 'Rotten Tomatoes', url: 'https://www.rottentomatoes.com' },
-            { text: 'Variety', url: 'https://variety.com' },
-            { text: 'The Hollywood Reporter', url: 'https://www.hollywoodreporter.com' },
-            { text: 'Metacritic', url: 'https://www.metacritic.com' }
-        ]
-    }
-];
-
 function initFirebase() {
     if (!window.firebase) {
         window.addEventListener('firebaseReady', initFirebase, { once: true });
@@ -160,7 +31,8 @@ function initFirebase() {
             signInBtn.style.display = 'inline-flex';
             userSection.style.display = 'none';
             exitEditMode();
-            renderDefaultCards();
+            // Clear cards when signed out - must sign in to see/edit cards
+            renderCards([]);
             // Update saved sites UI after sign out
             if (typeof updateSavedSitesUI === 'function') {
                 updateSavedSitesUI();
@@ -207,7 +79,8 @@ function initFirebase() {
     });
 
     setupModal();
-    renderDefaultCards();
+    // Initially show empty grid until user signs in
+    renderCards([]);
 }
 
 function setupModal() {
@@ -238,6 +111,13 @@ function enterEditMode() {
 }
 
 function exitEditMode() {
+    editMode = false;
+    const editBtn = document.getElementById('edit-btn');
+    if (editBtn) {
+        editBtn.textContent = 'Edit';
+        editBtn.classList.remove('btn-primary');
+        editBtn.classList.add('btn-secondary');
+    }
     document.querySelector('.cards-grid').classList.remove('edit-mode');
     removeEditButtons();
     removeAddCardButton();
@@ -468,13 +348,6 @@ async function deleteCard() {
         );
         await window.firebase.db.remove(cardRef);
 
-        // Track deleted cards so they don't get re-added
-        const deletedRef = window.firebase.db.ref(
-            window.firebase.db.database,
-            `deletedCards/${cardId}`
-        );
-        await window.firebase.db.set(deletedRef, true);
-
         closeModal();
         await loadCardsFromFirebase();
     } catch (error) {
@@ -526,18 +399,8 @@ async function loadCardsFromFirebase() {
         const snapshot = await window.firebase.db.get(cardsRef);
 
         if (!snapshot.exists()) {
-            // Check if user has deleted cards before (meaning they're not a new user)
-            const deletedRef = window.firebase.db.ref(window.firebase.db.database, 'deletedCards');
-            const deletedSnapshot = await window.firebase.db.get(deletedRef);
-
-            if (deletedSnapshot.exists()) {
-                // User has deleted all cards, show empty grid
-                renderCards([]);
-                return;
-            }
-
-            // New user - migrate default cards
-            await migrateDefaultCards();
+            // No cards in database - show empty grid
+            renderCards([]);
             return;
         }
 
@@ -552,31 +415,6 @@ async function loadCardsFromFirebase() {
     } catch (error) {
         console.error('Load error:', error);
     }
-}
-
-async function migrateDefaultCards() {
-    try {
-        const promises = DEFAULT_CARDS.map(card => {
-            const cardRef = window.firebase.db.ref(
-                window.firebase.db.database,
-                `cards/${card.id}`
-            );
-            return window.firebase.db.set(cardRef, {
-                title: card.title,
-                links: card.links,
-                order: card.order
-            });
-        });
-
-        await Promise.all(promises);
-        await loadCardsFromFirebase();
-    } catch (error) {
-        console.error('Migration error:', error);
-    }
-}
-
-function renderDefaultCards() {
-    renderCards(DEFAULT_CARDS);
 }
 
 function renderCards(cards) {
