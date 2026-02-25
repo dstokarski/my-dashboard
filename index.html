@@ -48,48 +48,36 @@
 
         <div class="col-rule c1r"></div>
 
-        <!-- COLUMN 2: Static Content -->
+        <!-- COLUMN 2: Bookmarks / Cards -->
         <div class="col c2">
-            <div class="section-head red">Today</div>
-
-            <!-- Quote -->
-            <div class="static-card" style="border: none; padding: 0; margin-bottom: 20px;">
-                <div class="static-card-title">Inspiration</div>
-                <div id="quote-content" class="quote-content">
-                    <p class="loading">Loading quote...</p>
-                </div>
-            </div>
-
-            <!-- Joke -->
-            <div class="static-card" style="border: none; padding: 0; margin-bottom: 20px;">
-                <div class="static-card-title red">Daily Joke</div>
-                <div id="joke-content" class="joke-content">
-                    <p class="loading">Loading joke...</p>
-                </div>
-            </div>
-
-            <!-- Photos -->
-            <div class="static-card" style="border: none; padding: 0; margin-bottom: 20px;">
-                <div class="static-card-title">Photo of the Day</div>
-                <div id="photo-1" class="photo-content">
-                    <p class="loading">Loading photo...</p>
-                </div>
-            </div>
-
-            <div class="static-card" style="border: none; padding: 0;">
-                <div class="static-card-title">Nature</div>
-                <div id="photo-2" class="photo-content">
-                    <p class="loading">Loading photo...</p>
-                </div>
-            </div>
+            <div class="section-head">Bookmarks</div>
+            <div id="cards-grid" class="cards-section"></div>
         </div>
 
         <div class="col-rule c2r"></div>
 
-        <!-- COLUMN 3: Bookmarks / Cards -->
+        <!-- COLUMN 3: Photos, Quote, Joke -->
         <div class="col c3">
-            <div class="section-head">Bookmarks</div>
-            <div id="cards-grid" class="cards-section"></div>
+            <div class="section-head red">Today</div>
+
+            <!-- Photos -->
+            <div id="photo-1" class="photo-content" style="margin-bottom: 16px;">
+                <p class="loading">Loading photo...</p>
+            </div>
+
+            <div id="photo-2" class="photo-content" style="margin-bottom: 20px;">
+                <p class="loading">Loading photo...</p>
+            </div>
+
+            <!-- Quote -->
+            <div id="quote-content" class="quote-content" style="margin-bottom: 20px; padding-top: 16px; border-top: 1px solid var(--tan);">
+                <p class="loading">Loading quote...</p>
+            </div>
+
+            <!-- Joke -->
+            <div id="joke-content" class="joke-content" style="padding-top: 16px; border-top: 1px solid var(--tan);">
+                <p class="loading">Loading joke...</p>
+            </div>
         </div>
 
     </div>
