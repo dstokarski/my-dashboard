@@ -4,96 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Top Bar -->
-        <header class="header">
-            <div class="header-left">
-                <div class="time-display">
-                    <div id="time" class="time"></div>
-                    <div id="date" class="date"></div>
-                </div>
-            </div>
-            <div class="header-right">
-                <button id="sign-in-btn" class="btn btn-primary">
-                    <span class="btn-icon">👤</span> Sign in
-                </button>
-                <div id="user-section" class="user-section" style="display: none;">
-                    <span id="user-name" class="user-name"></span>
-                    <button id="edit-btn" class="btn btn-secondary">Edit</button>
-                    <button id="sign-out-btn" class="btn btn-secondary">Sign out</button>
-                </div>
-            </div>
-        </header>
 
-        <!-- Weather Section -->
-        <section class="weather-grid">
-            <div class="weather-card">
-                <h3 class="weather-title">Ottawa, ON</h3>
-                <div id="weather-ottawa" class="weather-content">
-                    <p class="loading">Loading weather data...</p>
-                </div>
+    <!-- MASTHEAD -->
+    <div class="masthead">
+        <div class="paper-name">DASH<span>BOARD</span></div>
+        <div class="masthead-right">
+            <div class="time-display">
+                <div id="time" class="time"></div>
+                <div id="date" class="date"></div>
             </div>
-            <div class="weather-card">
-                <h3 class="weather-title">Chelsea, QC</h3>
-                <div id="weather-chelsea" class="weather-content">
-                    <p class="loading">Loading weather data...</p>
-                </div>
+            <button id="sign-in-btn" class="btn btn-primary">Sign in</button>
+            <div id="user-section" style="display: none;">
+                <span id="user-name" class="user-name"></span>
+                <button id="edit-btn" class="btn btn-secondary">Edit</button>
+                <button id="sign-out-btn" class="btn btn-secondary">Sign out</button>
             </div>
-        </section>
-
-        <!-- Cards Grid -->
-        <section class="cards-container">
-            <div id="cards-grid" class="cards-grid"></div>
-        </section>
-
-        <!-- Static Cards Section -->
-        <section class="static-cards-container">
-            <div class="static-cards-grid">
-                <div class="static-card photo-card">
-                    <h3 class="static-card-title">Photo of the Day</h3>
-                    <div id="photo-1" class="photo-content">
-                        <p class="loading">Loading photo...</p>
-                    </div>
-                </div>
-                <div class="static-card photo-card">
-                    <h3 class="static-card-title">Nature</h3>
-                    <div id="photo-2" class="photo-content">
-                        <p class="loading">Loading photo...</p>
-                    </div>
-                </div>
-                <div class="static-card quote-card">
-                    <h3 class="static-card-title">Inspiration</h3>
-                    <div id="quote-content" class="quote-content">
-                        <p class="loading">Loading quote...</p>
-                    </div>
-                </div>
-                <div class="static-card joke-card">
-                    <h3 class="static-card-title">Daily Joke</h3>
-                    <div id="joke-content" class="joke-content">
-                        <p class="loading">Loading joke...</p>
-                    </div>
-                </div>
-                <div class="static-card suggestions-card">
-                    <h3 class="static-card-title">Suggestions</h3>
-                    <div id="suggestions-content" class="suggestions-content">
-                        <p class="loading">Loading suggestions...</p>
-                    </div>
-                </div>
-                <div class="static-card saved-sites-card">
-                    <div class="saved-sites-header">
-                        <h3 class="static-card-title">Saved Sites</h3>
-                        <button id="edit-saved-sites-btn" class="btn btn-secondary btn-sm">Edit</button>
-                    </div>
-                    <div id="saved-sites-content" class="saved-sites-content">
-                        <p class="loading">No saved sites yet</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        </div>
     </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="layout">
+
+        <!-- COLUMN 1: Weather -->
+        <div class="col c1">
+            <div class="section-head">Weather</div>
+
+            <div class="weather-section" id="weather-ottawa-section">
+                <div id="weather-ottawa" class="weather-content">
+                    <p class="loading">Loading weather...</p>
+                </div>
+            </div>
+
+            <div class="weather-section" id="weather-chelsea-section">
+                <div id="weather-chelsea" class="weather-content">
+                    <p class="loading">Loading weather...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-rule c1r"></div>
+
+        <!-- COLUMN 2: Static Content -->
+        <div class="col c2">
+            <div class="section-head red">Today</div>
+
+            <!-- Quote -->
+            <div class="static-card" style="border: none; padding: 0; margin-bottom: 20px;">
+                <div class="static-card-title">Inspiration</div>
+                <div id="quote-content" class="quote-content">
+                    <p class="loading">Loading quote...</p>
+                </div>
+            </div>
+
+            <!-- Joke -->
+            <div class="static-card" style="border: none; padding: 0; margin-bottom: 20px;">
+                <div class="static-card-title red">Daily Joke</div>
+                <div id="joke-content" class="joke-content">
+                    <p class="loading">Loading joke...</p>
+                </div>
+            </div>
+
+            <!-- Photos -->
+            <div class="static-card" style="border: none; padding: 0; margin-bottom: 20px;">
+                <div class="static-card-title">Photo of the Day</div>
+                <div id="photo-1" class="photo-content">
+                    <p class="loading">Loading photo...</p>
+                </div>
+            </div>
+
+            <div class="static-card" style="border: none; padding: 0;">
+                <div class="static-card-title">Nature</div>
+                <div id="photo-2" class="photo-content">
+                    <p class="loading">Loading photo...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-rule c2r"></div>
+
+        <!-- COLUMN 3: Bookmarks / Cards -->
+        <div class="col c3">
+            <div class="section-head">Bookmarks</div>
+            <div id="cards-grid" class="cards-section"></div>
+        </div>
+
+    </div>
+
+    <!-- STATIC SECTION: Suggestions & Saved Sites -->
+    <section class="static-section">
+        <div class="static-grid">
+            <div class="static-card suggestions-card">
+                <div class="suggestions-header">
+                    <div class="static-card-title">Suggestions</div>
+                    <button id="refresh-suggestions-btn" class="btn btn-sm" title="Get new suggestions">Refresh</button>
+                </div>
+                <div id="suggestions-content" class="suggestions-content">
+                    <p class="loading">Loading suggestions...</p>
+                </div>
+            </div>
+            <div class="static-card saved-sites-card">
+                <div class="saved-sites-header">
+                    <div class="static-card-title">Saved Sites</div>
+                    <button id="edit-saved-sites-btn" class="btn btn-sm">Edit</button>
+                </div>
+                <div id="saved-sites-content" class="saved-sites-content">
+                    <p class="loading">No saved sites yet</p>
+                </div>
+            </div>
+            <div class="static-card">
+                <div class="static-card-title red">Quick Links</div>
+                <ul class="suggestions-list">
+                    <li>
+                        <div class="suggestion-info">
+                            <a href="https://mail.google.com" target="_blank">Gmail</a>
+                            <span class="suggestion-desc">Check your email</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="suggestion-info">
+                            <a href="https://calendar.google.com" target="_blank">Google Calendar</a>
+                            <span class="suggestion-desc">View your schedule</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="suggestion-info">
+                            <a href="https://drive.google.com" target="_blank">Google Drive</a>
+                            <span class="suggestion-desc">Access your files</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
 
     <!-- Edit Modal -->
     <div id="edit-modal" class="modal">

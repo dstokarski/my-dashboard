@@ -105,7 +105,7 @@ function setupModal() {
 }
 
 function enterEditMode() {
-    document.querySelector('.cards-grid').classList.add('edit-mode');
+    document.querySelector('.cards-section').classList.add('edit-mode');
     addEditButtons();
     addAddCardButton();
 }
@@ -118,7 +118,7 @@ function exitEditMode() {
         editBtn.classList.remove('btn-primary');
         editBtn.classList.add('btn-secondary');
     }
-    document.querySelector('.cards-grid').classList.remove('edit-mode');
+    document.querySelector('.cards-section').classList.remove('edit-mode');
     removeEditButtons();
     removeAddCardButton();
 }
@@ -175,7 +175,7 @@ function addAddCardButton() {
         btn.className = 'add-card-btn';
         btn.textContent = '+ Add Card';
         btn.addEventListener('click', () => openEditModal(null));
-        document.querySelector('.cards-grid').appendChild(btn);
+        document.querySelector('.cards-section').appendChild(btn);
     }
 }
 
@@ -418,7 +418,9 @@ async function loadCardsFromFirebase() {
 }
 
 function renderCards(cards) {
-    const grid = document.querySelector('.cards-grid');
+    const grid = document.querySelector('.cards-section');
+    if (!grid) return;
+
     grid.querySelectorAll('.card').forEach(card => card.remove());
 
     cards.forEach(cardData => {
@@ -438,9 +440,19 @@ function createCardElement(cardData) {
     card.dataset.cardId = cardData.id;
     card.dataset.order = cardData.order;
 
-    const title = document.createElement('h3');
+    // Title with link count (editorial style)
+    const title = document.createElement('div');
     title.className = 'card-title';
-    title.textContent = cardData.title;
+
+    const titleText = document.createElement('span');
+    titleText.textContent = cardData.title;
+
+    const linkCount = document.createElement('span');
+    linkCount.className = 'card-link-count';
+    linkCount.textContent = `${cardData.links.length} link${cardData.links.length !== 1 ? 's' : ''}`;
+
+    title.appendChild(titleText);
+    title.appendChild(linkCount);
 
     const linksList = document.createElement('ul');
     linksList.className = 'card-links';

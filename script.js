@@ -23,8 +23,8 @@ function updateTime() {
     document.getElementById('date').textContent = dateString;
 }
 
-// Weather Data using Open-Meteo API
-async function fetchWeather(lat, lon, elementId, wundergroundUrl) {
+// Weather Data using Open-Meteo API - Editorial Style
+async function fetchWeather(lat, lon, elementId, wundergroundUrl, cityName) {
     try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode,windspeed_10m,relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=America%2FToronto&forecast_days=5`;
 
@@ -38,6 +38,7 @@ async function fetchWeather(lat, lon, elementId, wundergroundUrl) {
         const weatherDesc = getWeatherDescription(current.weathercode);
         const humidity = Math.round(current.relativehumidity_2m);
         const windSpeed = Math.round(current.windspeed_10m);
+        const lowTemp = Math.round(daily.temperature_2m_min[0]);
 
         let forecastHTML = '';
         for (let i = 1; i < 5; i++) {
@@ -49,24 +50,37 @@ async function fetchWeather(lat, lon, elementId, wundergroundUrl) {
             forecastHTML += `
                 <div class="forecast-day">
                     <div class="forecast-day-name">${dayName}</div>
-                    <div class="forecast-temp">${maxTemp}° / ${minTemp}°</div>
+                    <div class="forecast-temp">${maxTemp}°/${minTemp}°</div>
                 </div>
             `;
         }
 
         const weatherHTML = `
-            <div class="weather-current">
-                <div class="weather-temp">${temp}°C</div>
-                <div class="weather-condition">${weatherDesc}</div>
-                <div class="weather-details">
-                    <span>💧 ${humidity}%</span>
-                    <span>💨 ${windSpeed} km/h</span>
+            <div class="weather-temp-big">${temp}°</div>
+            <div class="weather-city">${cityName}</div>
+            <div class="weather-desc">${weatherDesc}</div>
+            <div class="weather-grid">
+                <div class="w-cell">
+                    <div class="w-label">Humidity</div>
+                    <div class="w-val">${humidity}%</div>
+                </div>
+                <div class="w-cell">
+                    <div class="w-label">Wind</div>
+                    <div class="w-val">${windSpeed} km/h</div>
+                </div>
+                <div class="w-cell">
+                    <div class="w-label">Low</div>
+                    <div class="w-val">${lowTemp}°C</div>
+                </div>
+                <div class="w-cell">
+                    <div class="w-label">Condition</div>
+                    <div class="w-val">${weatherDesc}</div>
                 </div>
             </div>
-            <div class="weather-forecast">
+            <div class="weather-forecast-row">
                 ${forecastHTML}
             </div>
-            <a href="${wundergroundUrl}" target="_blank" class="weather-link">10 Day Forecast</a>
+            <a href="${wundergroundUrl}" target="_blank" class="weather-link">View Full Forecast →</a>
         `;
 
         document.getElementById(elementId).innerHTML = weatherHTML;
@@ -215,31 +229,52 @@ const CURATED_SUGGESTIONS = [
     { text: "Metafilter", url: "https://www.metafilter.com", desc: "Best of the web" }
 ];
 
-// Get today's date key for caching (changes at midnight)
-function getTodayKey() {
-    const now = new Date();
-    return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+// Suggestions state - persisted in localStorage
+let currentSuggestionSeed = null;
+
+// Get or initialize the suggestion seed (only changes when user clicks refresh)
+function getSuggestionSeed() {
+    if (currentSuggestionSeed !== null) {
+        return currentSuggestionSeed;
+    }
+
+    const stored = localStorage.getItem('suggestionSeed');
+    if (stored) {
+        currentSuggestionSeed = parseInt(stored, 10);
+    } else {
+        // Initialize with current timestamp
+        currentSuggestionSeed = Date.now();
+        localStorage.setItem('suggestionSeed', currentSuggestionSeed.toString());
+    }
+    return currentSuggestionSeed;
 }
 
-// Seeded random number generator for consistent daily results
+// Generate new seed when user clicks refresh
+function refreshSuggestionSeed() {
+    currentSuggestionSeed = Date.now();
+    localStorage.setItem('suggestionSeed', currentSuggestionSeed.toString());
+    // Clear HN cache to get fresh stories
+    Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('hn_stories_')) {
+            localStorage.removeItem(key);
+        }
+    });
+    return currentSuggestionSeed;
+}
+
+// Seeded random number generator for consistent results
 function seededRandom(seed) {
     const x = Math.sin(seed) * 10000;
     return x - Math.floor(x);
 }
 
-// Get day of year as seed
-function getDayOfYear() {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    return Math.floor((now - start) / (1000 * 60 * 60 * 24));
-}
-
 // Fetch top stories from Hacker News
 async function fetchHackerNewsStories() {
-    const cacheKey = `hn_stories_${getTodayKey()}`;
+    const seed = getSuggestionSeed();
+    const cacheKey = `hn_stories_${seed}`;
     const cached = localStorage.getItem(cacheKey);
 
-    // Return cached data if available for today
+    // Return cached data if available for this seed
     if (cached) {
         try {
             return JSON.parse(cached);
@@ -253,9 +288,8 @@ async function fetchHackerNewsStories() {
         const response = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
         const storyIds = await response.json();
 
-        // Use day of year to select which stories to fetch (consistent per day)
-        const dayOfYear = getDayOfYear();
-        const startIndex = (dayOfYear * 7) % 100; // Rotate through top 100 stories
+        // Use seed to select which stories to fetch
+        const startIndex = (seed % 100);
         const selectedIds = storyIds.slice(startIndex, startIndex + 10);
 
         // Fetch story details
@@ -277,15 +311,8 @@ async function fetchHackerNewsStories() {
                 source: 'hn'
             }));
 
-        // Cache for today
+        // Cache for this seed
         localStorage.setItem(cacheKey, JSON.stringify(formattedStories));
-
-        // Clean up old cache entries
-        Object.keys(localStorage).forEach(key => {
-            if (key.startsWith('hn_stories_') && key !== cacheKey) {
-                localStorage.removeItem(key);
-            }
-        });
 
         return formattedStories;
     } catch (error) {
@@ -294,11 +321,9 @@ async function fetchHackerNewsStories() {
     }
 }
 
-// Get curated suggestions for today (deterministic based on date)
-function getCuratedSuggestionsForToday(count = 3) {
-    const dayOfYear = getDayOfYear();
-    const year = new Date().getFullYear();
-    const seed = dayOfYear + year * 365;
+// Get curated suggestions based on current seed
+function getCuratedSuggestions(count = 3) {
+    const seed = getSuggestionSeed();
 
     // Create shuffled copy using seeded random
     const shuffled = [...CURATED_SUGGESTIONS];
@@ -310,10 +335,15 @@ function getCuratedSuggestionsForToday(count = 3) {
     return shuffled.slice(0, count).map(s => ({ ...s, source: 'curated' }));
 }
 
-// Fetch daily suggestions - mix of curated sites and Hacker News
-async function fetchSuggestions() {
+// Fetch suggestions - mix of curated sites and Hacker News
+async function fetchSuggestions(forceRefresh = false) {
     const suggestionsEl = document.getElementById('suggestions-content');
     if (!suggestionsEl) return;
+
+    // Generate new seed if refreshing
+    if (forceRefresh) {
+        refreshSuggestionSeed();
+    }
 
     // Show loading state
     suggestionsEl.innerHTML = '<p class="loading">Loading suggestions...</p>';
@@ -324,7 +354,7 @@ async function fetchSuggestions() {
             fetchHackerNewsStories()
         ]);
 
-        const curatedSuggestions = getCuratedSuggestionsForToday(3);
+        const curatedSuggestions = getCuratedSuggestions(3);
         const hnSuggestions = hnStories.slice(0, 2);
 
         // Combine: curated first, then HN
@@ -332,7 +362,7 @@ async function fetchSuggestions() {
 
         // If HN failed, fill with more curated
         if (dailySuggestions.length < 5) {
-            const moreCurated = getCuratedSuggestionsForToday(5).slice(dailySuggestions.length);
+            const moreCurated = getCuratedSuggestions(5).slice(dailySuggestions.length);
             dailySuggestions.push(...moreCurated);
         }
 
@@ -340,7 +370,7 @@ async function fetchSuggestions() {
     } catch (error) {
         console.error('Error fetching suggestions:', error);
         // Fallback to curated only
-        const curatedSuggestions = getCuratedSuggestionsForToday(5);
+        const curatedSuggestions = getCuratedSuggestions(5);
         renderSuggestions(curatedSuggestions);
     }
 }
@@ -565,13 +595,13 @@ function init() {
     setInterval(updateTime, 1000);
 
     // Fetch weather for Ottawa and Chelsea
-    fetchWeather(45.4215, -75.6972, 'weather-ottawa', 'https://www.wunderground.com/forecast/ca/ottawa');
-    fetchWeather(45.5, -75.8, 'weather-chelsea', 'https://www.wunderground.com/forecast/ca/chelsea');
+    fetchWeather(45.4215, -75.6972, 'weather-ottawa', 'https://www.wunderground.com/forecast/ca/ottawa', 'Ottawa, Ontario');
+    fetchWeather(45.5, -75.8, 'weather-chelsea', 'https://www.wunderground.com/forecast/ca/chelsea', 'Chelsea, Québec');
 
     // Refresh weather every 15 minutes
     setInterval(() => {
-        fetchWeather(45.4215, -75.6972, 'weather-ottawa', 'https://www.wunderground.com/forecast/ca/ottawa');
-        fetchWeather(45.5, -75.8, 'weather-chelsea', 'https://www.wunderground.com/forecast/ca/chelsea');
+        fetchWeather(45.4215, -75.6972, 'weather-ottawa', 'https://www.wunderground.com/forecast/ca/ottawa', 'Ottawa, Ontario');
+        fetchWeather(45.5, -75.8, 'weather-chelsea', 'https://www.wunderground.com/forecast/ca/chelsea', 'Chelsea, Québec');
     }, 15 * 60 * 1000);
 
     // Load static card content
@@ -581,6 +611,21 @@ function init() {
     fetchSuggestions();
     renderSavedSites();
     setupSavedSitesEdit();
+    setupSuggestionsRefresh();
+}
+
+// Setup refresh button for suggestions
+function setupSuggestionsRefresh() {
+    const refreshBtn = document.getElementById('refresh-suggestions-btn');
+    if (!refreshBtn) return;
+
+    refreshBtn.addEventListener('click', async () => {
+        refreshBtn.disabled = true;
+        refreshBtn.textContent = '...';
+        await fetchSuggestions(true); // true = force refresh
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = 'Refresh';
+    });
 }
 
 // Start when page loads
