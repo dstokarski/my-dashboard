@@ -5,75 +5,85 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0a0e27;
+    color: #e0e6ff;
     min-height: 100vh;
-    padding: 40px 20px;
+    padding: 32px 16px;
 }
 
 .container {
-    max-width: 1300px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
 .header {
     text-align: center;
-    color: #1a1a1a;
-    margin-bottom: 50px;
+    margin-bottom: 48px;
 }
 
 .header h1 {
-    font-size: 48px;
+    font-size: 42px;
     font-weight: 700;
-    margin-bottom: 10px;
-    letter-spacing: -1px;
+    background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1.5px;
 }
 
 .header .subtitle {
-    font-size: 18px;
-    font-weight: 400;
-    color: #666666;
+    display: none;
 }
 
 .cards-container {
-    display: flex;
-    gap: 25px;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
 }
 
 .card {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background: linear-gradient(135deg, #1a1f3a 0%, #16213e 100%);
+    border: 1px solid rgba(0, 212, 255, 0.1);
+    border-radius: 12px;
     overflow: hidden;
-    transition: all 0.3s ease;
-    flex: 1 1 320px;
-    max-width: 380px;
-    border: 1px solid #e5e5e5;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at top right, rgba(0, 212, 255, 0.1), transparent);
+    pointer-events: none;
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
-    border-color: #d0d0d0;
+    border-color: rgba(0, 212, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.15), inset 0 0 20px rgba(0, 212, 255, 0.05);
+    transform: translateY(-2px);
 }
 
 .card-header {
-    background: #f8f9fa;
-    padding: 28px 25px;
-    border-bottom: 2px solid #e5e5e5;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+    background: rgba(0, 212, 255, 0.03);
 }
 
 .card-header h2 {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600;
-    color: #1a1a1a;
-    letter-spacing: -0.3px;
+    color: #00d4ff;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
 .card-content {
-    padding: 28px 25px;
+    padding: 14px 18px;
 }
 
 .links-list {
@@ -81,8 +91,7 @@ body {
 }
 
 .links-list li {
-    margin-bottom: 16px;
-    transition: all 0.2s ease;
+    margin-bottom: 5px;
 }
 
 .links-list li:last-child {
@@ -90,94 +99,88 @@ body {
 }
 
 .links-list a {
-    color: #2563eb;
+    color: #a5b4fc;
     text-decoration: none;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 500;
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.links-list a::before {
+    content: '▸';
+    margin-right: 6px;
+    color: #00d4ff;
+    opacity: 0;
     transition: all 0.2s ease;
 }
 
 .links-list a:hover {
-    color: #1d4ed8;
-    transform: translateX(4px);
+    color: #00d4ff;
+    padding-left: 4px;
+}
+
+.links-list a:hover::before {
+    opacity: 1;
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-    .cards-container {
-        flex-direction: row;
-    }
-
-    .card {
-        flex: 1 1 calc(50% - 13px);
-        max-width: none;
-    }
-}
-
 @media (max-width: 768px) {
-    body {
-        padding: 30px 20px;
-    }
-
     .header h1 {
-        font-size: 36px;
-    }
-
-    .header .subtitle {
-        font-size: 16px;
+        font-size: 32px;
     }
 
     .cards-container {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .card {
-        flex: 1 1 auto;
-        max-width: none;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 16px;
     }
 
     .card-header h2 {
-        font-size: 18px;
+        font-size: 15px;
     }
 
     .links-list a {
-        font-size: 14px;
+        font-size: 12px;
     }
 }
 
 @media (max-width: 480px) {
     body {
-        padding: 20px 15px;
+        padding: 20px 12px;
     }
 
     .header {
-        margin-bottom: 35px;
+        margin-bottom: 32px;
     }
 
     .header h1 {
-        font-size: 28px;
+        font-size: 24px;
     }
 
-    .header .subtitle {
-        font-size: 14px;
+    .cards-container {
+        grid-template-columns: 1fr;
+        gap: 14px;
     }
 
     .card-header {
-        padding: 20px;
+        padding: 12px 16px;
     }
 
     .card-content {
-        padding: 20px;
+        padding: 12px 16px;
     }
 
-    .links-list li {
-        margin-bottom: 14px;
+    .card-header h2 {
+        font-size: 14px;
     }
 
     .links-list a {
-        font-size: 13px;
+        font-size: 11px;
+    }
+
+    .links-list li {
+        margin-bottom: 4px;
     }
 }
