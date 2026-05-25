@@ -3,181 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Dashboard</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1>Dashboard</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="brand">
-                Dashboard
-            </div>
-            <nav class="sidebar-nav">
-                <a href="#weather">Weather</a>
-                <a href="#news">News</a>
-                <a href="#canada">Canada</a>
-                <a href="#ottawa">Ottawa</a>
+            <nav class="menu">
+                <a href="#weather" class="menu-item">Weather</a>
+                <a href="#news" class="menu-item">News</a>
+                <a href="#canada" class="menu-item">Canada</a>
+                <a href="#ottawa" class="menu-item">Ottawa</a>
+                <a href="#miscellaneous" class="menu-item">Miscellaneous</a>
+                <a href="#social" class="menu-item">Social</a>
             </nav>
         </aside>
 
-        <main class="content">
-
-
-            <section id="weather" class="category-section">
-             <div class="weather-widget">
-                    <div class="weather-current">
-                        <div class="weather-top">
-                            <div>
-                                <p class="weather-label">Now</p>
-                                <h3 id="current-temp">--°C</h3>
-                                <p id="current-desc" class="weather-description">Loading...</p>
-                            </div>
-                            <div class="weather-icon">☁️</div>
-                        </div>
-                        <div class="weather-details">
-                            <div><span>Wind</span><strong id="current-wind">--</strong></div>
-                            <div><span>Humidity</span><strong id="current-humidity">--</strong></div>
-                            <div><span>Pressure</span><strong id="current-pressure">--</strong></div>
-                            <div><span>Updated</span><strong id="current-time">--</strong></div>
-                        </div>
-                    </div>
-                    <div class="weather-forecast">
-                        <!-- Forecast items will be injected here -->
-                        <div id="forecast-list"></div>
-                    </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Weather Section -->
+            <section id="weather" class="section">
+                <h2 class="section-title">Weather</h2>
+                <div class="card">
+                    <ul class="link-list">
+                        <li><a href="https://www.wunderground.com/forecast/ca/ottawa" target="_blank">Ottawa</a></li>
+                        <li><a href="https://www.wunderground.com/forecast/ca/chelsea" target="_blank">Chelsea</a></li>
+                        <li><a href="https://www.wunderground.com/forecast/ca/westmeath" target="_blank">Westmeath</a></li>
+                        <li><a href="https://www.ottawariver.ca/location/coulonge/" target="_blank">Ottawa River</a></li>
+                        <li><a href="https://nordic-pulse.com/ski-areas/CA/ON/region/Ottawa-Urban-Winter-Trails" target="_blank">Ottawa Urban Winter Trails</a></li>
+                    </ul>
                 </div>
             </section>
 
-            <section id="news" class="category-section">
-                <div class="section-header">
-                    <h2>News</h2>
-                                   </div>
-                <ul>
-                    <li><a href="https://www.globeandmail.com" target="_blank">Globe and Mail</a></li>
-                    <li><a href="https://www.nyt.com" target="_blank">NYT</a></li>
-                    <li><a href="https://www.theatlantic.com" target="_blank">The Atlantic</a></li>
-                    <li><a href="https://www.bbc.com/news" target="_blank">BBC News</a></li>
-                    <li><a href="https://www.reuters.com" target="_blank">Reuters</a></li>
-                    <li><a href="https://www.apnews.com" target="_blank">AP News</a></li>
-                    <li><a href="https://www.theguardian.com/international" target="_blank">The Guardian</a></li>
-                    <li><a href="https://www.aljazeera.com" target="_blank">Al Jazeera</a></li>
-                    <li><a href="https://www.politico.com" target="_blank">Politico</a></li>
-                    <li><a href="https://www.lemonde.com/international" target="_blank">Le Monde</a></li>
-                    <li><a href="https://www.spiegel.com" target="_blank">Der Spiegel</a></li>
-                    <li><a href="https://www.npr.org" target="_blank">NPR</a></li>
-                    <li><a href="https://www.allafrica.com" target="_blank">All Africa</a></li>
-                    <li><a href="https://www.asiatimes.com" target="_blank">Asia Times</a></li>
-                    <li><a href="https://www.thediplomat.com" target="_blank">The Diplomat</a></li>
-                    <li><a href="https://www.aljazeera.com/latin-america/" target="_blank">Al Jazeera Latin America</a></li>
-                </ul>
+            <!-- News Section -->
+            <section id="news" class="section">
+                <h2 class="section-title">News</h2>
+                <div class="card">
+                    <ul class="link-list">
+                        <li><a href="https://www.globeandmail.com" target="_blank">Globe and Mail</a></li>
+                        <li><a href="https://www.nyt.com" target="_blank">NYT</a></li>
+                        <li><a href="https://www.theatlantic.com" target="_blank">The Atlantic</a></li>
+                        <li><a href="https://www.bbc.com/news" target="_blank">BBC News</a></li>
+                        <li><a href="https://www.reuters.com" target="_blank">Reuters</a></li>
+                        <li><a href="https://www.apnews.com" target="_blank">AP News</a></li>
+                        <li><a href="https://www.theguardian.com/international" target="_blank">The Guardian</a></li>
+                        <li><a href="https://www.aljazeera.com" target="_blank">Al Jazeera</a></li>
+                        <li><a href="https://www.politico.com" target="_blank">Politico</a></li>
+                        <li><a href="https://www.lemonde.com/international" target="_blank">Le Monde</a></li>
+                        <li><a href="https://www.spiegel.de/" target="_blank">Der Spiegel</a></li>
+                        <li><a href="https://www.npr.org" target="_blank">NPR</a></li>
+                        <li><a href="https://www.allafrica.com" target="_blank">All Africa</a></li>
+                        <li><a href="https://www.asiatimes.com" target="_blank">Asia Times</a></li>
+                        <li><a href="https://www.thediplomat.com" target="_blank">The Diplomat</a></li>
+                        <li><a href="https://www.aljazeera.com/latin-america/" target="_blank">Al Jazeera Latin America</a></li>
+                    </ul>
+                </div>
             </section>
 
-            <section id="canada" class="category-section">
-                <div class="section-header">
-                    <h2>Canada</h2>
-                     </div>
-                <ul>
-                    <li><a href="https://www.cbc.ca/news" target="_blank">CBC News</a></li>
-                    <li><a href="https://www.globalnews.ca" target="_blank">Global News</a></li>
-                    <li><a href="https://www.thestar.com" target="_blank">Toronto Star</a></li>
-                    <li><a href="https://www.ctv.ca/news" target="_blank">CTV News</a></li>
-                    <li><a href="https://www.macleans.ca" target="_blank">Maclean's</a></li>
-                    <li><a href="https://www.nationalnewswatch.com" target="_blank">National News Watch</a></li>
-                </ul>
+            <!-- Canada Section -->
+            <section id="canada" class="section">
+                <h2 class="section-title">Canada</h2>
+                <div class="card">
+                    <ul class="link-list">
+                        <li><a href="https://www.cbc.ca/news" target="_blank">CBC News</a></li>
+                        <li><a href="https://www.globalnews.ca" target="_blank">Global News</a></li>
+                        <li><a href="https://www.thestar.com" target="_blank">Toronto Star</a></li>
+                        <li><a href="https://www.ctv.ca/news" target="_blank">CTV News</a></li>
+                        <li><a href="https://www.macleans.ca" target="_blank">Maclean's</a></li>
+                        <li><a href="https://www.nationalnewswatch.com" target="_blank">National News Watch</a></li>
+                    </ul>
+                </div>
             </section>
 
-            <section id="ottawa" class="category-section">
-                <div class="section-header">
-                    <h2>Ottawa</h2>
-                    </div>
-                <ul>
-                    <li><a href="https://www.cbc.ca/news/canada/ottawa" target="_blank">CBC Ottawa</a></li>
-                    <li><a href="https://globalnews.ca/news/8888888/ottawa" target="_blank">Global Ottawa</a></li>
-                    <li><a href="https://www.ottawamatters.com" target="_blank">Ottawa Matters</a></li>
-                    <li><a href="https://www.ctvnews.ca/news/ottawa" target="_blank">CTV Ottawa</a></li>
-                    <li><a href="https://www.mayfairtheatre.ca" target="_blank">Mayfair Theatre</a></li>
-                    <li><a href="https://nac-cna.ca/en" target="_blank">National Arts Centre</a></li>
-                    <li><a href="https://www.bytowne.ca" target="_blank">Bytowne</a></li>
-                </ul>
+            <!-- Ottawa Section -->
+            <section id="ottawa" class="section">
+                <h2 class="section-title">Ottawa</h2>
+                <div class="card">
+                    <ul class="link-list">
+                        <li><a href="https://www.cbc.ca/news/canada/ottawa" target="_blank">CBC Ottawa</a></li>
+                        <li><a href="https://globalnews.ca/news/8888888/ottawa" target="_blank">Global Ottawa</a></li>
+                        <li><a href="https://www.ottawamatters.com" target="_blank">Ottawa Matters</a></li>
+                        <li><a href="https://www.ctvnews.ca/news/ottawa" target="_blank">CTV Ottawa</a></li>
+                        <li><a href="https://www.mayfairtheatre.ca" target="_blank">Mayfair Theatre</a></li>
+                        <li><a href="https://nac-cna.ca/en" target="_blank">National Arts Centre</a></li>
+                        <li><a href="https://www.bytowne.ca" target="_blank">Bytowne</a></li>
+                        <li><a href="https://ottawatourism.ca/en/event-calendar" target="_blank">Ottawa Tourism Event Calendar</a></li>
+                        <li><a href="https://bronsoncentremusictheatre.com/events/" target="_blank">Bronson Centre Music Theatre Events</a></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Miscellaneous Section -->
+            <section id="miscellaneous" class="section">
+                <h2 class="section-title">Miscellaneous</h2>
+                <div class="card">
+                    <ul class="link-list">
+                        <li><a href="https://marginalrevolution.com" target="_blank">Marginal Revolution</a></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Social Section -->
+            <section id="social" class="section">
+                <h2 class="section-title">Social</h2>
+                <div class="card">
+                    <ul class="link-list">
+                        <li><a href="https://www.facebook.com" target="_blank">Facebook</a></li>
+                        <li><a href="https://www.strava.com" target="_blank">Strava</a></li>
+                        <li><a href="https://www.instagram.com" target="_blank">Instagram</a></li>
+                        <li><a href="https://www.reddit.com" target="_blank">Reddit</a></li>
+                    </ul>
+                </div>
             </section>
         </main>
     </div>
-    <script>
-    // Live weather for Ottawa using Open-Meteo (no API key required)
-    document.addEventListener('DOMContentLoaded', () => {
-        const lat = 45.4215;
-        const lon = -75.6972;
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=relativehumidity_2m,pressure_msl&current_weather=true&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=America%2FToronto`;
-
-        const mapWeatherCode = (code) => {
-            // Basic mapping for Open-Meteo WMO weather codes
-            const map = {
-                0: ['Clear', '☀️'],
-                1: ['Mainly clear', '🌤️'],
-                2: ['Partly cloudy', '⛅'],
-                3: ['Overcast', '☁️'],
-                45: ['Fog', '🌫️'],
-                48: ['Depositing rime fog', '🌫️'],
-                51: ['Light drizzle', '🌦️'],
-                53: ['Moderate drizzle', '🌦️'],
-                55: ['Dense drizzle', '🌧️'],
-                61: ['Slight rain', '🌧️'],
-                63: ['Moderate rain', '🌧️'],
-                65: ['Heavy rain', '⛈️'],
-                80: ['Rain showers', '🌦️'],
-                81: ['Moderate rain showers', '🌦️'],
-                82: ['Violent rain showers', '⛈️'],
-                95: ['Thunderstorm', '⛈️'],
-                96: ['Thunderstorm with slight hail', '⛈️'],
-                99: ['Thunderstorm with heavy hail', '⛈️']
-            };
-            return map[code] || ['Unknown', '❓'];
-        };
-
-        fetch(url).then(r => r.json()).then(data => {
-            const current = data.current_weather;
-            if (!current) throw new Error('No current weather');
-
-            // Update current temp and description
-            const [desc, emoji] = mapWeatherCode(current.weathercode);
-            document.getElementById('current-temp').textContent = `${Math.round(current.temperature)}°C`;
-            document.getElementById('current-desc').textContent = desc;
-            document.querySelector('.weather-icon').textContent = emoji;
-
-            // Find index for current hour in hourly arrays
-            const timeIndex = data.hourly.time.indexOf(current.time);
-            if (timeIndex !== -1) {
-                const humidity = data.hourly.relativehumidity_2m[timeIndex];
-                const pressure = data.hourly.pressure_msl[timeIndex];
-                document.getElementById('current-humidity').textContent = humidity + '%';
-                document.getElementById('current-pressure').textContent = Math.round(pressure) + ' hPa';
-            }
-
-            document.getElementById('current-wind').textContent = Math.round(current.windspeed) + ' km/h';
-            document.getElementById('current-time').textContent = new Date(current.time).toLocaleString();
-
-            // Populate daily forecast (first 4 days)
-            const forecastEl = document.getElementById('forecast-list');
-            forecastEl.innerHTML = '';
-            const days = data.daily.time;
-            const tmax = data.daily.temperature_2m_max;
-            const tmin = data.daily.temperature_2m_min;
-            const codes = data.daily.weathercode;
-            for (let i = 0; i < Math.min(4, days.length); i++) {
-                const date = new Date(days[i]);
-                const dayName = date.toLocaleDateString(undefined, { weekday: 'short' });
-                const [dDesc, dEmoji] = mapWeatherCode(codes[i]);
-                const item = document.createElement('div');
-                item.className = 'forecast-item';
-                item.innerHTML = `<p>${dayName}</p><span title="${dDesc}">${dEmoji} ${Math.round(tmax[i])} / ${Math.round(tmin[i])}°C</span>`;
-                forecastEl.appendChild(item);
-            }
-
-        }).catch(err => {
-            console.error('Weather fetch error', err);
-            document.getElementById('current-desc').textContent = 'Unable to load weather';
-        });
-    });
-    </script>
 </body>
 </html>
